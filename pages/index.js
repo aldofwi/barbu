@@ -1,11 +1,22 @@
-export default function Home() {
+import { useAuthContext } from "@/context/AuthContext";
+import Auth from "./Auth";
+import Home from "./Home";
+
+export default function App() {
+
+    const { user, authIsReady } = useAuthContext();
+
+    if(!authIsReady) return null;
 
     return (
-  
-      <div className="h-screen flex flex-col bg-[#121212] container justify-center items-center">
-  
-            <code className="text-white font-mono font-bold">Hello World !</code>
-  
-      </div>
-    )
+        {user} ? 
+                <>
+                <Home />
+                </>
+             : 
+                <>
+                <Auth />
+                </>
+            
+    );
   };

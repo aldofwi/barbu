@@ -1,5 +1,6 @@
 import { getAuth, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
 
+const provider = FacebookAuthProvider();
 const auth = getAuth();
 signInWithPopup(auth, provider)
   .then((result) => {

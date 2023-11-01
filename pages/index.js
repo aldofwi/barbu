@@ -9,14 +9,18 @@ export default function App() {
     if(!authIsReady) return null;
 
     return (
-        {user} ? 
-                <>
-                <Home />
-                </>
-             : 
-                <>
-                <Auth />
-                </>
             
+        <main>
+            {
+            user ? 
+                (<>
+                <Home />
+                </>)
+             : 
+                (<>
+                <Auth />
+                </>)
+            }
+        </main>
     );
   };

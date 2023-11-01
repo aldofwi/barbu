@@ -1,8 +1,7 @@
 import { getAuth, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
 
-const provider = FacebookAuthProvider();
 const auth = getAuth();
-signInWithPopup(auth, provider)
+signInWithPopup(auth, FacebookAuthProvider)
   .then((result) => {
     // The signed-in user info.
     const user = result.user;

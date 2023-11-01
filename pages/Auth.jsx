@@ -1,5 +1,5 @@
-import { googleProvider, facebookProvider } from "./firebase/config";
-import { useSocialSignup } from "./hooks/useSocialSignup";
+import { googleProvider, facebookProvider } from "../firebase/config";
+import { useSocialSignup } from "../hooks/useSocialSignup";
 import { useAuthContext } from "@/context/AuthContext";
 import FacebookIcon from "../public/images/facebookIcon.png";
 import GoogleIcon from "../public/images/googleIcon.png";

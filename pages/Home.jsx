@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAuthContext } from '@/context/AuthContext';
-import { useLogout } from './hooks/useLogout';
+import { useLogout } from '../hooks/useLogout';
 import Image from 'next/image';
 
 const Home = () => {

@@ -93,6 +93,7 @@ button img {
 
 .home-logo {
   position: absolute;
+  left: 70vh;
   pointer-events: none;
   animation: App-logo-spin infinite 20s linear;
 }

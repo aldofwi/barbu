@@ -12,30 +12,26 @@ import Chat from './Chat';
 const Home = () => {
 
     const { user } = useAuthContext();
-    const { logout } = useLogout();
-
+    const name = user.displayName;
     const toast = useToast();
 
     useEffect(() => {
         toast({
-            title: "You're logged in as "+user.displayName,
+            title: "You're logged in as "+name,
             status: "success",
             duration: 2000,
             position: "top",
         });
-    });
+    }, [name, toast]);
     
     // useEffect(() => console.log(user), [user]);
-
 
   return (
     <div className="utility__page">
         <Navbar />
-            
+        <Chat />    
             <div className="h-screen flex flex-col bg-[#121212] container justify-center items-center">
-                <Chat />
-            
-                <div className="home-title text-white font-mono font-bold">Hello World!</div>
+                <div className="home-title right-40 text-white font-mono font-bold">Hello World!</div>
                 
                     <Image 
                         className='home-logo'
@@ -43,11 +39,7 @@ const Home = () => {
                         width={175}
                         alt="AldoIcon"
                     />
-
-                    {user.photoURL}
-                
             </div>
-
     </div>
   )};
 

@@ -71,6 +71,11 @@ button img {
   height: 20px;
 }
 
+.auth_title {
+  font-size: 3rem;
+  font-family: "Bradley Hand";
+}
+
 .home-title {
   font-size: 3rem;
   position: relative;
@@ -108,7 +113,7 @@ button img {
 }
 
 .profile_img {
-  width: 5rem;
-  height: 5rem;
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
 }

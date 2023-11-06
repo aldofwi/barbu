@@ -11,6 +11,10 @@ const Navbar = () => {
 
     const { user } = useAuthContext();
     const { logout } = useLogout();
+
+    const myLoader = ({ src }) => {
+        return user.photoURL;
+    }
     
   return (
         
@@ -29,17 +33,23 @@ const Navbar = () => {
                         <button className="text-blue-500 hover:text-white font-bold">Rules</button>
                     </li>
                     <li className='px-6 py-4'>
-                        <button className="text-blue-500 hover:text-white font-bold">Scored</button>
+                        <button className="text-blue-500 hover:text-white font-bold">Score</button>
                     </li>
                     <li className='px-6 py-4'>
                         <button className="text-blue-500 hover:text-white font-bold">Online</button>
                     </li>
                     <li className='px-6 py-2'>
-                        <Img
-                            src={user.photoURL}
-                            borderRadius='full'
-                            boxSize='40px'
-                            alt="pp" />
+                        <Tooltip label={user.displayName} bg='burlywood'>
+                            <Image
+                                className="profile_img"
+                                src={user.photoURL}
+                                borderRadius='full'
+                                boxSize='40px'
+                                loader={myLoader}
+                                width={30}
+                                height={30}
+                                alt="pp" />
+                        </Tooltip>
                     </li>
                     <li className="px-6 py-3">
                     <Tooltip hasArrow label='Log Out' bg='white'>

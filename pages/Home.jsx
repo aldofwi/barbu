@@ -1,13 +1,11 @@
 
 import React from 'react';
 import { useAuthContext } from '@/context/AuthContext';
-import { useLogout } from '../hooks/useLogout';
 import { useToast } from '@chakra-ui/react';
-import Image from 'next/image';
 import Navbar from '@/pages/Navbar';
-import LoadCard from '/public/images/loadCard.png';
 import { useEffect } from 'react';
 import Chat from './Chat';
+import Welcome from './Welcome';
 
 const Home = () => {
 
@@ -22,24 +20,16 @@ const Home = () => {
             duration: 2000,
             position: "top",
         });
-    }, [name, toast]);
-    
-    // useEffect(() => console.log(user), [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
   return (
     <div className="utility__page">
+    
         <Navbar />
         <Chat />    
-            <div className="h-screen flex flex-col bg-[#121212] container justify-center items-center">
-                <div className="home-title right-40 text-white font-mono font-bold">Hello World!</div>
-                
-                    <Image 
-                        className='home-logo'
-                        src={LoadCard}
-                        width={175}
-                        alt="AldoIcon"
-                    />
-            </div>
+        <Welcome />
+            
     </div>
   )};
 

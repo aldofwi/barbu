@@ -14,7 +14,7 @@ const Home = () => {
 
     useEffect(() => {
         toast({
-            title: "You're logged in as "+user?.displayName,
+            title: "You are logged in as " + user?.displayName,
             status: "success",
             duration: 2000,
             position: "top",

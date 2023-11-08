@@ -10,12 +10,11 @@ import Welcome from './Welcome';
 const Home = () => {
 
     const { user } = useAuthContext();
-    const name = user.displayName;
     const toast = useToast();
 
     useEffect(() => {
         toast({
-            title: "You're logged in as "+name,
+            title: "You're logged in as "+user?.displayName,
             status: "success",
             duration: 2000,
             position: "top",
@@ -25,7 +24,7 @@ const Home = () => {
 
   return (
     <div className="utility__page">
-    
+
         <Navbar />
         <Chat />    
         <Welcome />
@@ -34,10 +33,3 @@ const Home = () => {
   )};
 
 export default Home;
-
-/*
-    const myLoader = ({ src }) => {
-        
-        return user.photoURL;
-    }
-*/

@@ -39,10 +39,10 @@ const Navbar = () => {
                         <button className="text-blue-500 hover:text-white font-bold">Online</button>
                     </li>
                     <li className='px-6 py-2'>
-                        <Tooltip label={user.displayName} bg='burlywood'>
+                        <Tooltip label={user?.displayName} bg='burlywood'>
                             <Image
                                 className="profile_img"
-                                src={user.photoURL}
+                                src={user?.photoURL}
                                 borderRadius='full'
                                 boxSize='40px'
                                 loader={myLoader}

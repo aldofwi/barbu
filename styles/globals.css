@@ -118,3 +118,66 @@ button img {
   height: 4rem;
   border-radius: 50%;
 }
+
+.chat {
+  position: absolute;
+  background-color: ivory;
+  border : 3px solid #d33c40 ;
+  width: 25%;
+  height: 100%;
+  top: 0;
+  right: 0;
+}
+
+.typetext {
+  position: fixed;
+  width: 24.5%;
+  right: 0.5vh;
+  bottom: 3px;
+}
+
+.messages {
+  font-family: Courier;
+  position: fixed;
+  padding-bottom: 3vh;
+  top: 10px;
+  right: 100px;
+}
+
+.msg {
+  position: absolute;
+  font-size: 15px;
+  padding-left: 3vh;
+  top: 70px;
+  left: 10px;
+  bottom: 35px;
+  overflow-y: scroll;
+}
+
+.cb {
+  color: blue;
+}
+
+.cg {
+  color: green;
+}
+
+.crr {
+  color: red;
+}
+
+.dr {
+  color: orangered;
+}
+
+.dg {
+  color: darkgreen;
+}
+
+.db {
+  color: royalblue;
+}
+
+.dc {
+  color: slategrey;
+}

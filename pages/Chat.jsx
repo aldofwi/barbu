@@ -1,19 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IconButton, Icon } from '@chakra-ui/react';
-import { IoSend } from 'react-icons/io5'
+import { IoSend } from 'react-icons/io5';
+import moment from 'moment';
+import { io } from 'socket.io-client';
+
+let socket;
 
 const Chat = (props) => {
 
   const [users, setUsers]       = useState([]);
   const [message, setMessage]   = useState("");
   const [messages, setMessages] = useState([]);
+  
+  useEffect(() => {
+    socketInitializer();
+  }, []);
 
+  async function socketInitializer() {
+    await fetch("/api/socket");
 
+    socket = io();
+
+    socket.on("messagetxt", (data) => {
+      console.log(data);
+      setMessages( messages => [...messages, message]);
+    });
+  }
 
   const submit = (event) => {
     event.preventDefault();
 
-    // emit()
+    socket.emit("sendtxt", 
+      user.displayName,
+      message);
+
     setMessage("");
   }
 
@@ -100,7 +120,7 @@ const Chat = (props) => {
                       aria-label="Default"
                       className='fixed right-16 w-2/12 h-10 rounded-lg border-double border'
                       onChange={e => setMessage(e.currentTarget.value)}
-                      placeholder="-> Type your text here"
+                      placeholder="   Type your text here"
                       value={message}
                       id="text"
                   />

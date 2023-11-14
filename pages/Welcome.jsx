@@ -14,6 +14,7 @@ const Welcome = () => {
                 src={LoadCard}
                 width={175}
                 alt="AldoIcon"
+                priority
             />
     </div>
 

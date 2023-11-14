@@ -104,6 +104,7 @@ const Navbar = () => {
                             <Image
                                 className="profile_img"
                                 src={user?.photoURL}
+                                unoptimized
                                 loader={myLoader}
                                 width={30}
                                 height={30}

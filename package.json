@@ -13,13 +13,16 @@
     "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "express": "^4.18.2",
     "firebase": "^10.5.2",
     "framer-motion": "^6.5.1",
+    "moment": "^2.29.4",
     "next": "14.0.0",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^4.11.0",
-    "react-router-dom": "^6.17.0"
+    "react-router-dom": "^6.17.0",
+    "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
     "autoprefixer": "^10",

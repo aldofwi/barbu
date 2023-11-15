@@ -140,18 +140,18 @@ button img {
   font-family: Courier;
   position: fixed;
   padding-bottom: 3vh;
-  top: 10px;
+  top: 30px;
   right: 100px;
 }
 
 .msg {
   position: absolute;
-  font-size: 15px;
-  padding-left: 3vh;
-  top: 70px;
+  font-size: 12px;
+  top: 50px;
   left: 10px;
   bottom: 35px;
-  overflow-y: scroll;
+  overflow-y: auto;
+  scroll-behavior: auto;
 }
 
 .cb {

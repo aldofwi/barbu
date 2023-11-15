@@ -1,20 +1,24 @@
-import { Server } from 'socket.io-client';
+import { io } from 'socket.io-client';
 
-export default function SocketHandler(req, res) {
+const ENDPOINT = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:3000/';
 
-    const bio = Server(res.socket.server);
-    res.socket.server.io = bio;
+export const barbuWS = io(ENDPOINT); 
 
-    bio.on("connection", (socket) => {
+// export default function SocketHandler(req, res) {
 
-        socket.on("sendtxt", (obj) => {
-            bio.emit("messagetxt", obj);
-        });
-    });
+//     const io = new Server(res.socket.server);
+//     res.socket.server.io = io;
 
-    console.log("socket.js --- Setting Socket.");
-    res.end();
-}
+//     io.on("connection", (socket) => {
+
+//         socket.on("sendtxt", (obj) => {
+//             io.emit("messagetxt", obj);
+//         });
+//     });
+
+//     console.log("socket.js --- Setting Socket.");
+//     res.end();
+// }
 
 
 // const ENDPOINT = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:3000/';

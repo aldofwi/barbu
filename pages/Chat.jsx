@@ -19,8 +19,6 @@ const Chat = (props) => {
   useEffect(() => {
     //const socket = io("http://localhost:3000");
 
-
-
     barbuWS.on("messagetxt", (message) => {
       setMessages( messages => [...messages, message]);
     });
@@ -32,7 +30,6 @@ const Chat = (props) => {
     event.preventDefault();
 
     barbuWS.emit("sendtxt", [message, user.displayName]);
-
     setMessage("");
   }
 

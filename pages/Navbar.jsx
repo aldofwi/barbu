@@ -9,7 +9,7 @@ import Image from 'next/image';
 import ALogo from '/public/images/logoA_trans.png';
 import Rules from './Rules';
 import Score from './Score';
-import Online from './online';
+import Online from './Online';
 
 const Navbar = () => {
 

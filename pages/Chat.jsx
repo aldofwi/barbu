@@ -3,7 +3,6 @@ import { useAuthContext } from '@/context/AuthContext';
 import { IconButton, Icon } from '@chakra-ui/react';
 import { IoSend } from 'react-icons/io5';
 import moment from 'moment';
-import { io } from 'socket.io-client';
 import { barbuWS } from './api/socket';
 
 const Chat = (props) => {
@@ -14,9 +13,13 @@ const Chat = (props) => {
   const [message, setMessage]   = useState("");
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState("");
+
+  console.log("Props.users = ", props);
   
   useEffect(() => {
     //const socket = io("http://localhost:3000");
+
+
 
     barbuWS.on("messagetxt", (message) => {
       setMessages( messages => [...messages, message]);
@@ -33,8 +36,6 @@ const Chat = (props) => {
     setMessage("");
   }
 
-  console.log(messages);
-
   return (
     <div className="flex flex-col fixed mx-auto px-40 py-10 border text-white border-[#33353F] top-0 right-0 bottom-0 z-10 bg-[#121212] bg-opacity-100">
       <span className="flex font-[Stanley] text-blue-500 text-2xl font-bold">Messages</span>
@@ -47,11 +48,11 @@ const Chat = (props) => {
 
                       <div className="pl-2">
 
-                            {moment(date).format("h:mma")}
-
-                            {<b className="text-slate-500"> [{[user]}] </b>}
-
-                            {<abbr className="text-white"> {text} </abbr>}
+                        <p className='text-base'>
+                              {moment(date).format("h:mma")}
+                              <abbr className="text-slate-500"> [{[user]}] </abbr>
+                              <abbr className="text-white"> {text} </abbr>
+                        </p>
 
                       </div>
 
@@ -62,7 +63,6 @@ const Chat = (props) => {
             </div>
 
             <div className="typetext">
-
                 <form className='fixed bottom-2 right-0' onSubmit={submit} id="form">
                     
                   <input
@@ -86,7 +86,6 @@ const Chat = (props) => {
                   />
 
                 </form>
-
             </div>
         
     </div>

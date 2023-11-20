@@ -1,5 +1,5 @@
 import { googleProvider, facebookProvider, githubProvider } from "../firebase/config";
-import { Card, CardHeader, CardBody, CardFooter, Heading, Stack, StackDivider, Box } from "@chakra-ui/react";
+import { Card, CardHeader, CardBody, Heading, Stack, StackDivider, Box } from "@chakra-ui/react";
 import { useSocialSignup } from "../hooks/useSocialSignup";
 import { useAuthContext } from "@/context/AuthContext";
 import FacebookIcon from "../public/images/facebookIcon.png";

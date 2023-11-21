@@ -17,14 +17,7 @@ export default function App() {
                 <meta property="og:barbu" title="The Barbu" key="barbu" />
             </Head>
             {
-            user ? 
-                (<>
-                <Home />
-                </>)
-             : 
-                (<>
-                <Auth />
-                </>)
+                user ? <Home /> : <Auth />
             }
         </main>
     );

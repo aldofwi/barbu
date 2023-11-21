@@ -65,7 +65,7 @@ const Chat = (props) => {
                   <input
                       type="text"
                       aria-label="Default"
-                      className='fixed right-16 w-2/12 h-10 rounded-lg border-double border text-black'
+                      className='fixed right-16 w-2/12 h-10 rounded-lg border-double border text-white'
                       onChange={e => setMessage(e.currentTarget.value)}
                       placeholder="   Type your text here"
                       value={message}

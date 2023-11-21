@@ -43,7 +43,10 @@ html {
 }
 
 .utility__page {
+  position: absolute;
   display: flex;
+  background-image: url('../public/images/homepage.jpg');
+  background-size: contain;
   width: 100%;
   height: 100vh;
   justify-content: center;
@@ -52,7 +55,6 @@ html {
   font-family: Tahoma, Geneva, Verdana, sans-serif;
   row-gap: 1rem;
   flex-direction: column;
-  background: #e2dbd9;
 }
 
 button {

@@ -118,7 +118,7 @@ const Navbar = () => {
                             className="px-5 py-4 font-medium rounded-full text-center text-white inline-flex items-center bg-[#d05454] hover:bg-[#d05454]/90" 
                             data-tooltip-target="tooltip-bottom" 
                             data-tooltip-placement="bottom"
-                            onClick={() => { if(confirm("Are you sure you want to log out ?") == true) logout}}>
+                            onClick={() => { if(confirm("Are you sure you want to log out ?") == true) logout() }}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" />
                             </svg>

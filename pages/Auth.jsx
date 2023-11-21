@@ -21,8 +21,6 @@ export default function Auth() {
   return (
       <div className="utility__page">
 
-        <div className="auth_title mb-9 text-5xl font-bold">Welcome to Barbu</div>
-
             <Card>
               <CardHeader>
                 <Heading className="text-5xl font-bold" align='center' size='md'>Sign Up</Heading>
@@ -55,3 +53,5 @@ export default function Auth() {
       </div>
   )
 };
+
+// <div className="auth_title mb-9 text-5xl font-bold">Welcome to Barbu</div>

@@ -27,9 +27,9 @@ const Home = () => {
             position: "top",
         });
 
-        barbuWS.emit("username", user?.displayName);
+        // barbuWS.emit("username", user?.displayName);
         setUsers( users => [...users, user]);
-        setSocket(barbuWS);
+        // setSocket(barbuWS);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

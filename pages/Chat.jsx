@@ -1,36 +1,53 @@
+// import { barbuWS } from './api/socket';
 import React, { useState, useEffect } from 'react';
+
 import { useAuthContext } from '@/context/AuthContext';
 import { IconButton, Icon } from '@chakra-ui/react';
 import { IoSend } from 'react-icons/io5';
-import moment from 'moment';
-import { barbuWS } from './api/socket';
 
-const Chat = (props) => {
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { db } from '@/firebase/config';
+import moment from 'moment';
+
+import { useCollectionData } from 'react-firebase-hooks/firestore';
+
+const Chat = async (props) => {
 
   const { user } = useAuthContext();
+  const query = getDocs(collection(db, 'messages'));
+  const [messages] = useCollectionData(query);
 
   const [users, setUsers]       = useState([]);
   const [message, setMessage]   = useState("");
-  const [messages, setMessages] = useState([]);
-  const [socket, setSocket] = useState("");
+  // const [messages, setMessages] = useState([]);
+  // const [socket, setSocket] = useState("");
 
-  console.log("Props.users = ", props);
-  
-  useEffect(() => {
-    //const socket = io("http://localhost:3000");
+  // query.forEach((doc) => console.log(doc.id, " => ", doc.data()));
+  // const docRef = doc(db, "messages");
+  // const docSnap = await getDoc(docRef);
 
-    barbuWS.on("messagetxt", (message) => {
-      setMessages( messages => [...messages, message]);
-    });
+  console.log("Query = ", query);
+  if(docSnap) console.log("Document data : ", docSnap);
+  else console.log("No Such Document !");
 
-    setSocket(barbuWS);
-  }, []);
+  // console.log("messageRef = ", messagesRef);
+  // console.log("Messages = ", messages);
+
+  // useEffect(() => {
+  // const socket = io("http://localhost:3000");
+
+  //   barbuWS.on("messagetxt", (message) => {
+  //     setMessages( messages => [...messages, message]);
+  //   });
+
+  //   setSocket(barbuWS);
+  // }, []);
 
   const submit = (event) => {
     event.preventDefault();
 
-    barbuWS.emit("sendtxt", [message, user.displayName]);
-    setMessage("");
+    // barbuWS.emit("sendtxt", [message, user.displayName]);
+    // setMessage("");
   }
 
   return (
@@ -39,23 +56,7 @@ const Chat = (props) => {
 
             <div className="msg border flex flex-col-reverse rounded-lg w-11/12">
 
-                {messages.slice(0).reverse().map(({ user, date, text }, index) => (
-
-                    <div key={index}>
-
-                      <div className="pl-2">
-
-                        <p className='text-base'>
-                              {moment(date).format("h:mma")}
-                              <abbr className="text-slate-500"> [{[user]}] </abbr>
-                              <abbr className="text-white"> {text} </abbr>
-                        </p>
-
-                      </div>
-
-                    </div>
-
-                ))}
+                {messages}
 
             </div>
 

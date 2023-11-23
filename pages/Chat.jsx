@@ -1,54 +1,55 @@
-// import { barbuWS } from './api/socket';
 import React, { useState, useEffect } from 'react';
 
 import { useAuthContext } from '@/context/AuthContext';
 import { IconButton, Icon } from '@chakra-ui/react';
 import { IoSend } from 'react-icons/io5';
 
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { collection, query, orderBy, where, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 import moment from 'moment';
 
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
-const Chat = async (props) => {
+const Chat = () => {
 
   const { user } = useAuthContext();
-  const query = getDocs(collection(db, 'messages'));
-  const [messages] = useCollectionData(query);
+  // const query = getDocs(collection(db, 'messages'));
+  // const [messages] = useCollectionData(query);
 
-  const [users, setUsers]       = useState([]);
-  const [message, setMessage]   = useState("");
-  // const [messages, setMessages] = useState([]);
-  // const [socket, setSocket] = useState("");
+  const [users, setUsers]         = useState([]);
+  const [message, setMessage]     = useState("");
+  const [messages, setMessages]   = useState([]);
 
-  // query.forEach((doc) => console.log(doc.id, " => ", doc.data()));
-  // const docRef = doc(db, "messages");
-  // const docSnap = await getDoc(docRef);
+  useEffect(() => {
 
-  console.log("Query = ", query);
-  if(docSnap) console.log("Document data : ", docSnap);
-  else console.log("No Such Document !");
+    const handleMessages = async () => {
+      const q = query(
+        collection(db, "messages"),
+        orderBy("createdAt")
+        );
 
-  // console.log("messageRef = ", messagesRef);
-  // console.log("Messages = ", messages);
+      try {
+          console.log("------LOG------");
+          const querySnapshot = await getDocs(q);
 
-  // useEffect(() => {
-  // const socket = io("http://localhost:3000");
+          querySnapshot.forEach((doc) => {
+            //console.log(doc.data());
+            setMessages( messages => [...messages, doc.data().msg])
+          });
 
-  //   barbuWS.on("messagetxt", (message) => {
-  //     setMessages( messages => [...messages, message]);
-  //   });
+      } catch (error) { console.warn("Err --> ", error.message); }
+    }
 
-  //   setSocket(barbuWS);
-  // }, []);
+    handleMessages();
+  }, []);
+  
 
   const submit = (event) => {
     event.preventDefault();
-
-    // barbuWS.emit("sendtxt", [message, user.displayName]);
     // setMessage("");
   }
+  // if(q) console.log("Document data : ", q);
+  // else console.log("No Such Document !");
 
   return (
     <div className="flex flex-col fixed mx-auto px-40 py-10 border text-white border-[#33353F] top-0 right-0 bottom-0 z-10 bg-[#121212] bg-opacity-100">

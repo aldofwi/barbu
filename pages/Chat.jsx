@@ -3,18 +3,26 @@ import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '@/context/AuthContext';
 import { IconButton, Icon } from '@chakra-ui/react';
 import { IoSend } from 'react-icons/io5';
-
-import { collection, query, orderBy, where, getDocs } from 'firebase/firestore';
-import { db } from '@/firebase/config';
 import moment from 'moment';
 
+import {   
+          query, 
+          orderBy,
+          collection,
+          serverTimestamp, 
+          QuerySnapshot,
+          onSnapshot, 
+          addDoc, 
+          getDocs, 
+          doc } from 'firebase/firestore';
+
 import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { db } from '@/firebase/config';
 
 const Chat = () => {
 
   const { user } = useAuthContext();
-  // const query = getDocs(collection(db, 'messages'));
-  // const [messages] = useCollectionData(query);
+  const messagesRef = collection(db, "messages");
 
   const [users, setUsers]         = useState([]);
   const [message, setMessage]     = useState("");
@@ -22,47 +30,52 @@ const Chat = () => {
 
   useEffect(() => {
 
-    const handleMessages = async () => {
-      const q = query(
-        collection(db, "messages"),
-        orderBy("createdAt")
-        );
+    const queryMessages = query(messagesRef, orderBy("createdAt", "asc"));
+    onSnapshot(queryMessages, (snapshot) => {
 
-      try {
-          console.log("------LOG------");
-          const querySnapshot = await getDocs(q);
+      let messages = [];
+      snapshot.forEach((doc) => {
+        messages.push({ ...doc.data(), id: doc.id });
+      });
+      setMessages(messages);
 
-          querySnapshot.forEach((doc) => {
-            //console.log(doc.data());
-            setMessages( messages => [...messages, doc.data().msg])
-          });
-
-      } catch (error) { console.warn("Err --> ", error.message); }
-    }
-
-    handleMessages();
+    });
   }, []);
-  
 
-  const submit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // setMessage("");
-  }
-  // if(q) console.log("Document data : ", q);
-  // else console.log("No Such Document !");
 
-  return (
+    if(message === "") return;
+
+    await addDoc(messagesRef, {
+        createdAt: serverTimestamp(),
+        msg: message,
+        uid: user.displayName,
+    });
+
+    setMessage("");
+  }
+
+  console.log("Messages = ", messages);
+
+  return (  
     <div className="flex flex-col fixed mx-auto px-40 py-10 border text-white border-[#33353F] top-0 right-0 bottom-0 z-10 bg-[#121212] bg-opacity-100">
       <span className="flex font-[Stanley] text-blue-500 text-2xl font-bold">Messages</span>
 
             <div className="msg border flex flex-col-reverse rounded-lg w-11/12">
 
-                {messages}
+              {messages.slice(0).reverse().map((message, i) => 
+
+                <p key={i}  className="text-base">
+                    <abbr className="text-slate-500"> {message.uid} </abbr>
+                    <abbr className="text-slate-100"> {message.msg} </abbr>
+                </p>
+              )}
 
             </div>
 
             <div className="typetext">
-                <form className='fixed bottom-2 right-0' onSubmit={submit} id="form">
+                <form className='fixed bottom-2 right-0' onSubmit={handleSubmit} id="form">
                     
                   <input
                       type="text"
@@ -93,7 +106,13 @@ const Chat = () => {
 export default Chat;
 
 /*
+                  {messages?.map((doc, index) =>{
+                    <div key={index}>{doc.msg}</div>
+                  })}
 
+                  {Object.entries(messages)?.map((msg) =>{
+                    <div key={msg.uid}>{msg}</div>
+                  })}
 
                             {
                                 user === props.players[0]

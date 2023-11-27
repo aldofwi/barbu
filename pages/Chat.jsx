@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '@/context/AuthContext';
 import { IconButton, Icon } from '@chakra-ui/react';
 import { IoSend } from 'react-icons/io5';
-import moment from 'moment';
 
 import {   
           query, 
@@ -16,7 +15,6 @@ import {
           getDocs, 
           doc } from 'firebase/firestore';
 
-import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { db } from '@/firebase/config';
 
 const Chat = () => {
@@ -31,16 +29,17 @@ const Chat = () => {
   useEffect(() => {
 
     const queryMessages = query(messagesRef, orderBy("createdAt", "asc"));
-    onSnapshot(queryMessages, (snapshot) => {
+    const unsuscribe = onSnapshot(queryMessages, (snapshot) => {
 
       let messages = [];
       snapshot.forEach((doc) => {
         messages.push({ ...doc.data(), id: doc.id });
       });
       setMessages(messages);
-
     });
-  }, []);
+
+    return () => unsuscribe();
+  }, [messagesRef]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -50,13 +49,13 @@ const Chat = () => {
     await addDoc(messagesRef, {
         createdAt: serverTimestamp(),
         msg: message,
-        uid: user.displayName,
+        uid: user.uid,
+        name: user.displayName,
     });
-
+ 
+    // console.log("Messages = ", messages);
     setMessage("");
   }
-
-  console.log("Messages = ", messages);
 
   return (  
     <div className="flex flex-col fixed mx-auto px-40 py-10 border text-white border-[#33353F] top-0 right-0 bottom-0 z-10 bg-[#121212] bg-opacity-100">
@@ -66,8 +65,8 @@ const Chat = () => {
 
               {messages.slice(0).reverse().map((message, i) => 
 
-                <p key={i}  className="text-base">
-                    <abbr className="text-slate-500"> {message.uid} </abbr>
+                <p key={i}  className="text-base pl-1">
+                    <abbr className="text-slate-500"> {message.name} </abbr>
                     <abbr className="text-slate-100"> {message.msg} </abbr>
                 </p>
               )}

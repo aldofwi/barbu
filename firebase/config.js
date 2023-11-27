@@ -6,6 +6,7 @@ import {
   GithubAuthProvider } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getDatabase } from "firebase/database";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,6 +19,7 @@ const firebaseConfig = {
   projectId: "barbu-a3b4c",
   storageBucket: "barbu-a3b4c.appspot.com",
   messagingSenderId: "664549950364",
+  databaseURL: "https://barbu-a3b4c-default-rtdb.firebaseio.com",
   appId: "1:664549950364:web:f2af01d5a5d2cd9cacfe59",
   measurementId: "G-4368ZKPD0Z"
 };
@@ -26,9 +28,10 @@ const firebaseConfig = {
 const app       = initializeApp(firebaseConfig);
 const auth      = getAuth(app);
 const db        = getFirestore(app);
+const database  = getDatabase(app); 
 
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 const githubProvider = new GithubAuthProvider();
 
-export {auth, db, googleProvider, githubProvider, facebookProvider};
+export {auth, db, database, googleProvider, githubProvider, facebookProvider};

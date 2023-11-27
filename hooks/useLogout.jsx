@@ -1,11 +1,14 @@
 import React from 'react'
-import { auth } from '../firebase/config';
+import { auth, database } from '../firebase/config';
 import { signOut } from 'firebase/auth';
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '@/context/AuthContext';
+import { ref, remove } from 'firebase/database';
 
 export const useLogout = () => {
-
+    
+    const { user } = useAuthContext();
+    
     // Error state for potential errors during logout.
     const [error, setError] = useState(null);
     // State to indicate if logout is in progress.
@@ -22,8 +25,10 @@ export const useLogout = () => {
 
         try {
             // Initiating the logout using Firebase's signout function.
+            await remove(ref(database, 'users/' + user.uid));
+            console.log("-> user ", user.displayName, " removed.");
             await signOut(auth);
-            dispatch({ type : "LOGOUT" }); 
+            dispatch({ type : "LOGOUT" });
 
             // If the operation wasn't cancelled, reset pending state and error.
             if(!isCancelled) {
@@ -43,10 +48,12 @@ export const useLogout = () => {
 
     // Effect hook to set isCancelled to true when component unmount.
     useEffect(() => {
-      return () => setIsCancelled(true);
+
+      return () => {
+        setIsCancelled(true);
+    }
       // Clean up function runs when component unmounts.
     }, []);
-    
 
   return { logout, error, isPending };
 };

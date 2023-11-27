@@ -55,11 +55,11 @@ const Rules = () => {
                 <span className="textrules">
 
                 C&apos;est le même principe que le jeu du Domino classic.<br></br>
-                On commence <b>OBLIGATOIREMENT</b> par un <b>Valet</b>.<br></br>
                 Il va falloir poser les cartes <b>dans l&apos;ordre de leur valeur</b>.<br></br>
+                On commence <b>OBLIGATOIREMENT</b> par un <b>Valet</b>.<br></br>
                 <i>Exemple</i> : (A.R.D.<span className="text-blue-500">V</span>.10.9.8.7)<br></br>
                 Celui qui n&apos;a plus de cartes en main gagne le Domino.<br></br>
-                <b>1er : <span className="text-green-500">+50 points</span> ➡️ 2e : <span className="text-blue-500">+25 points</span> ➡️ 3e : 0 point ➡️ 4e : <span className="text-red-500">-25 points</span></b><br></br><br></br>
+                <b>1er : <span className="text-green-500"> +50 </span> ➡️ 2e : <span className="text-blue-500"> +25 </span> ➡️ 3e : 0 ➡️ 4e : <span className="text-red-500"> -25 </span></b><br></br><br></br>
                 
                 </span>
                 

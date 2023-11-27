@@ -15,8 +15,7 @@ export default function Auth() {
   const github = useSocialSignup(githubProvider);
 
   const { user } = useAuthContext();
-
-  useEffect(() => console.log(user), [user]);
+  // useEffect(() => console.log(user), [user]);
 
   return (
       <div className="utility__page">

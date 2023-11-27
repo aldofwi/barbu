@@ -4,8 +4,8 @@ import { useAuthContext } from "@/context/AuthContext";
 import { signInWithPopup } from "firebase/auth";
 
 import { auth, database } from "../firebase/config";
-import { useToast } from "@chakra-ui/react";
 import { ref, set } from "firebase/database";
+import { useToast } from "@chakra-ui/react";
 
 export const useSocialSignup = (provider) => {
     

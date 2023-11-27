@@ -4,56 +4,46 @@ import { useAuthContext } from '@/context/AuthContext';
 import { IconButton, Icon } from '@chakra-ui/react';
 import { IoSend } from 'react-icons/io5';
 
-import {   
-          query, 
-          orderBy,
-          collection,
-          serverTimestamp, 
-          QuerySnapshot,
-          onSnapshot, 
-          addDoc, 
-          getDocs, 
-          doc } from 'firebase/firestore';
-
-import { db } from '@/firebase/config';
+import { database } from "../firebase/config";
+import { onValue, push, ref, set, serverTimestamp } from "firebase/database";
 
 const Chat = () => {
 
   const { user } = useAuthContext();
-  const messagesRef = collection(db, "messages");
 
-  const [users, setUsers]         = useState([]);
   const [message, setMessage]     = useState("");
   const [messages, setMessages]   = useState([]);
 
   useEffect(() => {
 
-    const queryMessages = query(messagesRef, orderBy("createdAt", "asc"));
-    const unsuscribe = onSnapshot(queryMessages, (snapshot) => {
+    onValue(
+      ref(database, 'messages/' ), (snapshot) => {
+        let messages = [];
+          snapshot.forEach((doc) => {
+            messages.push({...doc.val(), id: doc.id });
+          });
+          setMessages(messages);
+      }
+    );
 
-      let messages = [];
-      snapshot.forEach((doc) => {
-        messages.push({ ...doc.data(), id: doc.id });
-      });
-      setMessages(messages);
-    });
-
-    return () => unsuscribe();
-  }, [messagesRef]);
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     if(message === "") return;
 
-    await addDoc(messagesRef, {
+    const msgRef = ref(database, 'messages/');
+    const newItem = await push(msgRef);
+
+    await set(newItem, 
+    {
         createdAt: serverTimestamp(),
         msg: message,
-        uid: user.uid,
         name: user.displayName,
+        uid: user.uid,
     });
- 
-    // console.log("Messages = ", messages);
+
     setMessage("");
   }
 

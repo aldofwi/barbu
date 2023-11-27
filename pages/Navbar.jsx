@@ -47,7 +47,7 @@ const Navbar = () => {
                         <Modal onClose={onRulesClose} size={'xl'} isOpen={isRulesOpen}>
                             <ModalOverlay />
                             <ModalContent>
-                                <ModalHeader align='center'>Les Règles du Barbu</ModalHeader>
+                                <ModalHeader align='center'>📜 Règles du Barbu</ModalHeader>
                                 <ModalCloseButton />
 
                                 <ModalBody>
@@ -66,7 +66,7 @@ const Navbar = () => {
                         <Modal onClose={onScoreClose} size={'xl'} isOpen={isScoreOpen}>
                             <ModalOverlay />
                             <ModalContent>
-                                <ModalHeader align='center'>Scores</ModalHeader>
+                                <ModalHeader align='center'>📊 Scores</ModalHeader>
                                 <ModalCloseButton />
 
                                 <ModalBody>
@@ -86,7 +86,7 @@ const Navbar = () => {
                         <Modal onClose={onOnlineClose} size={'xl'} isOpen={isOnlineOpen}>
                             <ModalOverlay />
                             <ModalContent>
-                                <ModalHeader align='center'>Users connected</ModalHeader>
+                                <ModalHeader align='center'>📲 Users connected</ModalHeader>
                                 <ModalCloseButton />
 
                                 <ModalBody>

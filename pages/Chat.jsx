@@ -7,7 +7,7 @@ import { IoSend } from 'react-icons/io5';
 import { database } from "../firebase/config";
 import { onValue, push, ref, set, serverTimestamp } from "firebase/database";
 
-const Chat = () => {
+const Chat = (props) => {
 
   const { user } = useAuthContext();
 
@@ -47,18 +47,36 @@ const Chat = () => {
     setMessage("");
   }
 
+  console.log("Chat Props = ", props.users);
+
+  const getColorByPlayer = (username) => {
+
+    props.users.map((person, i) => {
+      if(username === person.username) return "p"+i+"";
+    });
+  }
+
   return (  
     <div className="flex flex-col fixed mx-auto px-40 py-10 border text-white border-[#33353F] top-0 right-0 bottom-0 z-10 bg-[#121212] bg-opacity-100">
       <span className="flex font-[Stanley] text-blue-500 text-2xl font-bold">Messages</span>
 
             <div className="msg border flex flex-col-reverse rounded-lg w-11/12">
 
-              {messages.slice(0).reverse().map((message, i) => 
-
-                <p key={i}  className="text-base pl-1">
-                    <abbr className="text-slate-500"> {message.name} </abbr>
-                    <abbr className="text-slate-100"> {message.msg} </abbr>
-                </p>
+              {
+                messages.slice(0).reverse().map((message, i) => 
+                
+                  message.name === "[J@rvis]"
+                        ?
+                    <p key={i} className="text-base pl-1">
+                      <abbr> {message.name} </abbr>
+                      <abbr className='text-red-500'> {message.msg} </abbr>
+                    </p>
+                        :
+                    <p key={i} className="text-base pl-1">
+                        <abbr className={getColorByPlayer(message.name)}> {message.name} </abbr>
+                        <abbr className="text-slate-100"> {message.msg} </abbr>
+                    </p>
+                
               )}
 
             </div>

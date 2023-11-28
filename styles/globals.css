@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 /* ----------- BASICS ------------ */
 
 :root {
@@ -156,30 +155,46 @@ button img {
   scroll-behavior: auto;
 }
 
-.cb {
-  color: blue;
-}
-
-.cg {
-  color: green;
-}
-
-.crr {
-  color: red;
-}
-
-.dr {
-  color: orangered;
-}
-
-.dg {
-  color: darkgreen;
-}
-
-.db {
+.p0 {
   color: royalblue;
 }
 
-.dc {
-  color: slategrey;
+.p1 {
+  color: green;
+}
+
+.p2 {
+  color: white
+}
+
+.p3 {
+  color: orange;
+}
+
+.p4 {
+  color: brown;
+}
+
+.p5 {
+  color: royalblue;
+}
+
+.p6 {
+  color: brown;
+}
+
+.p7 {
+  color: yellow;
+}
+
+.p8 {
+  color: grey;
+}
+
+.p9 {
+  color: aqua;
+}
+
+.p10 {
+  color: blueviolet;
 }

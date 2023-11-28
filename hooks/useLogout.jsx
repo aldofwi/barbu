@@ -3,7 +3,7 @@ import { auth, database } from '../firebase/config';
 import { signOut } from 'firebase/auth';
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '@/context/AuthContext';
-import { ref, remove } from 'firebase/database';
+import { push, ref, remove, serverTimestamp, set } from 'firebase/database';
 
 export const useLogout = () => {
     
@@ -24,11 +24,22 @@ export const useLogout = () => {
         setIsPending(true); // Indicating logout in progress.
 
         try {
-            // Initiating the logout using Firebase's signout function.
             await remove(ref(database, 'users/' + user.uid));
-            console.log("-> user ", user.displayName, " removed.");
+                        
+            // Initiating the logout using Firebase's signout function.
             await signOut(auth);
             dispatch({ type : "LOGOUT" });
+
+            console.log("-> user", user.displayName, "removed.");
+            const msgRef = ref(database, 'messages/');
+            const newItem = await push(msgRef);
+            set(newItem, 
+                {
+                    createdAt: serverTimestamp(),
+                    msg: user.displayName+" has left.",
+                    name: "[J@rvis]",
+                    uid: "basic101",
+                });
 
             // If the operation wasn't cancelled, reset pending state and error.
             if(!isCancelled) {

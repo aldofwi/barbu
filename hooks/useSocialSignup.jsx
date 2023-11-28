@@ -4,7 +4,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import { signInWithPopup } from "firebase/auth";
 
 import { auth, database } from "../firebase/config";
-import { ref, set } from "firebase/database";
+import { push, ref, serverTimestamp, set } from "firebase/database";
 import { useToast } from "@chakra-ui/react";
 
 export const useSocialSignup = (provider) => {
@@ -37,7 +37,17 @@ export const useSocialSignup = (provider) => {
             position: "top",
         });
 
-      }
+        const msgRef = ref(database, 'messages/');
+        const newItem = await push(msgRef);
+
+        set(newItem, 
+            {
+                createdAt: serverTimestamp(),
+                msg: response.user.displayName+" has just connected!",
+                name: "[J@rvis]",
+                uid: "basic101",
+            });
+    }
 
     // Function to initiate the social sign-up process.
     const signInWithSocial = async () => {

@@ -25,7 +25,7 @@ const Online = () => {
 
   return (
 
-    <div>
+    <div className='pt-10'>
 
       {connected.slice(0).map((person, i) => 
           <p className='text-center' key={i}> 🟢 {person.username} </p>

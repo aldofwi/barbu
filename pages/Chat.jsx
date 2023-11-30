@@ -14,6 +14,19 @@ const Chat = (props) => {
   const [message, setMessage]     = useState("");
   const [messages, setMessages]   = useState([]);
 
+  const colorVariants = [
+    'text-blue-500',
+    'text-green-500',
+    'text-gray-500',
+    'text-orange-500',
+    'text-yellow-500',
+    'text-amber-800',
+    'text-pink-500',
+    'text-cyan-500',
+    'text-white-500',
+    'text-purple-500',
+  ]
+
   useEffect(() => {
 
     onValue(
@@ -47,13 +60,12 @@ const Chat = (props) => {
     setMessage("");
   }
 
-  console.log("Chat Props = ", props.users);
-
   const getColorByPlayer = (username) => {
-
+    let indice = 3;
     props.users.map((person, i) => {
-      if(username === person.username) return "p"+i+"";
+      if(username === person.username) indice = i;
     });
+    return indice;
   }
 
   return (  
@@ -69,11 +81,11 @@ const Chat = (props) => {
                         ?
                     <p key={i} className="text-base pl-1">
                       <abbr> {message.name} </abbr>
-                      <abbr className='text-red-500'> {message.msg} </abbr>
+                      <b className='text-red-500'> {message.msg} </b>
                     </p>
                         :
                     <p key={i} className="text-base pl-1">
-                        <abbr className={getColorByPlayer(message.name)}> {message.name} </abbr>
+                        <abbr className={`${colorVariants[getColorByPlayer(message.name)]}`}> {message.name} </abbr>
                         <abbr className="text-slate-100"> {message.msg} </abbr>
                     </p>
                 

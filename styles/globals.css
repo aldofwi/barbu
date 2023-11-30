@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 /* ----------- BASICS ------------ */
 
@@ -153,6 +153,14 @@ button img {
   bottom: 35px;
   overflow-y: auto;
   scroll-behavior: auto;
+}
+
+.boardgame {
+  position: absolute;
+  width: 79.3%;
+  height: 89%;
+  bottom: 0;
+  left: 0;
 }
 
 .p0 {

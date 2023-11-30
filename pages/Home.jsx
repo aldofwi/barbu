@@ -34,7 +34,10 @@ const Home = () => {
 
         <Navbar users={connected} />
         <Chat users={connected} />    
-        <Welcome users={connected} />
+        <Welcome 
+          users={connected} 
+          isPartyFull={false} 
+        />
             
     </div>
   )};

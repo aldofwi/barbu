@@ -5,13 +5,16 @@ import { Button } from '@chakra-ui/react';
 import { IoPlayCircle } from 'react-icons/io5';
 import BoardGame from './BoardGame';
 
-const Welcome = (props) => {
+const Welcome = () => {
 
+  const [isPartyFull, setIsPartyFull] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
 
   const handlePlay = () => {
     setGameStarted(true);
   }
+
+  // If Nb Game Players is less than 4 (FULL)
 
   return (
 
@@ -35,7 +38,7 @@ const Welcome = (props) => {
               colorScheme='teal'
               variant='solid'
               className='right-40 -top-40'
-              isActive={props.isPartyFull}
+              isActive={isPartyFull}
               onClick={handlePlay}
             >
             Play

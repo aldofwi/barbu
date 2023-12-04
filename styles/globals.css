@@ -163,6 +163,13 @@ button img {
   left: 0;
 }
 
+.cardStyle {
+  position: absolute;
+  border-radius: 5%;
+  width: 10%;
+  height: auto;
+}
+
 .p0 {
   color: royalblue;
 }

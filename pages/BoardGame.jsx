@@ -1,26 +1,48 @@
 import { useAuthContext } from '@/context/AuthContext';
-import React from 'react'
+import { useState } from 'react';
+import Board from './Board';
+import DeckChoice from './DeckChoice';
+import PlayerBox from './PlayerBox';
 
 const BoardGame = () => {
 
     const { user } = useAuthContext();
+    const [isOrderSet, setIsOrderSet] = useState(false);
+
+    const positions = [
+        'absolute bottom-10 justify-center',
+        'absolute left-10   justify-center',
+        'absolute top-10    justify-center',
+        'absolute right-10  justify-center',
+    ];
+
+    // getPositionByID when Order is setted.
+    // pass positions to PlayerBox props.
+
+    // Map players from database.
+
 
   return (
 
     <div className="boardgame h-screen flex flex-col bg-[#121212] text-white container justify-center items-center">
     
-        <div className="absolute right-10 justify-center">
-            Player 4
+    {
+        isOrderSet
+            ?
+        <div>
+            <div className={`${positions[getPositionByID()]}`}>
+                <PlayerBox
+
+                />
+            </div>
+
+            <Board />
         </div>
-        <div className="absolute top-10 justify-center">
-            Player 3
-        </div>
-        <div className="absolute left-10 justify-center">
-            Player 2
-        </div>
-        <div className="absolute bottom-10 justify-center">
-            Player 1
-        </div>
+            :
+        <DeckChoice />
+    }
+
+
         
     </div>
 

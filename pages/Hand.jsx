@@ -31,6 +31,8 @@ console.log("newDeck = ", newDeck);
 
 const Hand = () => {
 
+    let position = {x: 20, y: 10} ;   
+
   return (
 
     <div>
@@ -38,6 +40,8 @@ const Hand = () => {
             <Card 
                 rank={element} 
                 suit="h"
+                flip={true}
+                pos={{x: position.x*(i+1), y: position.y}}
                 key={i} 
             />
         )}

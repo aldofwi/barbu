@@ -1,35 +1,77 @@
 import Image from 'next/image';
-import React from 'react'
-import styled from 'styled-components'
+import React, { useState } from 'react'
+//import styled from 'styled-components'
 
-const CardBox = styled.div`
-  font-size: 10rem;
-`;
+const Card = ({ rank, suit, styled, pos, size }) => {
 
-const Card = ({ rank, suit }) => {
+  const [style, setStyle] = useState([]);
+  const [flipped, setFlipped] = useState(false);
+  const [positions, setPositions] = useState({x: 0, y:0 });
 
-  const name = "/CardImg/"+rank+suit+".png"
+  const onClickCard = () => {
+    flipped ? setFlipped(false) : setFlipped(true);
+  }
+
+  const front = "/CardImg/"+rank+suit+".png";
+  const back = "/CardImg/back.png";
+
+  const nameofclass = "cardStyle bottom-"+pos.y+" left-"+pos.x; // "+"left-"+pos.x+" bottom-"+pos.y;
+  console.log("className = ", nameofclass);
+  console.log("position = ", pos);
 
   return (
 
-    <CardBox>
+    <div>
         <Image 
-            className='cardStyle'
-            src={name}
+            className="cardStyle bottom-10 left-10"
+            src={flipped === true ? back : front}
             width={105}
             height={65}
-            alt=""
-            unoptimized
-            priority
+            alt="card"
+            onClick={() => onClickCard()}
         />
-    </CardBox>
-
+        <Image 
+            className="cardStyle bottom-10 left-40"
+            src={flipped === true ? back : front}
+            width={105}
+            height={65}
+            alt="card"
+            onClick={() => onClickCard()}
+        />
+        <Image 
+            className="cardStyle bottom-10 left-80"
+            src={flipped === true ? back : front}
+            width={105}
+            height={65}
+            alt="card"
+            onClick={() => onClickCard()}
+        />
+        <Image 
+            className="cardStyle bottom-10 left-120"
+            src={flipped === true ? back : front}
+            width={105}
+            height={65}
+            alt="card"
+            onClick={() => onClickCard()}
+        />
+    </div>
   )
 }
 
 export default Card;
 
 /*
+        <Image 
+            className={nameofclass}
+            src={flipped === true ? back : front}
+            width={105}
+            height={65}
+            alt="card"
+            onClick={() => onClickCard()}
+        />
+
+
+<div style={{ left: pos.x }}></div>
 const heartSuit = new Map([
   ["Seven", "🂷"],
   ["Eight", "🂸"],
@@ -42,6 +84,9 @@ const heartSuit = new Map([
   ["Back",  "🂠"],
 ]);
 
+
+const CardBox = styled.div`
+`;
 
       {heartSuit.get(value)}
 */

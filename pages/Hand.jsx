@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Card from './Card';
 
 const suits = ["s", "d", "c", "h"];
@@ -26,25 +26,64 @@ const suffle = (tab) => {
     return newTab;
 }
 
+const getNameOfClass = (style) => {
+
+    switch (style) {
+        case "positionPick":
+            return "relative flex flex-row px-50 left-40 top-60 bottom-20";
+
+        case "mainPlayer":
+            return "relative flex flex-row px-50 left-40 top-80 bottom-10";
+
+        case "westPlayer":
+            return "relative";
+
+        case "northPlayer":
+            return "relative";
+
+        case "eastPlayer":
+            return "relative";
+    
+        default:
+            return "relative";
+    }
+}
+
 const newDeck = suffle(ranks);
 console.log("newDeck = ", newDeck);
 
-const Hand = () => {
+const Hand = ({ handStyle, suitChoice, others, onClickHand }) => {
 
-    let position = {x: 20, y: 10} ;   
+    const getFlip = (c) => {
+    // Back = TRUE | Front = FALSE
 
+        if(others.length === 0) {
+            return true;
+        } else {
+
+            for(let i=0; i<others.length; i++) {
+                if(others[i].pick === c) return false;
+            }
+            return true;
+        }
+    }
+    
   return (
 
     <div>
-        {newDeck.map((element, i) => 
-            <Card 
-                rank={element} 
-                suit="h"
-                flip={true}
-                pos={{x: position.x*(i+1), y: position.y}}
-                key={i} 
-            />
-        )}
+        <div className={getNameOfClass(handStyle)}>
+            {newDeck.map((element, i) =>
+                <Card
+                    rank={element}
+                    suit={suitChoice}
+                    flip={getFlip(element+suitChoice)}
+                    key={i}
+                    picked={others}
+                    onClickCard={(c) => onClickHand(c) }
+                />
+                
+            )}
+        </div>
     </div>
 
 

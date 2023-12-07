@@ -1,58 +1,40 @@
+import { useAuthContext } from '@/context/AuthContext';
 import Image from 'next/image';
-import React, { useState } from 'react'
-//import styled from 'styled-components'
+import React, { useEffect, useState } from 'react';
 
-const Card = ({ rank, suit, styled, pos, size }) => {
+const Card = ({ rank, suit, flip, picked, onClickCard }) => {
 
-  const [style, setStyle] = useState([]);
-  const [flipped, setFlipped] = useState(false);
-  const [positions, setPositions] = useState({x: 0, y:0 });
+  const { user } = useAuthContext();
 
-  const onClickCard = () => {
-    flipped ? setFlipped(false) : setFlipped(true);
-  }
-
+  const card = rank+suit;
   const front = "/CardImg/"+rank+suit+".png";
   const back = "/CardImg/back.png";
 
-  const nameofclass = "cardStyle bottom-"+pos.y+" left-"+pos.x; // "+"left-"+pos.x+" bottom-"+pos.y;
-  console.log("className = ", nameofclass);
-  console.log("position = ", pos);
+  const handleClickCard = (c) => {
+
+    for(let i=0; i<picked.length; i++) {
+      if(picked[i].username === user.displayName) {
+        alert('Sorry, You already picked a card!');
+        return;
+      }
+    }
+
+    if(!flip) alert('Already picked.');
+    else {
+      onClickCard(c);
+    }
+  }
 
   return (
 
-    <div>
+    <div className="px-2">
         <Image 
-            className="cardStyle bottom-10 left-10"
-            src={flipped === true ? back : front}
+            className="rounded-lg"
+            src={flip ? back : front}
             width={105}
             height={65}
             alt="card"
-            onClick={() => onClickCard()}
-        />
-        <Image 
-            className="cardStyle bottom-10 left-40"
-            src={flipped === true ? back : front}
-            width={105}
-            height={65}
-            alt="card"
-            onClick={() => onClickCard()}
-        />
-        <Image 
-            className="cardStyle bottom-10 left-80"
-            src={flipped === true ? back : front}
-            width={105}
-            height={65}
-            alt="card"
-            onClick={() => onClickCard()}
-        />
-        <Image 
-            className="cardStyle bottom-10 left-120"
-            src={flipped === true ? back : front}
-            width={105}
-            height={65}
-            alt="card"
-            onClick={() => onClickCard()}
+            onClick={() => { handleClickCard(card) }}
         />
     </div>
   )
@@ -61,6 +43,32 @@ const Card = ({ rank, suit, styled, pos, size }) => {
 export default Card;
 
 /*
+
+
+        <Image 
+            className="cardStyle bottom-10 left-44"
+            src={flipped === true ? back : front}
+            width={105}
+            height={65}
+            alt="card"
+            onClick={() => onClickCard()}
+        />
+        <Image 
+            className="cardStyle bottom-10 left-64"
+            src={flipped === true ? back : front}
+            width={105}
+            height={65}
+            alt="card"
+            onClick={() => onClickCard()}
+        />
+        <Image 
+            className="cardStyle bottom-10 left-84"
+            src={flipped === true ? back : front}
+            width={105}
+            height={65}
+            alt="card"
+            onClick={() => onClickCard()}
+        />
         <Image 
             className={nameofclass}
             src={flipped === true ? back : front}

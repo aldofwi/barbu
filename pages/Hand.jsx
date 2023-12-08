@@ -21,7 +21,7 @@ const suffle = (tab) => {
         //delete tab[i];
         n--;
     }
-    console.log("newtab = ", newTab);
+    //console.log("newtab = ", newTab);
 
     return newTab;
 }
@@ -50,7 +50,7 @@ const getNameOfClass = (style) => {
 }
 
 const newDeck = suffle(ranks);
-console.log("newDeck = ", newDeck);
+// console.log("newDeck = ", newDeck);
 
 const Hand = ({ handStyle, suitChoice, others, onClickHand }) => {
 
@@ -67,6 +67,8 @@ const Hand = ({ handStyle, suitChoice, others, onClickHand }) => {
             return true;
         }
     }
+
+
     
   return (
 
@@ -76,7 +78,7 @@ const Hand = ({ handStyle, suitChoice, others, onClickHand }) => {
                 <Card
                     rank={element}
                     suit={suitChoice}
-                    flip={getFlip(element+suitChoice)}
+                    flip={handStyle === "positionPick" ? getFlip(element+suitChoice) : null}
                     key={i}
                     picked={others}
                     onClickCard={(c) => onClickHand(c) }

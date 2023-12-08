@@ -3,7 +3,18 @@ import Image from 'next/image';
 import LoadCard from '/public/images/loadCard.png';
 import { Button } from '@chakra-ui/react';
 import { IoPlayCircle } from 'react-icons/io5';
-import BoardGame from './BoardGame';
+import BoardGame from './FirstBoard';
+
+const values = {
+  7: 0,
+  8: 1,
+  9: 2,
+  t: 3,
+  j: 4,
+  q: 5,
+  k: 6,
+  a: 7,
+}
 
 const Welcome = () => {
 
@@ -14,6 +25,7 @@ const Welcome = () => {
     setGameStarted(true);
   }
 
+  console.log("Value Q = ", values['t']);
   // If Nb Game Players is less than 4 (FULL)
 
   return (

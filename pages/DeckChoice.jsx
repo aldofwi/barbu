@@ -11,8 +11,6 @@ const cardSpell = {
   "7d": "Sept de carreau", "8d": "Huit de carreau", "9d": "Neuf de carreau", "td": "Dix de carreau", "jd": "Valet de carreau",  "qd": "Dame de carreau",  "kd": "Roi de carreau",  "ad": "As de carreau",
 }
 
-const cardValues = ["7", "8", "9", "t", "j", "q", "k", "a"];
-
 const DeckChoice = () => {
 
   const { user } = useAuthContext();
@@ -28,7 +26,6 @@ const DeckChoice = () => {
             orders.push({...doc.val()});
           });
           setOrder(orders);
-
       }
     );
 
@@ -54,7 +51,7 @@ const DeckChoice = () => {
           });
   }
 
-  console.log("Order : ", order);
+  // console.log("Order : ", order);
     
   return (
 

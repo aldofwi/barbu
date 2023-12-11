@@ -182,25 +182,25 @@ button img {
 
 .boardCS {
   position: absolute;
-  left: 450px;
+  left: 470px;
   top: 250px;
 }
 
 .boardCW {
   position: absolute;
-  left: 340px;
+  left: 360px;
   top: 180px;
 }
 
 .boardCN {
   position: absolute;
-  left: 450px;
+  left: 470px;
   top: 100px;
 }
 
 .boardCE {
   position: absolute;
-  left: 560px;
+  left: 580px;
   top: 180px;
 }
 

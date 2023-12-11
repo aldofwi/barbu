@@ -14,7 +14,7 @@ const getNameOfClass = (style) => {
             return "relative px-50 top-40";
 
         case "northPlayer":
-            return "relative flex px-50 -left-10 top-2 bottom-50";
+            return "relative flex px-50 -left-4 top-2 bottom-50";
 
         case "eastPlayer":
             return "relative px-50 top-40 -left-2";

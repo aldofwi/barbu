@@ -27,7 +27,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards }) => {
     switch(oneID) {
       case "SOUTH": return "relative flex px-50 top-8 -right-40 bottom-10";
       case "WEST" : return "relative flex px-50 -top-40 left-20 bottom-10";
-      case "NORTH": return "relative flex px-50 top-4 -right-48 bottom-50";
+      case "NORTH": return "relative flex px-50 top-4 -right-52 bottom-50";
       case "EAST" : return "relative flex px-50 -top-40 -left-20 bottom-10";
       default: break;
     }

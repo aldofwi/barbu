@@ -2,39 +2,78 @@ import { useAuthContext } from '@/context/AuthContext';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
-const Card = ({ rank, suit, flip, picked, onClickCard }) => {
+const getNameOfClassCard = (style) => {
+
+  switch (style) {
+      case "positionPick":
+          return "relative";
+
+      case "mainPlayer":
+          return "relative px-2 w-32"; // Done
+
+      case "westPlayer":
+          return "relative px-2 w-16 rotate-90";
+
+      case "northPlayer":
+          return "relative px-2 w-16";
+
+      case "eastPlayer":
+          return "relative px-2 w-16 rotate-90";
+
+      case "mainBoard":
+          return "boardCS";
+
+      case "westBoard":
+          return "boardCW";
+
+      case "northBoard":
+          return "boardCN";
+
+      case "eastBoard":
+          return "boardCE";
+  
+      default:
+          return "relative";
+  }
+}
+
+const Card = ({ value, flip, picked, cardStyle, onClickCard }) => {
 
   const { user } = useAuthContext();
 
-  const card = rank+suit;
-  const front = "/CardImg/"+rank+suit+".png";
+  const front = "/CardImg/"+value+".png";
   const back = "/CardImg/back.png";
 
   const handleClickCard = (c) => {
 
-    for(let i=0; i<picked.length; i++) {
-      if(picked[i].username === user.displayName) {
-        alert('Sorry, You already picked a card!');
-        return;
+    if(cardStyle === "positionPick") {
+      for(let i=0; i<picked.length; i++) {
+        if(picked[i].username === user.displayName) {
+          alert('Sorry, You already picked a card!');
+          return;
+        }
       }
+  
+      if(!flip) alert('Already picked.');
+      else {
+        onClickCard(c);
+      }
+    } else {
+      // 
     }
-
-    if(!flip) alert('Already picked.');
-    else {
-      onClickCard(c);
-    }
+    
   }
 
   return (
 
-    <div className="px-2">
+    <div className={getNameOfClassCard(cardStyle)}>
         <Image 
             className="rounded-lg"
             src={flip ? back : front}
             width={105}
             height={65}
             alt="card"
-            onClick={() => { handleClickCard(card) }}
+            onClick={() => { handleClickCard(value) }}
         />
     </div>
   )

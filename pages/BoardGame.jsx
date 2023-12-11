@@ -4,10 +4,10 @@ import Panel from './Panel';
 import PlayerBox from './PlayerBox';
 
 const positions = [
-  'absolute bottom-10 justify-center',
-  'absolute left-10   justify-center',
-  'absolute top-10    justify-center',
-  'absolute right-10  justify-center',
+  'absolute bottom-10 right-0',
+  'absolute left-10 justify-center',
+  'absolute top-0 right-1/3',
+  'absolute right-10 justify-center',
 ];
 
 const cards = [
@@ -17,7 +17,7 @@ const cards = [
   "7d", "8d", "9d", "td", "jd", "qd", "kd", "ad",
 ];
 
-const suffle = (tab) => {
+const shuffle = (tab) => {
 
   const theTab = [...tab];
   const newTab = [];
@@ -39,41 +39,71 @@ const suffle = (tab) => {
   return newTab;
 }
 
-const BoardGame = ({ players, rank }) => {
+const BoardGame = ({ players }) => {
 
   const [nbClic, setNbClic] = useState(0);
-  const [displayLoading, setDisplayLoading] = useState(false);
+  const [newDeck, setNewDeck] = useState(shuffle(cards));
+  const [eastHand,  setEastHand]  = useState(newDeck.slice(24, 32));
+  const [northHand, setNorthHand] = useState(newDeck.slice(16, 24));
+  const [westHand,  setWestHand]  = useState(newDeck.slice(8, 16));
+  const [southHand, setSouthHand] = useState(newDeck.slice(0, 8));
+
   const [contractor, setContractor] = useState("");
+  const [displayLoading, setDisplayLoading] = useState(false);
   const [nbContractsDone, setNbContractsDone] = useState(0); // Max is 28.
   const [endOfContract, setEndOfContract] = useState(true);
   const [endOfGame, setEndOfGame] = useState(false);
 
+  console.log("1st Hand = ", eastHand);
+  console.log("2nd Hand = ", northHand);
+  console.log("3rd Hand = ", westHand);
+  console.log("4th Hand = ", southHand);
 
+/*
+
+*/
 
   return (
 
     <div>
-        <div className={`${positions[1]}`}>
-            <PlayerBox
-              player={players[1]}
-            // main <Hand /> & <Picture />
-            />
-        </div>
 
-        <div className={`${positions[0]}`}>
-            <PlayerBox
-              player={players[0]}
-            // main <Hand /> & <Picture />
-            />
-        </div>
+      <PlayerBox
+        id="EAST"
+        player={players[1]}
+        myCards={eastHand}
+        nameOfClass={`${positions[3]}`}
+      />
+
+      <PlayerBox
+        id="NORTH"
+        player={players[0]}
+        myCards={northHand}
+        nameOfClass={`${positions[2]}`}
+      />
+
+      <PlayerBox
+        id="WEST"
+        player={players[1]}
+        myCards={westHand}
+        nameOfClass={`${positions[1]}`}
+      />
+        
+      <PlayerBox
+        id="SOUTH"
+        player={players[0]}
+        myCards={southHand}
+        nameOfClass={`${positions[0]}`}
+      />
 
         {
-          endOfContract 
+          !endOfContract 
               ?
+
             <Panel />
+            
               :
             <Board
-            
+              
             />
         }
         

@@ -36,9 +36,7 @@ const FirstBoard = () => {
           }
         );
 
-        if(places.length === 2) {
-          setIsOrderSet(true);
-        }
+        if(places.length === 2) setIsOrderSet(true);
     
       }, [places.length]);
 
@@ -69,10 +67,10 @@ const FirstBoard = () => {
       for(let k=0; k<places.length; k++) {
         if(places[k].username !== user.displayName) {
           
-          console.log("myValue = ", myValue);
-          console.log("k = ", k, "| places[k].pick.charAt(0) = ", places[k].pick.charAt(0));
-          console.log("values[places[k].pick.charAt(0)] = ", values[places[k].pick.charAt(0)]);
-          console.log("myValue < other --> ", myValue  < values[places[k].pick.charAt(0)]);
+          // console.log("myValue = ", myValue);
+          // console.log("k = ", k, "| places[k].pick.charAt(0) = ", places[k].pick.charAt(0));
+          // console.log("values[places[k].pick.charAt(0)] = ", values[places[k].pick.charAt(0)]);
+          // console.log("myValue < other --> ", myValue  < values[places[k].pick.charAt(0)]);
 
           if(myValue < values[places[k].pick.charAt(0)]) {
             numb++;
@@ -107,10 +105,12 @@ const FirstBoard = () => {
 
       return numb;
     }
+      
+    // className="h-full w-full flex flex-col text-white bg-[#121212] inset-y-0"
 
   return (
 
-    <div className="boardgame h-screen flex flex-col bg-[#121212] text-white container justify-center items-center">
+    <div>
     
     {
         isOrderSet

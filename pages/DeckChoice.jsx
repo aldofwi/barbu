@@ -4,6 +4,7 @@ import { onValue, push, ref, serverTimestamp, set } from 'firebase/database';
 import React, { useEffect, useState } from 'react'
 import Hand from './Hand';
 
+const rankh = ["7h", "8h", "9h", "th", "jh", "qh", "kh", "ah"];
 const cardSpell = {
   "7h": "Sept de coeur", "8h": "Huit de coeur", "9h": "Neuf de coeur", "th": "Dix de coeur", "jh": "Valet de coeur",  "qh": "Dame de coeur",  "kh": "Roi de coeur",  "ah": "As de coeur",
   "7c": "Sept de trèfle", "8c": "Huit de trèfle", "9c": "Neuf de trèfle", "tc": "Dix de trèfle", "jc": "Valet de trèfle",  "qc": "Dame de trèfle",  "kc": "Roi de trèfle",  "ac": "As de trèfle",
@@ -11,10 +12,33 @@ const cardSpell = {
   "7d": "Sept de carreau", "8d": "Huit de carreau", "9d": "Neuf de carreau", "td": "Dix de carreau", "jd": "Valet de carreau",  "qd": "Dame de carreau",  "kd": "Roi de carreau",  "ad": "As de carreau",
 }
 
+const shuffle = (tab) => {
+
+    const theTab = [...tab];
+    const newTab = [];
+    let i;  let n = tab.length;
+    
+    // While it remains elements to suffle.
+    while(n) {
+        // Pick a remaining element.
+        i = Math.floor(Math.random() * theTab.length);
+        
+        // If not already shuffle, move it to the new array.
+        newTab.push(theTab[i]);
+        theTab.splice(i, 1);
+        //delete tab[i];
+        n--;
+    }
+    //console.log("newtab = ", newTab);
+
+    return newTab;
+}
+
 const DeckChoice = () => {
 
   const { user } = useAuthContext();
   const [order, setOrder] = useState([]);
+  const [myCards, setMyCards] = useState(shuffle(rankh));
   const [contractors, setContractors] = useState([]);
 
   useEffect(() => {
@@ -32,10 +56,10 @@ const DeckChoice = () => {
   }, []);
 
   const onClickChoice = (element) => {
-      // alert(user.displayName+"picked the card : "+element);
 
       set(ref(database, '/game/order/' + user.uid), {
         username: user.displayName,
+        picture: user.photoURL,
         pick: element,
       });
 
@@ -50,8 +74,6 @@ const DeckChoice = () => {
               uid: "basic101",
           });
   }
-
-  // console.log("Order : ", order);
     
   return (
 
@@ -62,7 +84,7 @@ const DeckChoice = () => {
 
             <Hand
               handStyle="positionPick"
-              suitChoice="h"
+              cards={myCards}
               others={order}
               onClickHand={(choice) => onClickChoice(choice)}
             />

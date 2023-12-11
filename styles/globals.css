@@ -52,8 +52,21 @@ html {
   align-items: center;
   color: black;
   font-family: Tahoma, Geneva, Verdana, sans-serif;
-  row-gap: 1rem;
   flex-direction: column;
+}
+
+.utility__panel {
+  position: absolute;
+  display: flex;
+  background-size: contain;
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-family: Tahoma, Geneva, Verdana, sans-serif;
+  flex-direction: column;
+  bottom: 4vh;
 }
 
 button {
@@ -78,8 +91,10 @@ button img {
 }
 
 .home-title {
-  font-size: 3rem;
   position: relative;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
   bottom: 25vh;
 }
 
@@ -94,6 +109,8 @@ button img {
 
 .home-logo {
   position: absolute;
+  align-items: center;
+  justify-items: center;
   left: 70vh;
   pointer-events: none;
   animation: App-logo-spin infinite 20s linear;
@@ -161,6 +178,30 @@ button img {
   height: 89%;
   bottom: 0;
   left: 0;
+}
+
+.boardCS {
+  position: absolute;
+  left: 450px;
+  top: 250px;
+}
+
+.boardCW {
+  position: absolute;
+  left: 340px;
+  top: 180px;
+}
+
+.boardCN {
+  position: absolute;
+  left: 450px;
+  top: 100px;
+}
+
+.boardCE {
+  position: absolute;
+  left: 560px;
+  top: 180px;
 }
 
 .choiceTitle {

@@ -68,8 +68,10 @@ const Chat = (props) => {
     return indice;
   }
 
+  //  inset-y-0 right-0 --> top-0 right-0 bottom-0
+
   return (  
-    <div className="flex flex-col fixed mx-auto px-40 py-10 border text-white border-[#33353F] top-0 right-0 bottom-0 z-10 bg-[#121212] bg-opacity-100">
+    <div className="flex flex-col fixed mx-auto px-40 py-10 border text-white border-[#33353F] inset-y-0 right-0 z-10 bg-[#121212] bg-opacity-100">
       <span className="flex font-[Stanley] text-blue-500 text-2xl font-bold">Messages</span>
 
             <div className="msg border flex flex-col-reverse rounded-lg w-11/12">

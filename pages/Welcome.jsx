@@ -3,7 +3,7 @@ import Image from 'next/image';
 import LoadCard from '/public/images/loadCard.png';
 import { Button } from '@chakra-ui/react';
 import { IoPlayCircle } from 'react-icons/io5';
-import BoardGame from './FirstBoard';
+import FirstBoard from './FirstBoard';
 
 const values = {
   7: 0,
@@ -25,17 +25,18 @@ const Welcome = () => {
     setGameStarted(true);
   }
 
-  console.log("Value Q = ", values['t']);
+  // console.log("Value Q = ", values['t']);
   // If Nb Game Players is less than 4 (FULL)
+  //  className="h-full flex flex-col bg-[#121212] container justify-center items-center"
 
   return (
 
-    !gameStarted 
+    !gameStarted
         
         ?
 
-    <div className="h-screen flex flex-col bg-[#121212] container justify-center items-center">
-        <div className="home-title right-40 text-white font-mono font-bold">Hello World!</div>
+    <div className="absolute top-40  justify-center">
+        <div className="home-title text-white font-mono font-bold">Hello World!</div>
         <div className="flex w-1/5 pt-10 flex-col right-10">
             <Image 
                 className='home-logo top-30'
@@ -45,22 +46,24 @@ const Welcome = () => {
                 priority
             />
         
-            <Button
-              leftIcon={<IoPlayCircle />}
-              colorScheme='teal'
-              variant='solid'
-              className='right-40 -top-40'
-              isActive={isPartyFull}
-              onClick={handlePlay}
-            >
-            Play
-            </Button>
         </div>
+
+        <Button
+          leftIcon={<IoPlayCircle />}
+          colorScheme='teal'
+          variant='solid'
+          className='top-40'
+          isActive={isPartyFull}
+          onClick={handlePlay}
+        >
+        Play
+        </Button>
     </div>
 
         :
 
-    <BoardGame />
+    <FirstBoard />
+
   
   )
 }

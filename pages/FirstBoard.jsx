@@ -86,6 +86,7 @@ const FirstBoard = () => {
 
       if(numb === 1) {
         set(ref(database, '/game/contractor'), {
+          place: "SOUTH",
           name: user.displayName,
           uid: user.uid,
         });

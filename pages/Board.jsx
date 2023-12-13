@@ -4,18 +4,19 @@ import Hand from './Hand';
 
 const Board = () => {
   // Board
-  const [myCards, setMyCards] = useState(["8h", "th", "kh", "9h"]);
+  const [board, setBoard] = useState([]); // myCards
+  //const [myCards, setMyCards] = useState(["8h", "th", "kh", "9h"]);
 
-
+  
 
   return (
 
     <div>
     
-    <Hand
-      handStyle={"board"}
-      cards={myCards}
-    />
+      <Hand
+        handStyle={"board"}
+        cards={board}
+      />
     
     </div>
 

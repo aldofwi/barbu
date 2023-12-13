@@ -95,7 +95,17 @@ button img {
   justify-content: center;
   align-items: center;
   font-size: 3rem;
-  bottom: 25vh;
+  left: 70vh;
+  bottom: 3vh;
+}
+
+.home-button {
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  bottom: 3vh;
+  left: 70vh;
 }
 
 @keyframes App-logo-spin {
@@ -111,7 +121,8 @@ button img {
   position: absolute;
   align-items: center;
   justify-items: center;
-  left: 70vh;
+  left: 72vh;
+  top: 20vh;
   pointer-events: none;
   animation: App-logo-spin infinite 20s linear;
 }

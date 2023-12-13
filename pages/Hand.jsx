@@ -7,16 +7,16 @@ const getNameOfClass = (style) => {
         case "positionPick":
             return "relative flex flex-row px-50 left-40 top-60 bottom-20";
 
-        case "mainPlayer":
+        case "SOUTH":
             return "relative flex px-50 -left-80 top-8 bottom-10"; // Done
 
-        case "westPlayer":
+        case "WEST":
             return "relative px-50 top-40";
 
-        case "northPlayer":
+        case "NORTH":
             return "relative flex px-50 -left-4 top-2 bottom-50";
 
-        case "eastPlayer":
+        case "EAST":
             return "relative px-50 top-40 -left-2";
 
         case "board":
@@ -31,7 +31,7 @@ const getCardPos = (iCard) => {
     // BOARD
     switch(iCard) {
         case 0 :
-            return "mainBoard";
+            return "southBoard";
 
         case 1 :
             return "westBoard";

@@ -52,7 +52,7 @@ const Welcome = () => {
           leftIcon={<IoPlayCircle />}
           colorScheme='teal'
           variant='solid'
-          className='top-40'
+          className='home-button'
           isActive={isPartyFull}
           onClick={handlePlay}
         >

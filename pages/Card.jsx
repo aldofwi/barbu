@@ -8,19 +8,19 @@ const getNameOfClassCard = (style) => {
       case "positionPick":
           return "relative";
 
-      case "mainPlayer":
-          return "relative px-2 w-32"; // Done
+      case "SOUTH":
+          return "relative px-2 w-32 transform motion-safe:hover:scale-125 transition ease-in-out"; // transform motion-safe:hover:scale-110"; // Done
 
-      case "westPlayer":
+      case "WEST":
           return "relative px-2 w-16 rotate-90";
 
-      case "northPlayer":
+      case "NORTH":
           return "relative px-2 w-16";
 
-      case "eastPlayer":
+      case "EAST":
           return "relative px-2 w-16 rotate-90";
 
-      case "mainBoard":
+      case "southBoard":
           return "boardCS";
 
       case "westBoard":
@@ -58,8 +58,10 @@ const Card = ({ value, flip, picked, cardStyle, onClickCard }) => {
       else {
         onClickCard(c);
       }
-    } else {
-      // 
+    } else { //if(cardStyle === "mainPlayer") {
+
+      // If whoHasToPlay() === "SOUTH" 
+      onClickCard([cardStyle, c]);
     }
     
   }

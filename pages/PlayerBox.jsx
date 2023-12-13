@@ -1,7 +1,9 @@
 import { useAuthContext } from '@/context/AuthContext';
+import { database } from '@/firebase/config';
+import { ref, set } from 'firebase/database';
 import { Tooltip } from '@chakra-ui/react';
 import Image from 'next/image';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Hand from './Hand';
 
 const PlayerBox = ({ nameOfClass, id, player, myCards }) => {
@@ -9,18 +11,12 @@ const PlayerBox = ({ nameOfClass, id, player, myCards }) => {
   const { user } = useAuthContext();
   const myLoader = ({ src }) => { return player.picture };
 
-  console.log("player = ", player);
+  // console.log("player = ", player);
+  useEffect(() => {
+      
+    
 
-  const getStyle = (oneID) => {
-
-    switch(oneID) {
-      case "SOUTH": return "mainPlayer";
-      case "WEST" : return "westPlayer";
-      case "NORTH": return "northPlayer";
-      case "EAST" : return "eastPlayer";
-      default: break;
-    }
-  }
+  }, [myCards]);
 
   const getClass = (oneID) => {
 
@@ -33,25 +29,35 @@ const PlayerBox = ({ nameOfClass, id, player, myCards }) => {
     }
   }
 
-  const onClickPlay = (clickCard) => {
+  const onPlayerClick = (clickTab) => {
+    // PROD : ONLY MAIN PLAYER CAN CLICK !!! Update place later
+    // save in Database table "Board" 
+
+    set(ref(database, 'game/board/'+clickTab[0]), {
+      value: clickTab[1],
+    });
+
+    // REMOVE from HANDS in db
+    // onValue needed in BoardGame (8 --> 7 --> 6) southHand.splice(indexOf())
 
     // remove from hand.
-    // send it on Board.
-    alert(player.username+' clicked on '+clickCard);
+    // alert(myCards.indexOf(clickTab[1]));
+    myCards.splice(myCards.indexOf(clickTab[1]), 1);
+
+    // send it on Board via Database
+    alert('|| PlayerBox || '+clickTab[0]+' clicked on '+clickTab[1]);
 
   }
-  /*
 
-  */
 
   return (
 
     <div className={nameOfClass}>
 
         <Hand
-          handStyle={getStyle(id)}
+          handStyle={id}
           cards={myCards}
-          onClickHand={(playCard) => onClickPlay(playCard)}
+          onClickHand={(playCard) => onPlayerClick(playCard)}
         />
 
         <div className={getClass(id)}>

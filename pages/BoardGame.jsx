@@ -1,3 +1,5 @@
+import { database } from '@/firebase/config';
+import { ref, set } from 'firebase/database';
 import React, { useState } from 'react'
 import Board from './Board';
 import Panel from './Panel';
@@ -54,13 +56,30 @@ const BoardGame = ({ players }) => {
   const [endOfContract, setEndOfContract] = useState(true);
   const [endOfGame, setEndOfGame] = useState(false);
 
+  set(ref(database, 'game/hands/'), {
+    SOUTH: southHand,
+  });
+
+  // Nettoyer les mains en base directement
+  // UPDATE & Remove from db in PlayerBox
+
   console.log("1st Hand = ", eastHand);
   console.log("2nd Hand = ", northHand);
   console.log("3rd Hand = ", westHand);
   console.log("4th Hand = ", southHand);
 
-/*
+  const handlePlayerClick = () => {
 
+    alert("handlePlayerClick()");
+  }
+
+  // CHANGE CONTRACTOR
+
+
+/*
+  UseEffect : 
+    onValue
+      allHands
 */
 
   return (
@@ -72,6 +91,7 @@ const BoardGame = ({ players }) => {
         player={players[1]}
         myCards={eastHand}
         nameOfClass={`${positions[3]}`}
+        onPlayerClick={() => handlePlayerClick()}
       />
 
       <PlayerBox
@@ -103,7 +123,7 @@ const BoardGame = ({ players }) => {
             
               :
             <Board
-              
+
             />
         }
         

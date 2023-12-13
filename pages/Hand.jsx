@@ -68,7 +68,7 @@ const Hand = ({ handStyle, cards, others, onClickHand }) => {
     // TODO : correct flip condition
 
         <div className={getNameOfClass(handStyle)}>
-            {cards.map((element, i) =>
+            {cards?.map((element, i) =>
                 <Card
                     value={element}
                     flip={handStyle === "positionPick" ? getFlip(element) : false}

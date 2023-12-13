@@ -1,6 +1,6 @@
 import { useAuthContext } from '@/context/AuthContext';
 import { database } from '@/firebase/config';
-import { ref, set } from 'firebase/database';
+import { ref, set, update } from 'firebase/database';
 import { Tooltip } from '@chakra-ui/react';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
@@ -12,53 +12,64 @@ const PlayerBox = ({ nameOfClass, id, player, myCards }) => {
   const myLoader = ({ src }) => { return player.picture };
 
   // console.log("player = ", player);
-  useEffect(() => {
-      
-    
-
-  }, [myCards]);
 
   const getClass = (oneID) => {
 
     switch(oneID) {
-      case "SOUTH": return "relative flex px-50 top-8 -right-40 bottom-10";
-      case "WEST" : return "relative flex px-50 -top-40 left-20 bottom-10";
-      case "NORTH": return "relative flex px-50 top-4 -right-52 bottom-50";
-      case "EAST" : return "relative flex px-50 -top-40 -left-20 bottom-10";
+      case "SOUTH": return "fixed absolute flex px-50 left-8 bottom-32";
+      case "WEST" : return "fixed absolute flex px-50 top-96 -right-20 bottom-10";
+      case "NORTH": return "fixed absolute flex px-50 top-20 left-52 bottom-50";
+      case "EAST" : return "fixed absolute flex px-50 top-96 -left-20 bottom-10";
       default: break;
     }
   }
 
   const onPlayerClick = (clickTab) => {
-    // PROD : ONLY MAIN PLAYER CAN CLICK !!! Update place later
-    // save in Database table "Board" 
+    // TODO PROD : ONLY MAIN PLAYER CAN CLICK !!! Update place later
 
+    // Save clicked card in Database table "Board".
     set(ref(database, 'game/board/'+clickTab[0]), {
       value: clickTab[1],
     });
 
-    // REMOVE from HANDS in db
-    // onValue needed in BoardGame (8 --> 7 --> 6) southHand.splice(indexOf())
-
-    // remove from hand.
-    // alert(myCards.indexOf(clickTab[1]));
+    // Remove from myCards props
     myCards.splice(myCards.indexOf(clickTab[1]), 1);
 
-    // send it on Board via Database
-    alert('|| PlayerBox || '+clickTab[0]+' clicked on '+clickTab[1]);
+    // Remove from HANDS in Database table "Hands".
+    // TODO PROD : ONLY "SOUTH" updating with uid.
+    switch(clickTab[0]) {
+      case "SOUTH": 
+        update(ref(database, 'game/hands/'), {
+          SOUTH: myCards,
+        });
+        return;
+      case "WEST":  
+        update(ref(database, 'game/hands/'), {
+          WEST: myCards,
+        });
+        return;
+      case "NORTH":  
+        update(ref(database, 'game/hands/'), {
+          NORTH: myCards,
+        });
+        return;
+      case "EAST":  
+        update(ref(database, 'game/hands/'), {
+          EAST: myCards,
+        });
+        return;
 
+      default: break;
+    }
+
+    // onValue needed in BoardGame (8 --> 7 --> 6) southHand.splice(indexOf())
+
+    // alert('|| PlayerBox || '+clickTab[0]+' clicked on '+clickTab[1]);
   }
-
 
   return (
 
     <div className={nameOfClass}>
-
-        <Hand
-          handStyle={id}
-          cards={myCards}
-          onClickHand={(playCard) => onPlayerClick(playCard)}
-        />
 
         <div className={getClass(id)}>
           <Tooltip label={player.username} bg='burlywood' textColor="black">
@@ -72,6 +83,14 @@ const PlayerBox = ({ nameOfClass, id, player, myCards }) => {
                 alt="pp" />
           </Tooltip>
         </div>
+
+
+        <Hand
+          handStyle={id}
+          cards={myCards}
+          onClickHand={(playCard) => onPlayerClick(playCard)}
+        />
+        
     </div>
 
   )

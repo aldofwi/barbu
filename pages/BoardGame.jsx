@@ -1,6 +1,6 @@
 import { database } from '@/firebase/config';
-import { ref, set } from 'firebase/database';
-import React, { useState } from 'react'
+import { onValue, ref, remove, set, update } from 'firebase/database';
+import React, { useEffect, useState } from 'react'
 import Board from './Board';
 import Panel from './Panel';
 import PlayerBox from './PlayerBox';
@@ -49,6 +49,7 @@ const BoardGame = ({ players }) => {
   const [northHand, setNorthHand] = useState(newDeck.slice(16, 24));
   const [westHand,  setWestHand]  = useState(newDeck.slice(8, 16));
   const [southHand, setSouthHand] = useState(newDeck.slice(0, 8));
+  const [hands, setHands] = useState([southHand, westHand, northHand, eastHand]);
 
   const [contractor, setContractor] = useState("");
   const [displayLoading, setDisplayLoading] = useState(false);
@@ -56,10 +57,15 @@ const BoardGame = ({ players }) => {
   const [endOfContract, setEndOfContract] = useState(true);
   const [endOfGame, setEndOfGame] = useState(false);
 
+
   set(ref(database, 'game/hands/'), {
-    SOUTH: southHand,
+    SOUTH:  southHand,
+    WEST:   westHand,
+    NORTH:  northHand,
+    EAST:   eastHand,   
   });
 
+  // remove(ref(database, 'game/board/'), {});
   // Nettoyer les mains en base directement
   // UPDATE & Remove from db in PlayerBox
 
@@ -68,19 +74,40 @@ const BoardGame = ({ players }) => {
   console.log("3rd Hand = ", westHand);
   console.log("4th Hand = ", southHand);
 
-  const handlePlayerClick = () => {
-
-    alert("handlePlayerClick()");
-  }
-
   // CHANGE CONTRACTOR
 
+  useEffect(() => {
 
-/*
-  UseEffect : 
-    onValue
-      allHands
-*/
+    onValue(
+      ref(database, 'game/hands/SOUTH' ), (snapshot) => {
+        console.log("SnapS --> "+snapshot.val());
+        setSouthHand(snapshot.val());
+      }
+    );
+
+    onValue(
+      ref(database, 'game/hands/WEST' ), (snapshot) => {
+        console.log("SnapW --> "+snapshot.val());
+        setWestHand(snapshot.val());
+      }
+    );
+
+    onValue(
+      ref(database, 'game/hands/NORTH' ), (snapshot) => {
+        console.log("SnapN --> "+snapshot.val());
+        setNorthHand(snapshot.val());
+      }
+    );
+
+    onValue(
+      ref(database, 'game/hands/EAST' ), (snapshot) => {
+        console.log("SnapE --> "+snapshot.val());
+        setEastHand(snapshot.val());
+      }
+    );
+
+
+  }, []);
 
   return (
 
@@ -91,7 +118,6 @@ const BoardGame = ({ players }) => {
         player={players[1]}
         myCards={eastHand}
         nameOfClass={`${positions[3]}`}
-        onPlayerClick={() => handlePlayerClick()}
       />
 
       <PlayerBox

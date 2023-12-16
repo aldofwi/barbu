@@ -1,14 +1,15 @@
 import { database } from '@/firebase/config';
 import { onValue, ref, remove, set, update } from 'firebase/database';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import ContractName from './ContractName';
+import PlayerBox from './PlayerBox';
 import Board from './Board';
 import Panel from './Panel';
-import PlayerBox from './PlayerBox';
 
 const positions = [
-  'absolute bottom-10 right-0',
+  'absolute bottom-10 justify-center',
   'absolute left-10 justify-center',
-  'absolute top-0 right-1/3',
+  'absolute top-10 justify-center',
   'absolute right-10 justify-center',
 ];
 
@@ -17,6 +18,16 @@ const cards = [
   "7s", "8s", "9s", "ts", "js", "qs", "ks", "as",
   "7c", "8c", "9c", "tc", "jc", "qc", "kc", "ac",
   "7d", "8d", "9d", "td", "jd", "qd", "kd", "ad",
+];
+
+const contracts = [
+  "RATA",
+  "Barbu",
+  "Domino",
+  "Coeurs",
+  "Dames",
+  "Plis",
+  "Dernier Pli"
 ];
 
 const shuffle = (tab) => {
@@ -36,12 +47,12 @@ const shuffle = (tab) => {
       //delete tab[i];
       n--;
   }
-  console.log("newtab = ", newTab);
+  // console.log("newtab = ", newTab);
 
   return newTab;
 }
 
-const BoardGame = ({ players }) => {
+const BoardGame = () => {
 
   const [nbClic, setNbClic] = useState(0);
   const [newDeck, setNewDeck] = useState(shuffle(cards));
@@ -49,14 +60,21 @@ const BoardGame = ({ players }) => {
   const [northHand, setNorthHand] = useState(newDeck.slice(16, 24));
   const [westHand,  setWestHand]  = useState(newDeck.slice(8, 16));
   const [southHand, setSouthHand] = useState(newDeck.slice(0, 8));
-  const [hands, setHands] = useState([southHand, westHand, northHand, eastHand]);
 
+  const [board, setBoard] = useState([]);
+  const [players, setPlayers] = useState([]);
+  const [contract, setContract] = useState("");
   const [contractor, setContractor] = useState("");
+
   const [displayLoading, setDisplayLoading] = useState(false);
+  const [hasToPlay, setHasToPlay] = useState("");
+  const [master, setMaster] = useState("");
+
+  const [contractsDone, setContractsDone] = useState([]);
   const [nbContractsDone, setNbContractsDone] = useState(0); // Max is 28.
+
   const [endOfContract, setEndOfContract] = useState(true);
   const [endOfGame, setEndOfGame] = useState(false);
-
 
   set(ref(database, 'game/hands/'), {
     SOUTH:  southHand,
@@ -65,49 +83,102 @@ const BoardGame = ({ players }) => {
     EAST:   eastHand,   
   });
 
-  // remove(ref(database, 'game/board/'), {});
-  // Nettoyer les mains en base directement
-  // UPDATE & Remove from db in PlayerBox
+  // if(endOfContract) setHasToPlay(contractor);
 
-  console.log("1st Hand = ", eastHand);
-  console.log("2nd Hand = ", northHand);
-  console.log("3rd Hand = ", westHand);
-  console.log("4th Hand = ", southHand);
+  // Nettoyer le BOARD quand un pli est fini.
+  // remove(ref(database, 'game/board/'), {});
+
+  // console.log("1st Hand = ", eastHand);
+  // console.log("2nd Hand = ", northHand);
+  // console.log("3rd Hand = ", westHand);
+  // console.log("4th Hand = ", southHand);
 
   // CHANGE CONTRACTOR
 
   useEffect(() => {
+    // TODO Prod change place to UID.
+    onValue(
+      ref(database, 'game/contractor/name' ), (snapshot) => {
+        setContractor(snapshot.val());
+      }
+    );
+      
+    onValue(
+      ref(database, 'game/players/' ), (snapshot) => {
+        let playz = [];
+          snapshot.forEach((doc) => {
+            playz.push({...doc.val()});
+          });
+
+          console.log("playz : ", playz);
+          setPlayers(playz);
+      }
+    );
+
+    onValue(
+      ref(database, 'game/board' ), (snapshot) => {
+        let theBoard = [];
+        snapshot.forEach((doc) => {
+          theBoard.push(doc.val());
+        });
+        setBoard(theBoard);
+      }
+    );
 
     onValue(
       ref(database, 'game/hands/SOUTH' ), (snapshot) => {
-        console.log("SnapS --> "+snapshot.val());
         setSouthHand(snapshot.val());
       }
     );
 
     onValue(
       ref(database, 'game/hands/WEST' ), (snapshot) => {
-        console.log("SnapW --> "+snapshot.val());
         setWestHand(snapshot.val());
       }
     );
 
     onValue(
       ref(database, 'game/hands/NORTH' ), (snapshot) => {
-        console.log("SnapN --> "+snapshot.val());
         setNorthHand(snapshot.val());
       }
     );
 
     onValue(
       ref(database, 'game/hands/EAST' ), (snapshot) => {
-        console.log("SnapE --> "+snapshot.val());
         setEastHand(snapshot.val());
       }
     );
 
+    onValue(
+      ref(database, 'game/current/contract' ), (snapshot) => {
+          setContract(snapshot.val());
+      }
+    );
+
+    onValue(
+      ref(database, 'game/current/nbClic' ), (snapshot) => {
+          setNbClic(snapshot.val());
+      }
+    );
+
+    onValue(
+      ref(database, 'game/current/hasToPlay' ), (snapshot) => {
+          setHasToPlay(snapshot.val());
+      }
+    );
+
+    onValue(
+      ref(database, 'game/current/endOfContract' ), (snapshot) => {
+          setEndOfContract(snapshot.val());
+      }
+    );
 
   }, []);
+
+  console.log("BOARDGAME // players = ", players);
+  console.log("BOARDGAME // contract = ", contract);
+  console.log("BOARDGAME // contractor = ", contractor);
+  console.log("BOARDGAME // endOfContract = ", endOfContract);
 
   return (
 
@@ -115,43 +186,59 @@ const BoardGame = ({ players }) => {
 
       <PlayerBox
         id="EAST"
-        player={players[1]}
+        board={board}
+        player={players[3]}
         myCards={eastHand}
+        hasToPlay={hasToPlay}
+        contractor={contractor}
         nameOfClass={`${positions[3]}`}
       />
 
       <PlayerBox
         id="NORTH"
-        player={players[0]}
+        board={board}
+        player={players[2]}
         myCards={northHand}
+        hasToPlay={hasToPlay}
+        contractor={contractor}
         nameOfClass={`${positions[2]}`}
       />
 
       <PlayerBox
         id="WEST"
+        board={board}
         player={players[1]}
         myCards={westHand}
+        hasToPlay={hasToPlay}
+        contractor={contractor}
         nameOfClass={`${positions[1]}`}
       />
         
       <PlayerBox
         id="SOUTH"
+        board={board}
         player={players[0]}
         myCards={southHand}
+        hasToPlay={hasToPlay}
+        contractor={contractor}
         nameOfClass={`${positions[0]}`}
       />
 
         {
-          !endOfContract 
+          endOfContract 
               ?
 
-            <Panel />
+            <Panel 
+              contractor={contractor}
+            />
             
               :
             <Board
 
             />
         }
+
+        <ContractName value={contract} />
         
     </div>
 

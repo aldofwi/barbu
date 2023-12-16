@@ -8,13 +8,13 @@ const getNameOfClass = (style) => {
             return "relative flex flex-row px-50 left-40 top-60 bottom-20";
 
         case "SOUTH":
-            return "relative flex px-50 -left-80 top-8 bottom-10"; // Done
+            return "relative flex px-50 left-80 top-8"; // Done
 
         case "WEST":
-            return "relative px-50 top-40";
+            return "relative px-50 top-40 -right-2";
 
         case "NORTH":
-            return "relative flex px-50 -left-4 top-2 bottom-50";
+            return "relative flex pl-64 px-50 left-80 -top-8";
 
         case "EAST":
             return "relative px-50 top-40 -left-2";
@@ -50,8 +50,7 @@ const getCardPos = (iCard) => {
 
 const Hand = ({ handStyle, cards, others, onClickHand }) => {
 
-    console.log("cards = ", cards);
-
+    // console.log("cards = ", cards);
     const getFlip = (c) => {
     // Back = TRUE | Front = FALSE
 
@@ -66,7 +65,6 @@ const Hand = ({ handStyle, cards, others, onClickHand }) => {
 
   return (
     // TODO : correct flip condition
-
         <div className={getNameOfClass(handStyle)}>
             {cards?.map((element, i) =>
                 <Card

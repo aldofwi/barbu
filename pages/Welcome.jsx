@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import LoadCard from '/public/images/loadCard.png';
 import { Button } from '@chakra-ui/react';
 import { IoPlayCircle } from 'react-icons/io5';
 import FirstBoard from './FirstBoard';
+import { onValue, ref } from 'firebase/database';
+import { database } from '@/firebase/config';
+import BoardGame from './BoardGame';
 
 const values = {
   7: 0,
@@ -19,11 +22,15 @@ const values = {
 const Welcome = () => {
 
   const [isPartyFull, setIsPartyFull] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
+  const [gameStarted, setGameStarted] = useState(true);
+  
 
   const handlePlay = () => {
     setGameStarted(true);
   }
+
+    // ------TEMP -------
+
 
   // console.log("Value Q = ", values['t']);
   // If Nb Game Players is less than 4 (FULL)
@@ -62,7 +69,9 @@ const Welcome = () => {
 
         :
 
-    <FirstBoard />
+    <BoardGame
+
+    />
 
   
   )

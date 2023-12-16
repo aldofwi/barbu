@@ -1,6 +1,6 @@
 import { useAuthContext } from '@/context/AuthContext';
 import { database } from '@/firebase/config';
-import { onValue, push, ref, serverTimestamp, set, update } from 'firebase/database';
+import { get, onValue, ref, set, update } from 'firebase/database';
 import { useEffect, useState } from 'react';
 import BoardGame from './BoardGame';
 import DeckChoice from './DeckChoice';
@@ -18,27 +18,10 @@ const values = {
   a: 7,
 }
 
-const FirstBoard = () => {
+const FirstBoard = async () => {
 
-    const { user } = useAuthContext();
-    const [places, setPlaces] = useState([]);
-    const [isOrderSet, setIsOrderSet] = useState(false);
-
-    useEffect(() => {
-
-        onValue(
-          ref(database, 'game/order' ), (snapshot) => {
-            let orders = [];
-              snapshot.forEach((doc) => {
-                orders.push({...doc.val()});
-              });
-              setPlaces(orders);
-          }
-        );
-
-        if(places.length === 2) setIsOrderSet(true);
-    
-      }, [places.length]);
+    //const { user } = useAuthContext();
+    // const [isOrderSet, setIsOrderSet] = useState(true);
 
     // getPositionByID when Order is setted.
     // pass positions to PlayerBox props.
@@ -51,28 +34,28 @@ const FirstBoard = () => {
       let myValue;
       let otherCards = [];
 
-      for(let i=0; i<places.length; i++) {
-        if(places[i].username === user.displayName) {
-          myCard = places[i].pick.charAt(0);
+      for(let i=0; i<players.length; i++) {
+        if(players[i].username === user.displayName) {
+          myCard = players[i].pick.charAt(0);
           for(let j=0; j<cardValues.length; j++) {
             if(myCard === cardValues[j]) myValue = j;
           }
         } else {
-          otherCards.push(places[i].pick.charAt(0));
+          otherCards.push(players[i].pick.charAt(0));
         }
       }
 
       // console.log("otherCards = ", otherCards);
 
-      for(let k=0; k<places.length; k++) {
-        if(places[k].username !== user.displayName) {
+      for(let k=0; k<players.length; k++) {
+        if(players[k].username !== user.displayName) {
           
           // console.log("myValue = ", myValue);
-          // console.log("k = ", k, "| places[k].pick.charAt(0) = ", places[k].pick.charAt(0));
-          // console.log("values[places[k].pick.charAt(0)] = ", values[places[k].pick.charAt(0)]);
-          // console.log("myValue < other --> ", myValue  < values[places[k].pick.charAt(0)]);
+          // console.log("k = ", k, "| players[k].pick.charAt(0) = ", players[k].pick.charAt(0));
+          // console.log("values[players[k].pick.charAt(0)] = ", values[players[k].pick.charAt(0)]);
+          // console.log("myValue < other --> ", myValue  < values[players[k].pick.charAt(0)]);
 
-          if(myValue < values[places[k].pick.charAt(0)]) {
+          if(myValue < values[players[k].pick.charAt(0)]) {
             numb++;
           }
         }
@@ -80,13 +63,12 @@ const FirstBoard = () => {
 
       // console.log("Rank = ", numb);
       
-      update(ref(database, '/game/order/' + user.uid), {
+      update(ref(database, '/game/players/' + user.uid), {
         rank: numb,
       });
 
       if(numb === 1) {
         set(ref(database, '/game/contractor'), {
-          place: "SOUTH",
           name: user.displayName,
           uid: user.uid,
         });
@@ -106,23 +88,17 @@ const FirstBoard = () => {
 
       return numb;
     }
-      
+
     // className="h-full w-full flex flex-col text-white bg-[#121212] inset-y-0"
+    // rank={getRank()}
 
   return (
 
     <div>
     
-    {
-        isOrderSet
-            ?
-        <BoardGame
-          players={places}
-          rank={getRank()}
-        />
-            :
-        <DeckChoice />
-    }
+      <BoardGame
+
+      />
    
     </div>
 
@@ -130,3 +106,45 @@ const FirstBoard = () => {
 }
 
 export default FirstBoard;
+
+/*
+ {
+        isOrderSet
+            ?
+        <BoardGame
+          players={players}
+        />
+            :
+        <DeckChoice />
+    }
+*/
+
+/*
+    await set(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2'), {
+      picture: "https://lh3.googleusercontent.com/a/ACg8ocJKrBneCAOjhDLhJtFY5SQlvjtrntczP19Gp3LhYCI-Zw=s96-c",
+      rank: 1,
+      uid: "n3gYoJQyeHhCKzr3WGFybc8nIdb2",
+      username: "Player 1",
+    });
+
+    await set(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb3'), {
+      picture: "https://lh3.googleusercontent.com/a/ACg8ocJKrBneCAOjhDLhJtFY5SQlvjtrntczP19Gp3LhYCI-Zw=s96-c",
+      rank: 2,
+      uid: "n3gYoJQyeHhCKzr3WGFybc8nIdb3",
+      username: "Player 2",
+    });
+
+    await set(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb4'), {
+      picture: "https://lh3.googleusercontent.com/a/ACg8ocJKrBneCAOjhDLhJtFY5SQlvjtrntczP19Gp3LhYCI-Zw=s96-c",
+      rank: 3,
+      uid: "n3gYoJQyeHhCKzr3WGFybc8nIdb4",
+      username: "Player 3",
+    });
+
+    await set(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb5'), {
+      picture: "https://lh3.googleusercontent.com/a/ACg8ocJKrBneCAOjhDLhJtFY5SQlvjtrntczP19Gp3LhYCI-Zw=s96-c",
+      rank: 4,
+      uid: "n3gYoJQyeHhCKzr3WGFybc8nIdb5",
+      username: "Player 4",
+    });
+*/

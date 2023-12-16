@@ -44,7 +44,7 @@ const DeckChoice = () => {
   useEffect(() => {
 
     onValue(
-      ref(database, 'game/order' ), (snapshot) => {
+      ref(database, 'game/players' ), (snapshot) => {
         let orders = [];
           snapshot.forEach((doc) => {
             orders.push({...doc.val()});
@@ -57,7 +57,7 @@ const DeckChoice = () => {
 
   const onClickChoice = (element) => {
 
-      set(ref(database, '/game/order/' + user.uid), {
+      set(ref(database, '/game/players/' + user.uid), {
         username: user.displayName,
         picture: user.photoURL,
         pick: element,

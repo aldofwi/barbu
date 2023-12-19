@@ -6,6 +6,8 @@ import PlayerBox from './PlayerBox';
 import Board from './Board';
 import Panel from './Panel';
 
+const cardValues = ["7", "8", "9", "t", "j", "q", "k", "a"];
+
 const positions = [
   'absolute bottom-10 justify-center',
   'absolute left-10 justify-center',
@@ -68,7 +70,7 @@ const BoardGame = () => {
 
   const [displayLoading, setDisplayLoading] = useState(false);
   const [hasToPlay, setHasToPlay] = useState("");
-  const [master, setMaster] = useState("");
+  const [master, setMaster] = useState("SOUTH");
 
   const [contractsDone, setContractsDone] = useState([]);
   const [nbContractsDone, setNbContractsDone] = useState(0); // Max is 28.
@@ -76,6 +78,7 @@ const BoardGame = () => {
   const [endOfContract, setEndOfContract] = useState(true);
   const [endOfGame, setEndOfGame] = useState(false);
 
+  // INIT Hands
   set(ref(database, 'game/hands/'), {
     SOUTH:  southHand,
     WEST:   westHand,
@@ -83,15 +86,92 @@ const BoardGame = () => {
     EAST:   eastHand,   
   });
 
-  // if(endOfContract) setHasToPlay(contractor);
+  const sortPlayz = (playerz) => {
 
-  // Nettoyer le BOARD quand un pli est fini.
-  // remove(ref(database, 'game/board/'), {});
+    let nb=1;
+    let playaz = [];
+    while(nb<5) {
+      for(let i=0; i<playerz.length; i++) {
+        
+        if(playerz[i].rank === nb) {
+          playaz.push(playerz[i]);
+          nb++;
+        }
+      }
+    }
+    return playaz;
+  }
 
-  // console.log("1st Hand = ", eastHand);
-  // console.log("2nd Hand = ", northHand);
-  // console.log("3rd Hand = ", westHand);
-  // console.log("4th Hand = ", southHand);
+  const cleanBoard = (diBoard) => {
+
+    if(diBoard.length === 4) {
+
+      setTimeout(() => {
+        setBoard([]);
+        remove(ref(database, 'game/board/'));
+        console.log("BOARDGAME // CleanBoard() - Done");
+      }, 1500);
+    }
+  }
+
+  const whoIsTheMaster = (daBoard) => {
+    console.log("BOARDGAME // whoIsTheMaster() = ", daBoard.length);
+    console.log("BOARDGAME // Board = ", daBoard);
+
+    if(daBoard.length === 4) {
+
+      let masterPlace = "";
+
+      for(let i=1; i<daBoard.length; i++) {
+        if(cardValues.indexOf(daBoard[i].value.charAt(0)) > cardValues.indexOf(daBoard[i-1].value.charAt(0))) {
+          masterPlace = daBoard[i].place;
+        }
+      }
+      console.log("BOARDGAME // Who is The Master = ", masterPlace);
+      // alert("BOARDGAME // Who is The Master = "+masterPlace);
+
+      cleanBoard(daBoard);
+      setMaster(masterPlace);
+      setHasToPlay(masterPlace);
+      // setTimeout(() => { remove(ref(database, 'game/board/')) }, 2000);
+      // return masterPlace;
+    } // else return "";
+  }
+
+  const onBoardClick = (oneBoard) => {
+
+    // alert("BOARDGAME // onBoardClick() = "+oneBoard.length);
+    console.log("BOARDGAME // onBoardClick() = ", oneBoard.length);
+
+    if(oneBoard.length < 3) {
+
+      switch(hasToPlay) {
+        case "SOUTH": 
+        update(ref(database, 'game/current/'), {
+          hasToPlay: "WEST",
+        });
+        return;
+      case "WEST":  
+        update(ref(database, 'game/current/'), {
+          hasToPlay: "NORTH",
+        });
+        return;
+      case "NORTH":  
+        update(ref(database, 'game/current/'), {
+          hasToPlay: "EAST",
+        });
+        return;
+      case "EAST":
+        update(ref(database, 'game/current/'), {
+          hasToPlay: "SOUTH",
+        });
+        return;
+
+      default: break;
+      } 
+    } 
+
+  }
 
   // CHANGE CONTRACTOR
 
@@ -109,9 +189,8 @@ const BoardGame = () => {
           snapshot.forEach((doc) => {
             playz.push({...doc.val()});
           });
-
-          console.log("playz : ", playz);
-          setPlayers(playz);
+          //console.log("playz : ", playz);
+          setPlayers(sortPlayz(playz));
       }
     );
 
@@ -122,6 +201,7 @@ const BoardGame = () => {
           theBoard.push(doc.val());
         });
         setBoard(theBoard);
+        whoIsTheMaster(theBoard);
       }
     );
 
@@ -175,10 +255,15 @@ const BoardGame = () => {
 
   }, []);
 
-  console.log("BOARDGAME // players = ", players);
+  console.log("BOARDGAME _--------------------_");
+  console.log("BOARDGAME // board = ", board.length);
+  console.log("BOARDGAME // master = ", master);
   console.log("BOARDGAME // contract = ", contract);
+  console.log("BOARDGAME // hasToPlay = ", hasToPlay);
   console.log("BOARDGAME // contractor = ", contractor);
   console.log("BOARDGAME // endOfContract = ", endOfContract);
+  console.log("BOARDGAME -____________________-");
+
 
   return (
 
@@ -190,6 +275,8 @@ const BoardGame = () => {
         player={players[3]}
         myCards={eastHand}
         hasToPlay={hasToPlay}
+        whoIsMaster={() => whoIsTheMaster()}
+        clickBoard={() => onBoardClick(board)}
         contractor={contractor}
         nameOfClass={`${positions[3]}`}
       />
@@ -200,6 +287,8 @@ const BoardGame = () => {
         player={players[2]}
         myCards={northHand}
         hasToPlay={hasToPlay}
+        whoIsMaster={() => whoIsTheMaster()}
+        clickBoard={() => onBoardClick(board)}
         contractor={contractor}
         nameOfClass={`${positions[2]}`}
       />
@@ -210,6 +299,8 @@ const BoardGame = () => {
         player={players[1]}
         myCards={westHand}
         hasToPlay={hasToPlay}
+        whoIsMaster={() => whoIsTheMaster()}
+        clickBoard={() => onBoardClick(board)}
         contractor={contractor}
         nameOfClass={`${positions[1]}`}
       />
@@ -220,6 +311,8 @@ const BoardGame = () => {
         player={players[0]}
         myCards={southHand}
         hasToPlay={hasToPlay}
+        whoIsMaster={() => whoIsTheMaster()}
+        clickBoard={() => onBoardClick(board)}
         contractor={contractor}
         nameOfClass={`${positions[0]}`}
       />
@@ -234,7 +327,7 @@ const BoardGame = () => {
             
               :
             <Board
-
+              oneBoard={board}
             />
         }
 

@@ -20,7 +20,7 @@ const values = {
 
 const FirstBoard = async () => {
 
-    //const { user } = useAuthContext();
+    //const { user } =   useAuthContext();
     // const [isOrderSet, setIsOrderSet] = useState(true);
 
     // getPositionByID when Order is setted.

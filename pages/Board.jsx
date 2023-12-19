@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Card from './Card';
 import Hand from './Hand';
 
-const Board = () => {
+const Board = ({ oneBoard }) => {
   // Board
   // const [board, setBoard] = useState([]); // myCards
   //const [myCards, setMyCards] = useState(["8h", "th", "kh", "9h"]);
@@ -14,13 +14,24 @@ const Board = () => {
   const [cardN, setCardN] = useState("");
   const [cardE, setCardE] = useState("");
 
+  const cleanCards = (diBoard) => {
+
+    if(diBoard.length === 0) {      
+        setCardS("");
+        setCardW("");
+        setCardN("");
+        setCardE("");
+    }
+  }
+
   useEffect(() => {
     
     onValue(
       ref(database, 'game/board/SOUTH' ), (snapshot) => {
-        
+
         snapshot.forEach((doc) => {
           setCardS(doc.val());
+          // console.log("BOARD // cardS =", cardS);
         });
       }
     );
@@ -30,6 +41,7 @@ const Board = () => {
         
         snapshot.forEach((doc) => {
           setCardW(doc.val());
+          // console.log("BOARD // cardW =", cardW);
         });
       }
     );
@@ -39,6 +51,7 @@ const Board = () => {
         
         snapshot.forEach((doc) => {
           setCardN(doc.val());
+          // console.log("BOARD // cardN =", cardN);
         });
       }
     );
@@ -48,12 +61,24 @@ const Board = () => {
         
         snapshot.forEach((doc) => {
           setCardE(doc.val());
+          // console.log("BOARD // cardE =", cardE);
         });
       }
     );
+
+    onValue(
+      ref(database, 'game/board' ), (snapshot) => {
+        let oneBoard = [];
+        snapshot.forEach((doc) => {
+          oneBoard.push(doc.val());
+        });
+        cleanCards(oneBoard);
+      }
+    );
   
-  }, []);
-  
+  });
+
+  // oneBoard.length !== 0 &&
 
   return (
 
@@ -74,7 +99,6 @@ const Board = () => {
       {
         cardW
           ?  
-
         <Card
           value={cardW}
           flip={false}

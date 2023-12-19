@@ -6,7 +6,7 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import Hand from './Hand';
 
-const PlayerBox = ({ nameOfClass, id, player, contractor, board, hasToPlay, myCards }) => {
+const PlayerBox = ({ nameOfClass, id, player, contractor, board, clickBoard, hasToPlay, whoIsMaster, myCards }) => {
 
   const { user } = useAuthContext();
   const myLoader = ({ src }) => { return player.picture };
@@ -14,11 +14,22 @@ const PlayerBox = ({ nameOfClass, id, player, contractor, board, hasToPlay, myCa
   const getClass = (oneID) => {
     // HAS TO PLAY :  border border-2 rounded-full border-[red]
     switch(oneID) {
-      case "SOUTH": return "image_S border border-2 rounded-full border-[red]" ;
-      case "NORTH": return "image_N";
+      case "SOUTH":
+        if(hasToPlay === oneID) return "image_S border border-2 rounded-full border-[red]"
+        else return "image_S";
 
-      case "WEST" : return "fixed absolute flex px-50 top-96 right-32 bottom-10";
-      case "EAST" : return "fixed absolute flex px-50 top-96 left-32 bottom-10";
+      case "NORTH": 
+      if(hasToPlay === oneID) return "image_N border border-2 rounded-full border-[red]"
+        else return "image_N";
+
+      case "EAST" : 
+      if(hasToPlay === oneID) return "image_E border border-2 rounded-full border-[red]"
+        else return "image_E";
+
+      case "WEST" : 
+      if(hasToPlay === oneID) return "image_W border border-2 rounded-full border-[red]"
+        else return "image_W";
+
       default: break;
     }
   }
@@ -29,52 +40,22 @@ const PlayerBox = ({ nameOfClass, id, player, contractor, board, hasToPlay, myCa
     if(clickTab[0] !== hasToPlay) {
       alert(hasToPlay+" has to play !");
       return;
-    }
-    // SET hasTOPLAY "EAST"
+    } 
+    
     // Tableau de correspondance ex: "NORTH --> UID north"
     
     // Save clicked card in Database table "Board".
+    console.log("PLAYERBOX // ADD TO BOARD ", clickTab[1]);
     await set(ref(database, 'game/board/'+clickTab[0]), {
       value: clickTab[1],
+      place: clickTab[0],
     });
 
     // Remove from myCards props
+    console.log("PLAYERBOX // SPLICE // myCards");
     myCards.splice(myCards.indexOf(clickTab[1]), 1);
 
-    console.log("PLAYERBOX // BOARD =", board);
-
-    if(board.length < 4) {
-
-      switch(hasToPlay) {
-        case "SOUTH": 
-        update(ref(database, 'game/current/'), {
-          hasToPlay: "WEST",
-        });
-        return;
-      case "WEST":  
-        update(ref(database, 'game/current/'), {
-          hasToPlay: "NORTH",
-        });
-        return;
-      case "NORTH":  
-        update(ref(database, 'game/current/'), {
-          hasToPlay: "EAST",
-        });
-        return;
-      case "EAST":  
-        update(ref(database, 'game/current/'), {
-          hasToPlay: "SOUTH",
-        });
-        return;
-
-      default: break;
-      }
-    } else if(board.length === 4) {
-
-      // Who Is Master ?
-      
-    }
-
+    clickBoard();
 
     // Remove from HANDS in Database table "Hands".
     // TODO PROD : ONLY "SOUTH" updating with uid.

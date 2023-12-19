@@ -148,6 +148,20 @@ button img {
   border-radius: 50%;
 }
 
+.image_E {
+  position: fixed;
+  display: flex;
+  top: 50vh;
+  right: 50vh;
+}
+
+.image_W {
+  position: fixed;
+  display: flex;
+  top: 50vh;
+  left: 12vh;
+}
+
 .image_S {
   position: fixed;
   display: flex;

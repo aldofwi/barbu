@@ -22,9 +22,8 @@ const values = {
 const Welcome = () => {
 
   const [isPartyFull, setIsPartyFull] = useState(false);
-  const [gameStarted, setGameStarted] = useState(true);
+  const [gameStarted, setGameStarted] = useState(false);
   
-
   const handlePlay = () => {
     setGameStarted(true);
   }

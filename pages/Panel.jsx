@@ -16,12 +16,12 @@ const contracts = [
 const Panel = ({ contractor }) => {
 
   const handleClick = (choice) => {
-
+    //update
     update(ref(database, 'game/current/'), {
       contract: choice,
       nbClic: 0,
       hasToPlay: contractor,
-      endOfContract: false,
+      endOfContract: false, 
     });
 
     alert(contractor+" choosed "+ choice);

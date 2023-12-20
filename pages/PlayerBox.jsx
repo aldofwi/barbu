@@ -6,33 +6,10 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import Hand from './Hand';
 
-const PlayerBox = ({ nameOfClass, id, player, contractor, board, clickBoard, hasToPlay, whoIsMaster, myCards }) => {
+const PlayerBox = ({ nameOfClass, id, player, board, hasToPlay, myCards, clickBoard, getBoxClass }) => {
 
   const { user } = useAuthContext();
   const myLoader = ({ src }) => { return player.picture };
-
-  const getClass = (oneID) => {
-    // HAS TO PLAY :  border border-2 rounded-full border-[red]
-    switch(oneID) {
-      case "SOUTH":
-        if(hasToPlay === oneID) return "image_S border border-2 rounded-full border-[red]"
-        else return "image_S";
-
-      case "NORTH": 
-      if(hasToPlay === oneID) return "image_N border border-2 rounded-full border-[red]"
-        else return "image_N";
-
-      case "EAST" : 
-      if(hasToPlay === oneID) return "image_E border border-2 rounded-full border-[red]"
-        else return "image_E";
-
-      case "WEST" : 
-      if(hasToPlay === oneID) return "image_W border border-2 rounded-full border-[red]"
-        else return "image_W";
-
-      default: break;
-    }
-  }
 
   const onPlayerClick = async (clickTab) => {
     // TODO PROD : ONLY MAIN PLAYER CAN CLICK !!! Update place later
@@ -43,7 +20,6 @@ const PlayerBox = ({ nameOfClass, id, player, contractor, board, clickBoard, has
     } 
     
     // Tableau de correspondance ex: "NORTH --> UID north"
-    
     // Save clicked card in Database table "Board".
     console.log("PLAYERBOX // ADD TO BOARD ", clickTab[1]);
     await set(ref(database, 'game/board/'+clickTab[0]), {
@@ -55,35 +31,64 @@ const PlayerBox = ({ nameOfClass, id, player, contractor, board, clickBoard, has
     console.log("PLAYERBOX // SPLICE // myCards");
     myCards.splice(myCards.indexOf(clickTab[1]), 1);
 
+    console.log("PLAYERBOX // onPlayerClick = ", board.length);
+    if(board.length < 3) {
+      console.log("PLAYERBOX // switch() from ", hasToPlay);
+
+      switch(hasToPlay) {
+        case "SOUTH": 
+        update(ref(database, 'game/current/'), {
+          hasToPlay: "WEST",
+        });
+        return;
+      case "WEST":  
+        update(ref(database, 'game/current/'), {
+          hasToPlay: "NORTH",
+        });
+        return;
+      case "NORTH":  
+        update(ref(database, 'game/current/'), {
+          hasToPlay: "EAST",
+        });
+        return;
+      case "EAST":
+        update(ref(database, 'game/current/'), {
+          hasToPlay: "SOUTH",
+        });
+        return;
+
+      default: break;
+      } 
+    }
+
     clickBoard();
 
     // Remove from HANDS in Database table "Hands".
     // TODO PROD : ONLY "SOUTH" updating with uid.
     switch(clickTab[0]) {
       case "SOUTH": 
-        update(ref(database, 'game/hands/'), {
+        await update(ref(database, 'game/hands/'), {
           SOUTH: myCards,
         });
         return;
       case "WEST":  
-        update(ref(database, 'game/hands/'), {
+        await update(ref(database, 'game/hands/'), {
           WEST: myCards,
         });
         return;
       case "NORTH":  
-        update(ref(database, 'game/hands/'), {
+        await update(ref(database, 'game/hands/'), {
           NORTH: myCards,
         });
         return;
       case "EAST":  
-        update(ref(database, 'game/hands/'), {
+        await update(ref(database, 'game/hands/'), {
           EAST: myCards,
         });
         return;
 
       default: break;
     }
-    
 
     // onValue needed in BoardGame (8 --> 7 --> 6) southHand.splice(indexOf())
     // alert('|| PlayerBox || '+clickTab[0]+' clicked on '+clickTab[1]);
@@ -93,7 +98,7 @@ const PlayerBox = ({ nameOfClass, id, player, contractor, board, clickBoard, has
 
     <div>
 
-        <div className={getClass(id)}>
+        <div className={getBoxClass(id)}>
           <Tooltip label={player?.username} bg='burlywood' textColor="black">
             <Image
                 className="profile_img"

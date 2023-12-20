@@ -70,7 +70,7 @@ const BoardGame = () => {
 
   const [displayLoading, setDisplayLoading] = useState(false);
   const [hasToPlay, setHasToPlay] = useState("");
-  const [master, setMaster] = useState("SOUTH");
+  const [master, setMaster] = useState("");
 
   const [contractsDone, setContractsDone] = useState([]);
   const [nbContractsDone, setNbContractsDone] = useState(0); // Max is 28.
@@ -102,12 +102,36 @@ const BoardGame = () => {
     return playaz;
   }
 
+  const getBoxClass = (oneID) => {
+    console.log("BOARDGAME // getClass ", hasToPlay);
+    // HAS TO PLAY :  border border-2 rounded-full border-[red]
+    switch(oneID) {
+      case "SOUTH":
+        if(hasToPlay === oneID) return "image_S border border-2 rounded-full border-[red]"
+        else return "image_S";
+
+      case "NORTH": 
+      if(hasToPlay === oneID) return "image_N border border-2 rounded-full border-[red]"
+        else return "image_N";
+
+      case "EAST" : 
+      if(hasToPlay === oneID) return "image_E border border-2 rounded-full border-[red]"
+        else return "image_E";
+
+      case "WEST" : 
+      if(hasToPlay === oneID) return "image_W border border-2 rounded-full border-[red]"
+        else return "image_W";
+
+      default: break;
+    }
+  }
+
   const cleanBoard = (diBoard) => {
 
     if(diBoard.length === 4) {
 
       setTimeout(() => {
-        setBoard([]);
+        // setBoard([]);
         remove(ref(database, 'game/board/'));
         console.log("BOARDGAME // CleanBoard() - Done");
       }, 1500);
@@ -120,60 +144,32 @@ const BoardGame = () => {
 
     if(daBoard.length === 4) {
 
-      let masterPlace = "";
+      let masterKey = 0;
+      let masterPlace = daBoard[masterKey].place;
 
       for(let i=1; i<daBoard.length; i++) {
-        if(cardValues.indexOf(daBoard[i].value.charAt(0)) > cardValues.indexOf(daBoard[i-1].value.charAt(0))) {
-          masterPlace = daBoard[i].place;
+        if(cardValues.indexOf(daBoard[i].value.charAt(0)) > cardValues.indexOf(daBoard[masterKey].value.charAt(0))) {
+          console.log("cardValues.indexOf(daBoard[i].value.charAt(0))", cardValues.indexOf(daBoard[i].value.charAt(0)), " > ", cardValues.indexOf(daBoard[masterKey].value.charAt(0)) ,"cardValues.indexOf(daBoard[masterKey].value.charAt(0))");
+          masterKey = i;
+          masterPlace = daBoard[masterKey].place;
         }
       }
       console.log("BOARDGAME // Who is The Master = ", masterPlace);
       // alert("BOARDGAME // Who is The Master = "+masterPlace);
 
       cleanBoard(daBoard);
-      setMaster(masterPlace);
-      setHasToPlay(masterPlace);
-      // setTimeout(() => { remove(ref(database, 'game/board/')) }, 2000);
-      // return masterPlace;
-    } // else return "";
+      //setMaster(masterPlace);
+      return(masterPlace);
+    }
   }
 
-  const onBoardClick = (oneBoard) => {
+  const onBoardClick = () => {
+    console.log("BOARDGAME // onBoardClick() // nbClic+1", board);
 
-    // alert("BOARDGAME // onBoardClick() = "+oneBoard.length);
-    console.log("BOARDGAME // onBoardClick() = ", oneBoard.length);
-
-    if(oneBoard.length < 3) {
-
-      switch(hasToPlay) {
-        case "SOUTH": 
-        update(ref(database, 'game/current/'), {
-          hasToPlay: "WEST",
-        });
-        return;
-      case "WEST":  
-        update(ref(database, 'game/current/'), {
-          hasToPlay: "NORTH",
-        });
-        return;
-      case "NORTH":  
-        update(ref(database, 'game/current/'), {
-          hasToPlay: "EAST",
-        });
-        return;
-      case "EAST":
-        update(ref(database, 'game/current/'), {
-          hasToPlay: "SOUTH",
-        });
-        return;
-
-      default: break;
-      } 
-    } 
-
+    update(ref(database, 'game/current/'), {
+      nbClic: nbClic+1,
+    });
   }
-
-  // CHANGE CONTRACTOR
 
   useEffect(() => {
     // TODO Prod change place to UID.
@@ -189,7 +185,6 @@ const BoardGame = () => {
           snapshot.forEach((doc) => {
             playz.push({...doc.val()});
           });
-          //console.log("playz : ", playz);
           setPlayers(sortPlayz(playz));
       }
     );
@@ -201,7 +196,7 @@ const BoardGame = () => {
           theBoard.push(doc.val());
         });
         setBoard(theBoard);
-        whoIsTheMaster(theBoard);
+        theBoard.length === 4 ? setHasToPlay(whoIsTheMaster(theBoard)) : console.log("BOARDGAME // onValue : Board(", theBoard.length, ")");
       }
     );
 
@@ -253,6 +248,12 @@ const BoardGame = () => {
       }
     );
 
+    onValue(
+      ref(database, 'game/current/nbClic' ), (snapshot) => {
+          setNbClic(snapshot.val());
+      }
+    );
+
   }, []);
 
   console.log("BOARDGAME _--------------------_");
@@ -275,9 +276,9 @@ const BoardGame = () => {
         player={players[3]}
         myCards={eastHand}
         hasToPlay={hasToPlay}
-        whoIsMaster={() => whoIsTheMaster()}
-        clickBoard={() => onBoardClick(board)}
         contractor={contractor}
+        getBoxClass={(e) => getBoxClass(e)}
+        clickBoard={() => onBoardClick()}
         nameOfClass={`${positions[3]}`}
       />
 
@@ -287,9 +288,9 @@ const BoardGame = () => {
         player={players[2]}
         myCards={northHand}
         hasToPlay={hasToPlay}
-        whoIsMaster={() => whoIsTheMaster()}
-        clickBoard={() => onBoardClick(board)}
         contractor={contractor}
+        getBoxClass={(e) => getBoxClass(e)}
+        clickBoard={() => onBoardClick()}
         nameOfClass={`${positions[2]}`}
       />
 
@@ -299,9 +300,9 @@ const BoardGame = () => {
         player={players[1]}
         myCards={westHand}
         hasToPlay={hasToPlay}
-        whoIsMaster={() => whoIsTheMaster()}
-        clickBoard={() => onBoardClick(board)}
         contractor={contractor}
+        getBoxClass={(e) => getBoxClass(e)}
+        clickBoard={() => onBoardClick()}
         nameOfClass={`${positions[1]}`}
       />
         
@@ -311,9 +312,9 @@ const BoardGame = () => {
         player={players[0]}
         myCards={southHand}
         hasToPlay={hasToPlay}
-        whoIsMaster={() => whoIsTheMaster()}
-        clickBoard={() => onBoardClick(board)}
         contractor={contractor}
+        getBoxClass={(e) => getBoxClass(e)}
+        clickBoard={() => onBoardClick()}
         nameOfClass={`${positions[0]}`}
       />
 

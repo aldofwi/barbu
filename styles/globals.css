@@ -232,24 +232,32 @@ button img {
   position: absolute;
   left: 470px;
   top: 250px;
+  width: auto;
+  height: auto;
 }
 
 .boardCW {
   position: absolute;
   left: 360px;
   top: 180px;
+  width: auto;
+  height: auto;
 }
 
 .boardCN {
   position: absolute;
   left: 470px;
   top: 100px;
+  width: auto;
+  height: auto;
 }
 
 .boardCE {
   position: absolute;
   left: 580px;
   top: 180px;
+  width: auto;
+  height: auto;
 }
 
 .choiceTitle {

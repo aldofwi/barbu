@@ -2,12 +2,8 @@ import { database } from '@/firebase/config';
 import { onValue, ref } from 'firebase/database';
 import React, { useEffect, useState } from 'react'
 import Card from './Card';
-import Hand from './Hand';
 
-const Board = ({ oneBoard }) => {
-  // Board
-  // const [board, setBoard] = useState([]); // myCards
-  //const [myCards, setMyCards] = useState(["8h", "th", "kh", "9h"]);
+const Board = ({ }) => {
 
   const [cardS, setCardS] = useState("");
   const [cardW, setCardW] = useState("");
@@ -78,8 +74,6 @@ const Board = ({ oneBoard }) => {
   
   });
 
-  // oneBoard.length !== 0 &&
-
   return (
 
     <div>
@@ -141,14 +135,3 @@ const Board = ({ oneBoard }) => {
 }
 
 export default Board;
-
-/*
-      <Card
-          value={myCards[0]}
-          flip={false}
-          key={i}
-          picked={others}
-          cardStyle={handStyle}
-          onClickCard={(c) => onClickHand(c) }
-      />
-*/

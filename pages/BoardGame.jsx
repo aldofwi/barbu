@@ -1,6 +1,8 @@
-import { database } from '@/firebase/config';
 import { onValue, ref, remove, set, update } from 'firebase/database';
+import { useAuthContext } from '@/context/AuthContext';
 import React, { useEffect, useState } from 'react';
+import { database } from '@/firebase/config';
+
 import ContractName from './ContractName';
 import PlayerBox from './PlayerBox';
 import Board from './Board';
@@ -56,7 +58,9 @@ const shuffle = (tab) => {
 
 const BoardGame = () => {
 
-  const [nbClic, setNbClic] = useState(0);
+  const { user } = useAuthContext();
+
+  const [myRank, setMyRank] = useState(0);
   const [newDeck, setNewDeck] = useState(shuffle(cards));
   const [eastHand,  setEastHand]  = useState(newDeck.slice(24, 32));
   const [northHand, setNorthHand] = useState(newDeck.slice(16, 24));
@@ -70,6 +74,7 @@ const BoardGame = () => {
 
   const [displayLoading, setDisplayLoading] = useState(false);
   const [hasToPlay, setHasToPlay] = useState("");
+  const [nbClic, setNbClic] = useState(0);
   const [master, setMaster] = useState("");
 
   const [contractsDone, setContractsDone] = useState([]);
@@ -92,6 +97,8 @@ const BoardGame = () => {
     let playaz = [];
     while(nb<5) {
       for(let i=0; i<playerz.length; i++) {
+
+        if(playerz[i].uid === user.uid) setMyRank(playerz[i].rank);
         
         if(playerz[i].rank === nb) {
           playaz.push(playerz[i]);
@@ -100,6 +107,90 @@ const BoardGame = () => {
       }
     }
     return playaz;
+  }
+
+  // TODO : sortPlayerz with UID 
+  const getPlaceByMyRank = (cardinal) => {
+
+    switch(myRank) {
+
+      case 1 : 
+        switch(cardinal) {
+          case "SOUTH"  : return 0;
+          case "WEST"   : return 1;
+          case "NORTH"  : return 2;
+          case "EAST"   : return 3;
+          default : break;
+        }
+      case 2 : 
+        switch(cardinal) {
+          case "SOUTH"  : return 1;
+          case "WEST"   : return 2;
+          case "NORTH"  : return 3;
+          case "EAST"   : return 0;
+          default : break;
+        }
+      case 3 : 
+        switch(cardinal) {
+          case "SOUTH"  : return 2;
+          case "WEST"   : return 3;
+          case "NORTH"  : return 0;
+          case "EAST"   : return 1;
+          default : break;
+        }
+      case 4 : 
+        switch(cardinal) {
+          case "SOUTH"  : return 3;
+          case "WEST"   : return 0;
+          case "NORTH"  : return 1;
+          case "EAST"   : return 2;
+          default : break;
+        }
+      default: break;
+    }
+  }
+
+  const getPlaceByUid = (id) => {
+    let thatRank = 0;
+
+    for (let i = 0; i < players.length; i++) {
+      if(players[i].uid === id) thatRank = players[i].rank;
+    }
+
+    if(thatRank === myRank) return "SOUTH";
+
+    switch(thatRank) {
+
+      case 1 : 
+        switch(myRank) {
+          case 2 : return "EAST";
+          case 3 : return "NORTH";
+          case 4 : return "WEST";
+          default: break;
+        }
+      case 2 : 
+        switch(myRank) {
+          case 1 : return "WEST";
+          case 3 : return "EAST";
+          case 4 : return "NORTH";
+          default: break;
+        }
+      case 3 : 
+        switch(myRank) {
+          case 1 : return "NORTH";
+          case 2 : return "WEST";
+          case 4 : return "EAST";
+          default: break;
+        }
+      case 4 : 
+        switch(myRank) {
+          case 1 : return "EAST";
+          case 2 : return "NORTH";
+          case 3 : return "WEST";
+          default: break;
+        }
+      default: break;
+    }
   }
 
   const getBoxClass = (oneID) => {
@@ -174,8 +265,9 @@ const BoardGame = () => {
   useEffect(() => {
     // TODO Prod change place to UID.
     onValue(
-      ref(database, 'game/contractor/name' ), (snapshot) => {
+      ref(database, 'game/contractor/uid' ), (snapshot) => {
         setContractor(snapshot.val());
+        nbClic === 0 ? setHasToPlay(getPlaceByUid(contractor)) : null;
       }
     );
       
@@ -257,6 +349,7 @@ const BoardGame = () => {
   }, []);
 
   console.log("BOARDGAME _--------------------_");
+  console.log("BOARDGAME // myRank = ", myRank);
   console.log("BOARDGAME // board = ", board.length);
   console.log("BOARDGAME // master = ", master);
   console.log("BOARDGAME // contract = ", contract);
@@ -273,7 +366,7 @@ const BoardGame = () => {
       <PlayerBox
         id="EAST"
         board={board}
-        player={players[3]}
+        player={players[getPlaceByMyRank("EAST")]}
         myCards={eastHand}
         hasToPlay={hasToPlay}
         contractor={contractor}
@@ -285,7 +378,7 @@ const BoardGame = () => {
       <PlayerBox
         id="NORTH"
         board={board}
-        player={players[2]}
+        player={players[getPlaceByMyRank("NORTH")]}
         myCards={northHand}
         hasToPlay={hasToPlay}
         contractor={contractor}
@@ -297,7 +390,7 @@ const BoardGame = () => {
       <PlayerBox
         id="WEST"
         board={board}
-        player={players[1]}
+        player={players[getPlaceByMyRank("WEST")]}
         myCards={westHand}
         hasToPlay={hasToPlay}
         contractor={contractor}
@@ -309,7 +402,7 @@ const BoardGame = () => {
       <PlayerBox
         id="SOUTH"
         board={board}
-        player={players[0]}
+        player={players[getPlaceByMyRank("SOUTH")]}
         myCards={southHand}
         hasToPlay={hasToPlay}
         contractor={contractor}
@@ -323,7 +416,7 @@ const BoardGame = () => {
               ?
 
             <Panel 
-              contractor={contractor}
+              contractor={getPlaceByUid(contractor)}
             />
             
               :

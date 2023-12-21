@@ -24,7 +24,7 @@ const Panel = ({ contractor }) => {
       endOfContract: false, 
     });
 
-    alert(contractor+" choosed "+ choice);
+    // alert(contractor+" choosed "+ choice);
 
   }
   

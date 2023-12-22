@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { onValue, ref, remove, set, update } from 'firebase/database';
 import { useAuthContext } from '@/context/AuthContext';
 import React, { useEffect, useState } from 'react';
@@ -194,7 +195,7 @@ const BoardGame = () => {
   }
 
   const getBoxClass = (oneID) => {
-    console.log("BOARDGAME // getClass ", hasToPlay);
+    // console.log("BOARDGAME // getClass ", hasToPlay);
     // HAS TO PLAY :  border border-2 rounded-full border-[red]
     switch(oneID) {
       case "SOUTH":
@@ -246,20 +247,16 @@ const BoardGame = () => {
         }
       }
       console.log("BOARDGAME // Who is The Master = ", masterPlace);
-      // alert("BOARDGAME // Who is The Master = "+masterPlace);
 
       cleanBoard(daBoard);
-      //setMaster(masterPlace);
+
       return(masterPlace);
     }
   }
 
-  const onBoardClick = () => {
-    console.log("BOARDGAME // onBoardClick() // nbClic+1", board);
+  const onClickBoard = () => {
+    console.log("BOARDGAME // onClickBoard() // board", board);
 
-    update(ref(database, 'game/current/'), {
-      nbClic: nbClic+1,
-    });
   }
 
   useEffect(() => {
@@ -288,6 +285,7 @@ const BoardGame = () => {
           theBoard.push(doc.val());
         });
         setBoard(theBoard);
+        setNbClic(nbClic+1);
         theBoard.length === 4 ? setHasToPlay(whoIsTheMaster(theBoard)) : console.log("BOARDGAME // onValue : Board(", theBoard.length, ")");
       }
     );
@@ -352,9 +350,10 @@ const BoardGame = () => {
   console.log("BOARDGAME // myRank = ", myRank);
   console.log("BOARDGAME // board = ", board.length);
   console.log("BOARDGAME // master = ", master);
+  console.log("BOARDGAME // nbClic = ", nbClic);
   console.log("BOARDGAME // contract = ", contract);
   console.log("BOARDGAME // hasToPlay = ", hasToPlay);
-  console.log("BOARDGAME // contractor = ", contractor);
+  console.log("BOARDGAME // contractor = ", getPlaceByUid(contractor));
   console.log("BOARDGAME // endOfContract = ", endOfContract);
   console.log("BOARDGAME -____________________-");
 
@@ -371,7 +370,7 @@ const BoardGame = () => {
         hasToPlay={hasToPlay}
         contractor={contractor}
         getBoxClass={(e) => getBoxClass(e)}
-        clickBoard={() => onBoardClick()}
+        clickBoard={(key) => onClickBoard(key)}
         nameOfClass={`${positions[3]}`}
       />
 
@@ -383,7 +382,7 @@ const BoardGame = () => {
         hasToPlay={hasToPlay}
         contractor={contractor}
         getBoxClass={(e) => getBoxClass(e)}
-        clickBoard={() => onBoardClick()}
+        clickBoard={(key) => onClickBoard(key)}
         nameOfClass={`${positions[2]}`}
       />
 
@@ -395,7 +394,7 @@ const BoardGame = () => {
         hasToPlay={hasToPlay}
         contractor={contractor}
         getBoxClass={(e) => getBoxClass(e)}
-        clickBoard={() => onBoardClick()}
+        clickBoard={(key) => onClickBoard(key)}
         nameOfClass={`${positions[1]}`}
       />
         
@@ -407,7 +406,7 @@ const BoardGame = () => {
         hasToPlay={hasToPlay}
         contractor={contractor}
         getBoxClass={(e) => getBoxClass(e)}
-        clickBoard={() => onBoardClick()}
+        clickBoard={(key) => onClickBoard(key)}
         nameOfClass={`${positions[0]}`}
       />
 

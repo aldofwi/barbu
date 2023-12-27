@@ -107,7 +107,7 @@ const PlayerBox = ({ nameOfClass, id, player, board, hasToPlay, myCards, clickBo
           <Hand
             handStyle={id}
             cards={myCards}
-            onClickHand={(playCard) => onPlayerClick(playCard)}
+            onClickHand={(playCard) => clickBoard(playCard)}
           />
         </div>
 

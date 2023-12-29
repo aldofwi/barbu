@@ -13,19 +13,16 @@ const contracts = [
   "Dernier Pli"
 ];
 
-const Panel = ({ contractor }) => {
+const Panel = ({ }) => {
 
   const handleClick = (choice) => {
 
     update(ref(database, 'game/current/'), {
       contract: choice,
-      nbClic: 0,
-      hasToPlay: contractor,
       endOfContract: false, 
     });
 
     // alert(contractor+" choosed "+ choice);
-
   }
   
   // If contract X is done -->

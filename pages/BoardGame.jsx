@@ -82,7 +82,7 @@ const BoardGame = () => {
   const [contractsDone, setContractsDone] = useState([]);
   const [nbContractsDone, setNbContractsDone] = useState(0); // Max is 28.
 
-  const [endOfContract, setEndOfContract] = useState(true);
+  const [endOfContract, setEndOfContract] = useState(false);
   const [endOfGame, setEndOfGame] = useState(false);
 
   // INIT Hands
@@ -92,6 +92,40 @@ const BoardGame = () => {
     NORTH:  northHand,
     EAST:   eastHand,   
   });
+
+  const initHands = () => {
+
+    update(ref(database, 'game/current/'), {
+      endOfContract: true,
+      hasToPlay: getPlaceByUid(contractor),
+      nbClic: 0,
+    });
+
+    // NEW
+    setNewDeck(shuffle(cards));
+    console.log(". initHands() //", newDeck);
+
+    // set(ref(database, 'game/hands/'), {
+    //   SOUTH:  newDeck.slice(0, 8),
+    //   WEST:   newDeck.slice(8, 16),
+    //   NORTH:  newDeck.slice(16, 24),
+    //   EAST:   newDeck.slice(24, 32),   
+    // });
+
+    // INIT Hands
+    // setEastHand(newDeck.slice(24, 32));
+    // setNorthHand(newDeck.slice(16, 24));
+    // setWestHand(newDeck.slice(8, 16));
+    // setSouthHand(newDeck.slice(0, 8));
+
+    // SEND Hands
+    // update(ref(database, 'game/hands/'), {
+    //   SOUTH:  southHand,
+    //   WEST:   westHand,
+    //   NORTH:  northHand,
+    //   EAST:   eastHand,   
+    // });
+  }
 
   const sortPlayz = (playerz) => {
 
@@ -302,8 +336,8 @@ const BoardGame = () => {
     // CHECK IF CARD IS THE GOOD ONE.
     if(board.length > 0 && (click[1].charAt(1) !== colorAsked)) {
       if(hasColorAsked(click[0])) {
-        alert("Wrong Color !"); 
-        return; 
+        alert("Wrong Color !");
+        return;
       }
     }
 
@@ -373,12 +407,23 @@ const BoardGame = () => {
       nbClic: nbClic+1 
     });
 
+    // MAYBE CHECK ON TEMPO PLI SIZE
     // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
-    if(!southHand && !westHand && !northHand && !eastHand) {
-      console.log("6. BOARDGAME // END OF CONTRACT ||");      
+    if(nbClic === 31) {
+      console.log("6. BOARDGAME // END OF CONTRACT ||");
+      alert('6. BOARDGAME // END OF CONTRACT ||');
+
+      initHands();
+    } 
+    
+    else {
+        console.log("6. BOARDGAME // END OR WHAT ?");
     }
 
   }
+
+  // Record each TempoPli[] and push it to westPlis or southPlis.
+  // Calculate each score with IT and push into westScore or SouthScore.
 
   useEffect(() => {
     // TODO Prod change place to UID.
@@ -452,11 +497,9 @@ const BoardGame = () => {
     onValue(
       ref(database, 'game/current/nbClic' ), (snapshot) => {
           setNbClic(snapshot.val());
-          if(snapshot.val() === 32) {
-            update(ref(database, 'game/current/'), { 
-              endOfContract: true,
-            });
-          }
+          // if(snapshot.val() === 32) {
+          //    initHands();
+          // }
       }
     );
 
@@ -542,11 +585,9 @@ const BoardGame = () => {
         {
           endOfContract 
               ?
-
             <Panel 
-              contractor={getPlaceByUid(contractor)}
+
             />
-            
               :
             <Board
               oneBoard={board}

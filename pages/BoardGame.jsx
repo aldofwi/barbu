@@ -345,6 +345,7 @@ const BoardGame = () => {
   const whoIsTheMaster = (daBoard) => {
     console.log("2.1 BOARDGAME // whoIsTheMaster() - Board = ", daBoard);
 
+    // ADD HANDLE CONTRACT
     if(daBoard.length === 4) {
 
       let masterKey = 0;

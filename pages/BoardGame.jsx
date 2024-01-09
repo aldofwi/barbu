@@ -112,9 +112,10 @@ const BoardGame = () => {
 
     update(ref(database, 'game/current/'), {
       endOfContract: true,
-      hasToPlay: getPlaceByUid(contractor),
       nbClic: 0,
     });
+
+    // hasToPlay: getPlaceByUid(contractor),
 
     console.log(". initHands() // update Current");
 
@@ -345,7 +346,7 @@ const BoardGame = () => {
   const whoIsTheMaster = (daBoard) => {
     console.log("2.1 BOARDGAME // whoIsTheMaster() - Board = ", daBoard);
 
-    // ADD HANDLE CONTRACT
+    // ADD HANDLE CONTRACT 
     if(daBoard.length === 4) {
 
       let masterKey = 0;

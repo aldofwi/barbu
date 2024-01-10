@@ -106,7 +106,13 @@ const BoardGame = () => {
 
   const initHands = () => {
 
-    // NEW
+    // NEW PLIS
+    setSouthPlis([]);
+    setWestPlis([]);
+    setNorthPlis([]);
+    setEastPlis([]);
+
+    // NEW DECK
     setNewDeck(shuffle(cards));
     console.log(". initHands() // newDeck :", newDeck);
 
@@ -116,7 +122,6 @@ const BoardGame = () => {
     });
 
     // hasToPlay: getPlaceByUid(contractor),
-
     console.log(". initHands() // update Current");
 
     // SEND Hands

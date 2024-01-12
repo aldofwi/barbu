@@ -114,7 +114,7 @@ const BoardGame = () => {
 
     // NEW DECK
     setNewDeck(shuffle(cards));
-    console.log(". initHands() // newDeck :", newDeck);
+    // console.log(". initHands() // newDeck :", newDeck);
 
     update(ref(database, 'game/current/'), {
       endOfContract: true,
@@ -122,7 +122,7 @@ const BoardGame = () => {
     });
 
     // hasToPlay: getPlaceByUid(contractor),
-    console.log(". initHands() // update Current");
+    // console.log(". initHands() // update Current");
 
     // SEND Hands
     set(ref(database, 'game/hands/'), {
@@ -132,7 +132,7 @@ const BoardGame = () => {
       EAST:   newDeck.slice(24, 32), 
     });
 
-    console.log(". initHands() // set Hands");
+    // console.log(". initHands() // set Hands");
   }
 
   const sortPlayz = (playerz) => {
@@ -319,22 +319,78 @@ const BoardGame = () => {
     }
   }
 
+  const presenceIn = (temp) => {
+
+    for (let i = 0; i < southPlis.length; i++) {
+      if(southPlis[i].includes(temp)) {
+        console.log("2.2 BOARDGAME // RecordBoard() - ", temp," IS IN SOUTH");
+        return true;
+      }
+    }
+    for (let i = 0; i < westPlis.length; i++) {
+      if(westPlis[i].includes(temp)) {
+        console.log("2.2 BOARDGAME // RecordBoard() - ", temp," IS IN WEST");
+        return true;
+      }
+    }
+    for (let i = 0; i < northPlis.length; i++) {
+      if(northPlis[i].includes(temp)) {
+        console.log("2.2 BOARDGAME // RecordBoard() - ", temp," IS IN NORTH");
+        return true;
+      }
+    }
+    for (let i = 0; i < eastPlis.length; i++) {
+      if(eastPlis[i].includes(temp)) {
+        console.log("2.2 BOARDGAME // RecordBoard() - ", temp," IS IN EAST");
+        return true;
+      }
+    }
+    return false;
+  }
+
   const recordBoard = (place, board) => {
-    console.log("2.2 BOARDGAME // whoIsTheMaster() - RecordBoard = ", board);
+
+    console.log("BOARDGAME _--------------------------------------------_");
+    console.log("2.2 BOARDGAME // RecordBoard = ", board, " - place = ", place);
+
+    if(place === "") return;
 
     let tempoPli = [];
 
-    for (let i=0; i<board.length; i++) {
+    for(let i=0; i<board.length; i++) {
       tempoPli.push(board[i].value);
     }
 
-    switch(place) {
-      case "SOUTH" : southPlis.push(tempoPli); break;
-      case "WEST"  : westPlis.push(tempoPli); break;
-      case "NORTH" : northPlis.push(tempoPli); break;
-      case "EAST"  : eastPlis.push(tempoPli); break;
-      default : break;
+    console.log("2.2 BOARDGAME // RecordBoard() - tempoPli = ", tempoPli);
+    console.log("2.2 BOARDGAME // RecordBoard(before) - southPlis : ", southPlis);
+    console.log("2.2 BOARDGAME // RecordBoard(before) - westPlis : ", westPlis);
+    console.log("2.2 BOARDGAME // RecordBoard(before) - northPlis : ", northPlis);
+    console.log("2.2 BOARDGAME // RecordBoard(before) - eastPlis : ", eastPlis);
+
+    if(!presenceIn(tempoPli[0])) {
+
+      switch(place) {
+        case "SOUTH" : 
+          southPlis.push(tempoPli);
+          break;
+
+        case "WEST" : 
+          westPlis.push(tempoPli);
+          break;
+
+        case "NORTH" : 
+          northPlis.push(tempoPli);
+          break;
+
+        case "EAST" : 
+          eastPlis.push(tempoPli);
+          break;
+        
+        default : break;
+      }
     }
+
+    console.log("BOARDGAME _--------------------------------------------_");
 
     // EXCEPT BARBU CASE
     if((southPlis.length + westPlis.length + northPlis.length + eastPlis.length) === 8) {
@@ -342,17 +398,18 @@ const BoardGame = () => {
       //cleanScoreAndPlis();
     }
 
-    console.log("2.2 BOARDGAME // RecordBoard() - southPlis : ", southPlis);
-    console.log("2.2 BOARDGAME // RecordBoard() - westPlis : ", westPlis);
-    console.log("2.2 BOARDGAME // RecordBoard() - northPlis : ", northPlis);
-    console.log("2.2 BOARDGAME // RecordBoard() - eastPlis : ", eastPlis);
+    console.log("2.2 BOARDGAME // RecordBoard(after) - southPlis : ", southPlis);
+    console.log("2.2 BOARDGAME // RecordBoard(after) - westPlis : ", westPlis);
+    console.log("2.2 BOARDGAME // RecordBoard(after) - northPlis : ", northPlis);
+    console.log("2.2 BOARDGAME // RecordBoard(after) - eastPlis : ", eastPlis);
+
   }
 
   const whoIsTheMaster = (daBoard) => {
     console.log("2.1 BOARDGAME // whoIsTheMaster() - Board = ", daBoard);
 
     // ADD HANDLE CONTRACT 
-    if(daBoard.length === 4) {
+    if(daBoard.length === 4 && colorAsked !== "") {
 
       let masterKey = 0;
       let tempoMaster = [];
@@ -364,11 +421,11 @@ const BoardGame = () => {
         }
       }
       if(tempoMaster.length>0) masterPlace = tempoMaster[masterKey].place;
-      console.log("2.1 BOARDGAME // whoIsTheMaster() - tempoMaster = ", tempoMaster);
+      console.log("2.1 BOARDGAME // whoIsTheMaster() - masterPlace = ", masterPlace);
 
       for(let i=1; i<tempoMaster.length; i++) {
         if(cardValues.indexOf(tempoMaster[i].value.charAt(0)) > cardValues.indexOf(tempoMaster[masterKey].value.charAt(0))) {
-          console.log("cardValues.indexOf(tempoMaster[i].value.charAt(0))", cardValues.indexOf(tempoMaster[i].value.charAt(0)), " > ", cardValues.indexOf(tempoMaster[masterKey].value.charAt(0)) ,"cardValues.indexOf(tempoMaster[masterKey].value.charAt(0))");
+          // console.log("cardValues.indexOf(tempoMaster[i].value.charAt(0))", cardValues.indexOf(tempoMaster[i].value.charAt(0)), " > ", cardValues.indexOf(tempoMaster[masterKey].value.charAt(0)) ,"cardValues.indexOf(tempoMaster[masterKey].value.charAt(0))");
           masterKey = i;
           masterPlace = tempoMaster[masterKey].place;
         }
@@ -377,12 +434,11 @@ const BoardGame = () => {
       update(ref(database, 'game/current/'), { 
         hasToPlay: masterPlace, 
       });
-      console.log("2.1 BOARDGAME // Record Plis = ", masterPlace);
 
       // TRY INSIDE ON VALUE BOARD
       recordBoard(masterPlace, daBoard);
 
-      console.log("2.1 BOARDGAME // Master = ", master);
+      console.log("2.1 BOARDGAME // whoIsTheMaster() = ", masterPlace);
       // console.log("2.1 BOARDGAME // HasToPlay = ", hasToPlay);
       
       return(masterPlace);
@@ -522,7 +578,7 @@ const BoardGame = () => {
         if(theBoard.length === 4) {
           setHasToPlay(whoIsTheMaster(theBoard));
           cleanBoard(theBoard);
-        } else console.log("BOARDGAME // onValue : Board(", theBoard.length, ")");
+        } else console.log("BOARDGAME // onValue : Board(", theBoard.length, ") // theBoard :", theBoard);
       }
     );
 

@@ -119,18 +119,18 @@ const BoardGame = () => {
   //   dp: false,
   // });
 
-    // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2'), {
-    //   score: 0,
-    // });
-    // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb3'), {
-    //   score: 0,
-    // });
-    // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb4'), {
-    //   score: 0,
-    // });
-    // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb5'), {
-    //   score: 0,
-    // });
+  // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2'), {
+  //   score: 0,
+  // });
+  // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb3'), {
+  //   score: 0,
+  // });
+  // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb4'), {
+  //   score: 0,
+  // });
+  // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb5'), {
+  //   score: 0,
+  // });
 
   const initHands = () => {
 
@@ -366,19 +366,45 @@ const BoardGame = () => {
     return false;
   }
 
-  const handleRata = () => {
+  const handleRata = (player) => {
 
     if(!contractsDone.includes("RATA")) {
 
       contractsDone.push("RATA");
-      //setContractsDone(contractsDone);
-
       nbContractsDone = contractsDone.length;
-      //setNbContractsDone(nbContractsDone);
 
-      /**
-       * TODO 
-       */
+      // 1. Handle Barbu
+      southScore = getBarbu(southPlis);
+      westScore  = getBarbu(westPlis);
+      northScore = getBarbu(northPlis);
+      eastScore  = getBarbu(eastPlis);
+
+      // 2. Handle Dames
+      southScore += getNbQueens(southPlis) * -10;
+      westScore  += getNbQueens(westPlis)  * -10;
+      northScore += getNbQueens(northPlis) * -10;
+      eastScore  += getNbQueens(eastPlis)  * -10;
+
+      // 3. Handle Coeurs
+      southScore += getNbHearts(southPlis) * -5;
+      westScore  += getNbHearts(westPlis)  * -5;
+      northScore += getNbHearts(northPlis) * -5;
+      eastScore  += getNbHearts(eastPlis)  * -5;
+
+      // 4. Handle Plis
+      southScore += southPlis.length * -5;
+      westScore  += westPlis.length  * -5;
+      northScore += northPlis.length * -5;
+      eastScore  += eastPlis.length  * -5;
+
+      // 5. Handle DP
+      switch(player) {
+        case "SOUTH" : southScore += -25; break;
+        case "WEST"  : westScore  += -25; break;
+        case "NORTH" : northScore += -25; break;
+        case "EAST"  : eastScore  += -25; break;
+        default : break;
+      }
 
       console.log("2.2 BOARDGAME // handleRata() - southScore : ", southScore);
       console.log("2.2 BOARDGAME // handleRata() - westScore : ", westScore);
@@ -386,10 +412,10 @@ const BoardGame = () => {
       console.log("2.2 BOARDGAME // handleRata() - eastScore : ", eastScore);
   
       // UPDATE GLOBAL
-      southGlobalScore += southScore; setSouthGlobalScore(southGlobalScore);
-      westGlobalScore += westScore;   setWestGlobalScore(westGlobalScore);
-      northGlobalScore += northScore; setNorthGlobalScore(northGlobalScore);
-      eastGlobalScore += eastScore;   setEastGlobalScore(eastGlobalScore);
+      southGlobalScore += southScore; // setSouthGlobalScore(southGlobalScore);
+      westGlobalScore += westScore;   // setWestGlobalScore(westGlobalScore);
+      northGlobalScore += northScore; // setNorthGlobalScore(northGlobalScore);
+      eastGlobalScore += eastScore;   // setEastGlobalScore(eastGlobalScore);
 
       console.log("2.2 BOARDGAME // handleRata() - southGlobalScore : ", southGlobalScore);
       console.log("2.2 BOARDGAME // handleRata() - westGlobalScore : ", westGlobalScore);
@@ -648,6 +674,7 @@ const BoardGame = () => {
     if((c === "Barbu" && presenceIn('kh')) || ((nbClic === 31) && (allPlis === 8))) {
       
       switch(c) {
+        case "RATA"        : handleRata(p);   break;
         case "Barbu"       : handleBarbu();  break;
         case "Coeurs"      : handleHearts(); break;
         case "Dames"       : handleQueens(); break;

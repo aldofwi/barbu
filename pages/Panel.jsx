@@ -26,7 +26,7 @@ const Panel = ({ }) => {
   const [coeursDone, setCoeursDone] = useState(false);
   const [damesDone, setDamesDone]   = useState(false);
   const [plisDone, setPlisDone]     = useState(false);
-  const [dpDone, setDpDone]         = useState(true);
+  const [dpDone, setDpDone]         = useState(false);
 
   const handleClick = (choice) => {
 
@@ -41,43 +41,43 @@ const Panel = ({ }) => {
   useEffect(() => {
     
     onValue(
-      ref(database, 'game/contractsDone/RATA' ), (snapshot) => {
+      ref(database, 'game/contracts/rata' ), (snapshot) => {
           setRATADone(snapshot.val());
       }
     );
 
     onValue(
-      ref(database, 'game/contractsDone/Barbu' ), (snapshot) => {
+      ref(database, 'game/contracts/barbu' ), (snapshot) => {
           setBarbuDone(snapshot.val());
       }
     );
 
     onValue(
-      ref(database, 'game/contractsDone/Domino' ), (snapshot) => {
+      ref(database, 'game/contracts/domino' ), (snapshot) => {
           setDominoDone(snapshot.val());
       }
     );
 
     onValue(
-      ref(database, 'game/contractsDone/Coeurs' ), (snapshot) => {
+      ref(database, 'game/contracts/coeurs' ), (snapshot) => {
           setCoeursDone(snapshot.val());
       }
     );
 
     onValue(
-      ref(database, 'game/contractsDone/Dames' ), (snapshot) => {
+      ref(database, 'game/contracts/dames' ), (snapshot) => {
           setDamesDone(snapshot.val());
       }
     );
 
     onValue(
-      ref(database, 'game/contractsDone/Plis' ), (snapshot) => {
+      ref(database, 'game/contracts/plis' ), (snapshot) => {
           setPlisDone(snapshot.val());
       }
     );
 
     onValue(
-      ref(database, 'game/contractsDone/DP' ), (snapshot) => {
+      ref(database, 'game/contracts/dp' ), (snapshot) => {
           setDpDone(snapshot.val());
       }
     );

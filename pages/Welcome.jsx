@@ -1,12 +1,12 @@
+import { onValue, ref, remove, set, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import LoadCard from '/public/images/loadCard.png';
-import { Button } from '@chakra-ui/react';
 import { IoPlayCircle } from 'react-icons/io5';
-import FirstBoard from './FirstBoard';
-import { onValue, ref } from 'firebase/database';
 import { database } from '@/firebase/config';
+import { Button } from '@chakra-ui/react';
+
+import LoadCard from '/public/images/loadCard.png';
 import BoardGame from './BoardGame';
+import Image from 'next/image';
 
 const values = {
   7: 0,
@@ -25,6 +25,38 @@ const Welcome = () => {
   const [gameStarted, setGameStarted] = useState(false);
   
   const handlePlay = () => {
+
+    set(ref(database, 'game/contracts'), {
+      rata: false,
+      barbu: false,
+      domino: false,
+      coeurs: false,
+      dames: false,
+      plis: false,
+      dp: false,
+    });
+
+    update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2'), {
+      score: 0,
+    });
+    update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb3'), {
+      score: 0,
+    });
+    update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb4'), {
+      score: 0,
+    });
+    update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb5'), {
+      score: 0,
+    });
+
+    update(ref(database, 'game/current/'), {
+      colorAsk: "",
+      contract: "",
+      endOfContract: true,
+      hasToPlay: "SOUTH",
+      nbClic: 0,
+    });
+
     setGameStarted(true);
   }
 

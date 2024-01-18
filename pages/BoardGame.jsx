@@ -109,28 +109,6 @@ const BoardGame = () => {
     EAST:   eastHand,   
   });
 
-  // set(ref(database, 'game/contracts'), {
-  //   rata: false,
-  //   barbu: false,
-  //   domino: false,
-  //   coeurs: false,
-  //   dames: false,
-  //   plis: false,
-  //   dp: false,
-  // });
-
-  // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2'), {
-  //   score: 0,
-  // });
-  // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb3'), {
-  //   score: 0,
-  // });
-  // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb4'), {
-  //   score: 0,
-  // });
-  // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb5'), {
-  //   score: 0,
-  // });
 
   const initHands = () => {
 
@@ -148,15 +126,13 @@ const BoardGame = () => {
 
     // NEW DECK
     setNewDeck(shuffle(cards));
-    // console.log(". initHands() // newDeck :", newDeck);
 
     update(ref(database, 'game/current/'), {
+      colorAsk: "",
+      contract: "",
       endOfContract: true,
       nbClic: 0,
     });
-
-    // hasToPlay: getPlaceByUid(contractor),
-    // console.log(". initHands() // update Current");
 
     // SEND Hands
     set(ref(database, 'game/hands/'), {
@@ -166,7 +142,6 @@ const BoardGame = () => {
       EAST:   newDeck.slice(24, 32), 
     });
 
-    // console.log(". initHands() // set Hands");
   }
 
   const sortPlayz = (playerz) => {
@@ -295,6 +270,16 @@ const BoardGame = () => {
     }
   }
 
+  const getRata = () => {
+
+         if (southPlis.length === 8) {southScore = 185; return true;}
+    else if (westPlis.length  === 8) {westScore = 185;  return true;}
+    else if (northPlis.length === 8) {northScore = 185; return true;}
+    else if (eastPlis.length  === 8) {eastScore = 185;  return true;}
+    else return false;
+
+  }
+
   const getBarbu = (plis) => {
     
     for (let i = 0; i < plis.length; i++) {
@@ -373,37 +358,40 @@ const BoardGame = () => {
       contractsDone.push("RATA");
       nbContractsDone = contractsDone.length;
 
-      // 1. Handle Barbu
-      southScore = getBarbu(southPlis);
-      westScore  = getBarbu(westPlis);
-      northScore = getBarbu(northPlis);
-      eastScore  = getBarbu(eastPlis);
+      if(!getRata()) {
 
-      // 2. Handle Dames
-      southScore += getNbQueens(southPlis) * -10;
-      westScore  += getNbQueens(westPlis)  * -10;
-      northScore += getNbQueens(northPlis) * -10;
-      eastScore  += getNbQueens(eastPlis)  * -10;
+        // 1. Handle Barbu
+        southScore = getBarbu(southPlis);
+        westScore  = getBarbu(westPlis);
+        northScore = getBarbu(northPlis);
+        eastScore  = getBarbu(eastPlis);
 
-      // 3. Handle Coeurs
-      southScore += getNbHearts(southPlis) * -5;
-      westScore  += getNbHearts(westPlis)  * -5;
-      northScore += getNbHearts(northPlis) * -5;
-      eastScore  += getNbHearts(eastPlis)  * -5;
+        // 2. Handle Dames
+        southScore += getNbQueens(southPlis) * -10;
+        westScore  += getNbQueens(westPlis)  * -10;
+        northScore += getNbQueens(northPlis) * -10;
+        eastScore  += getNbQueens(eastPlis)  * -10;
 
-      // 4. Handle Plis
-      southScore += southPlis.length * -5;
-      westScore  += westPlis.length  * -5;
-      northScore += northPlis.length * -5;
-      eastScore  += eastPlis.length  * -5;
+        // 3. Handle Coeurs
+        southScore += getNbHearts(southPlis) * -5;
+        westScore  += getNbHearts(westPlis)  * -5;
+        northScore += getNbHearts(northPlis) * -5;
+        eastScore  += getNbHearts(eastPlis)  * -5;
 
-      // 5. Handle DP
-      switch(player) {
-        case "SOUTH" : southScore += -25; break;
-        case "WEST"  : westScore  += -25; break;
-        case "NORTH" : northScore += -25; break;
-        case "EAST"  : eastScore  += -25; break;
-        default : break;
+        // 4. Handle Plis
+        southScore += southPlis.length * -5;
+        westScore  += westPlis.length  * -5;
+        northScore += northPlis.length * -5;
+        eastScore  += eastPlis.length  * -5;
+
+        // 5. Handle DP
+        switch(player) {
+          case "SOUTH" : southScore += -25; break;
+          case "WEST"  : westScore  += -25; break;
+          case "NORTH" : northScore += -25; break;
+          case "EAST"  : eastScore  += -25; break;
+          default : break;
+        }
       }
 
       console.log("2.2 BOARDGAME // handleRata() - southScore : ", southScore);
@@ -787,29 +775,6 @@ const BoardGame = () => {
     console.log(" ----------------------------------------------> RECORD CONTRACT & SCORES OUT");
   }
 
-  const recordScore = () => {
-    console.log(" -____________________________________________-> RECORD SCORES IN");
-
-      // UPDATE PLAYER1 SCORE
-      update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2'), {
-        score: southGlobalScore,
-      });
-      // UPDATE PLAYER2 SCORE
-      update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb3'), {
-        score: westGlobalScore,
-      });
-      // UPDATE PLAYER3 SCORE
-      update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb4'), {
-        score: northGlobalScore,
-      });
-      // UPDATE PLAYER4 SCORE
-      update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb5'), {
-        score: eastGlobalScore,
-      });
-      
-    console.log(" -____________________________________________-> RECORD SCORES OUT");
-  }
-
   const recordBoard = (place, board) => {
 
     if(place === "") return;
@@ -844,30 +809,38 @@ const BoardGame = () => {
         
         default : break;
       }
-
-      // if(tempoPli.includes('kh') && contract === 'Barbu') {
-      //   nbClic = 31;
-
-      //   update(ref(database, 'game/current/'), { 
-      //     nbClic: nbClic 
-      //   });
-      // }
-
     }
     console.log("recordBoard -__________________________________________-");
   }
 
-  const whoIsTheMaster = (daBoard) => {
-    console.log("2.1 BOARDGAME // whoIsTheMaster() // daBoard = ", daBoard);
+  const verifyColor = (boarder) => {
 
-    if(daBoard.length === 4 && colorAsked !== "") {
+    for (let i = 0; i < boarder.length; i++) {
+      if(boarder[i].rank === 0) return boarder[i].value.charAt(1);
+    }
+
+  }
+
+  const whoIsTheMaster = (daBoard) => {
+
+    let color = verifyColor(daBoard);
+    console.log("2.1 BOARDGAME // whoIsTheMaster() // daBoard = ", daBoard, " // color = ", color);
+
+    /**
+     * 
+     * TODO : BUG Répartition des plis 
+     * Check on Color Asked -->> PUT VALUE ON BASE.
+     * 
+     */
+
+    if(daBoard.length === 4 && color !== "") {
 
       let masterKey = 0;
       let tempoMaster = [];
       let masterPlace = "";
 
       for(let j=0; j<daBoard.length; j++) {
-        if(daBoard[j].value.charAt(1) === colorAsked) {
+        if(daBoard[j].value.charAt(1) === color) {
           tempoMaster.push(daBoard[j]);
         }
       }
@@ -876,35 +849,53 @@ const BoardGame = () => {
 
       for(let i=1; i<tempoMaster.length; i++) {
         if(cardValues.indexOf(tempoMaster[i].value.charAt(0)) > cardValues.indexOf(tempoMaster[masterKey].value.charAt(0))) {
-          console.log("cardValues.indexOf(tempoMaster[i].value.charAt(0))", cardValues.indexOf(tempoMaster[i].value.charAt(0)), " > ", cardValues.indexOf(tempoMaster[masterKey].value.charAt(0)) ,"cardValues.indexOf(tempoMaster[masterKey].value.charAt(0))");
+          // console.log("cardValues.indexOf(tempoMaster[i].value.charAt(0))", cardValues.indexOf(tempoMaster[i].value.charAt(0)), " > ", cardValues.indexOf(tempoMaster[masterKey].value.charAt(0)) ,"cardValues.indexOf(tempoMaster[masterKey].value.charAt(0))");
           masterKey = i;
           masterPlace = tempoMaster[masterKey].place;
         }
       }
-      setMaster(masterPlace);
 
-      update(ref(database, 'game/current/'), { 
-        hasToPlay: masterPlace, 
-      });
+      if(masterPlace !== "") {
 
-      // RECORD EACH PLI FOR EACH PLAYER.
-      recordBoard(masterPlace, daBoard);
+        setMaster(masterPlace);
 
-      // CHECK EVOLUTION OF CONTRACT.
-      masterPlace = handleContract(masterPlace, contract);
+        update(ref(database, 'game/current/'), { 
+          hasToPlay: masterPlace, 
+        });
 
-      // RECORD GLOBAL ON BASE.
-      // recordScore();
+        // RECORD EACH PLI FOR EACH PLAYER.
+        recordBoard(masterPlace, daBoard);
 
-      console.log("2.1 BOARDGAME // whoIsTheMaster() = ", masterPlace, " // END");
-      
+        // CHECK EVOLUTION OF CONTRACT.
+        masterPlace = handleContract(masterPlace, contract);
+
+        console.log("2.2 BOARDGAME // handleContract() - southPlis : ", southPlis);
+        console.log("2.2 BOARDGAME // handleContract() - westPlis : ", westPlis);
+        console.log("2.2 BOARDGAME // handleContract() - northPlis : ", northPlis);
+        console.log("2.2 BOARDGAME // handleContract() - eastPlis : ", eastPlis);
+
+        console.log("2.1 BOARDGAME // whoIsTheMaster() = ", masterPlace, " // END");
+
+        // alert("southPlis : "+southPlis.length+"\n || westPlis : "+westPlis.length+"\n || northPlis : "+northPlis.length+"\n || eastPlis : "+ eastPlis.length);
+      }
+
       return(masterPlace);
     }
   }
 
   const onClickBoard = async (click) => {
-    console.log("1. BOARDGAME // onClickBoard(", click,") // board", board);
-    board.length === 0 ? setColorAsked(click[1].charAt(1)) : null;
+    console.log("1. BOARDGAME // onClickBoard(", click,") // board : ", board, " // colorAsked = ", colorAsked);
+
+    if(board.length === 0) {
+      update(ref(database, 'game/current/'), { 
+        colorAsk: click[1].charAt(1)
+      });
+
+      // colorAsked = click[1].charAt(1);
+      // setColorAsked(colorAsked);
+      // setPlaceAsked(click[0]);
+      console.log("1.1 BOARDGAME // onClickBoard // Updated colorAsked !");
+    }
 
     // CHECK IF PLAYER HAS TO PLAY.
     if(click[0] !== hasToPlay) { 
@@ -921,13 +912,14 @@ const BoardGame = () => {
     }
 
     // Save clicked card in Database table "Board".
-    console.log("2. BOARDGAME // ", click[0]," ADDED ", click[1]," TO BOARD.");
+    console.log("2. BOARDGAME // onClickBoard // ", click[0]," ADDED ", click[1]," TO BOARD.");
     await set(ref(database, 'game/board/'+click[0]), {
       value: click[1],
       place: click[0],
+      rank: board.length,
     });
         
-    console.log("3. BOARDGAME // BOARD (", board.length ,") // switch() from ", hasToPlay);
+    console.log("3. BOARDGAME // onClickBoard // BOARD (", board.length ,") // switch() from ", hasToPlay);
     if(board.length < 3) {
       switch(hasToPlay) {
         case "SOUTH": 
@@ -952,7 +944,7 @@ const BoardGame = () => {
 
     // Remove from HANDS in Database table "Hands".
     // TODO PROD : ONLY "SOUTH" updating with uid.
-    console.log("4. BOARDGAME // SPLICE // UPDATE HANDS");
+    console.log("4. BOARDGAME // onClickBoard // SPLICE // UPDATE HANDS");
     switch(click[0]) {
       case "SOUTH":
         setSouthHand(southHand.splice(southHand.indexOf(click[1]), 1));
@@ -989,8 +981,8 @@ const BoardGame = () => {
     // MAYBE CHECK ON TEMPO PLI SIZE
     // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
     if(nbClic === 31) {
-      console.log("6. BOARDGAME // END OF CONTRACT ||");
-      alert('6. BOARDGAME // END OF CONTRACT || ');
+      console.log("6. BOARDGAME // onClickBoard // END OF CONTRACT ||");
+      alert('6. BOARDGAME // onClickBoard // END OF CONTRACT || ');
 
       initHands();
     }
@@ -1006,11 +998,17 @@ const BoardGame = () => {
     );
 
     onValue(
+      ref(database, 'game/current/colorAsk' ), (snapshot) => {
+          setColorAsked(snapshot.val());
+      }
+    );
+
+    onValue(
       ref(database, 'game/current/hasToPlay' ), (snapshot) => {
           setHasToPlay(snapshot.val());
       }
     );
-      
+
     onValue(
       ref(database, 'game/players/' ), (snapshot) => {
         let playz = [];
@@ -1028,7 +1026,10 @@ const BoardGame = () => {
           theBoard.push(doc.val());
         });
         setBoard(theBoard);
-        if(theBoard.length === 4) {
+
+        //alert('colorAsked : '+colorAsked);
+
+        if(theBoard.length === 4 && colorAsked !== "") {
           setHasToPlay(whoIsTheMaster(theBoard));
           cleanBoard(theBoard);
         }
@@ -1101,7 +1102,7 @@ const BoardGame = () => {
       }
     );
 
-  }, [hasToPlay]);
+  }, [hasToPlay, colorAsked]);
 
   console.log("BOARDGAME _--------------------_");
   console.log("BOARDGAME // myRank = ", myRank);

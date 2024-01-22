@@ -260,6 +260,36 @@ button img {
   height: auto;
 }
 
+.class_Spides {
+  position: relative;
+  top: 120px;
+  width: auto;
+  height: auto;
+}
+
+.class_Hearts {
+  position: relative;
+  top: 140px;
+  width: auto;
+  height: auto;
+}
+
+.class_Cloves {
+  position: relative;
+  top: 160px;
+  width: auto;
+  height: auto;
+}
+
+.class_Diamonds {
+  position: relative;
+  top: 180px;
+  width: auto;
+  height: auto;
+}
+
+
+
 .choiceTitle {
   position: relative;
   align-content: center;

@@ -1,8 +1,8 @@
 import { useAuthContext } from '@/context/AuthContext';
-import React from 'react';
 import { Tooltip } from '@chakra-ui/react';
 import Image from 'next/image';
 import Hand from './Hand';
+import React from 'react';
 
 const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }) => {
 

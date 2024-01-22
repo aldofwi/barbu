@@ -19,6 +19,18 @@ const getNameOfClass = (style) => {
         case "EAST":
             return "relative px-50 top-40 -left-2";
 
+        case "SPIDES":
+            return "relative flex px-10 -left-20 -top-60";
+        
+        case "HEARTS":
+            return "relative flex px-10 -left-20 -top-60";
+
+        case "CLOVES":
+            return "relative flex px-10 -left-20 -top-60";
+        
+        case "DIAMONDS":
+            return "relative flex px-10 -left-20 -top-60";
+
         case "board":
             return "relative px-50 justify-center";
     
@@ -46,7 +58,6 @@ const getCardPos = (iCard) => {
             return "relative";
     }
 }
-
 
 const Hand = ({ handStyle, cards, others, onClickHand }) => {
 

@@ -8,6 +8,7 @@ import ContractName from './ContractName';
 import PlayerBox from './PlayerBox';
 import Board from './Board';
 import Panel from './Panel';
+import BoardDomino from './BoardDomino';
 
 const cardValues = ["7", "8", "9", "t", "j", "q", "k", "a"];
 
@@ -69,6 +70,11 @@ const BoardGame = () => {
   const [westHand,  setWestHand]  = useState(newDeck.slice(8, 16));
   const [southHand, setSouthHand] = useState(newDeck.slice(0, 8));
 
+  const [handSpides,   setHandSpides]   = useState([]);
+  const [handHearts,   setHandHearts]   = useState([]);
+  const [handCloves,   setHandCloves]   = useState([]);
+  const [handDiamonds, setHandDiamonds] = useState([]);
+
   const [southPlis, setSouthPlis] = useState([]);
   const [westPlis,  setWestPlis]  = useState([]);
   const [northPlis, setNorthPlis] = useState([]);
@@ -85,15 +91,19 @@ const BoardGame = () => {
   let [eastGlobalScore,  setEastGlobalScore]  = useState(0);
 
   const [board, setBoard] = useState([]);
+
   const [players, setPlayers] = useState([]);
   const [contract, setContract] = useState("");
   const [contractor, setContractor] = useState("");
 
+  const [dominoDone, setDominoDone] = useState([]);
   const [displayLoading, setDisplayLoading] = useState(false);
+
   const [hasToPlay, setHasToPlay] = useState("");
   const [colorAsked, setColorAsked] = useState("");
-  let [nbClic, setNbClic] = useState(0);
+
   const [master, setMaster] = useState("");
+  let [nbClic, setNbClic] = useState(0);
 
   let [contractsDone, setContractsDone] = useState([]);
   let [nbContractsDone, setNbContractsDone] = useState(0); // Max is 28.
@@ -109,7 +119,6 @@ const BoardGame = () => {
     EAST:   eastHand,   
   });
 
-
   const initHands = () => {
 
     // NEW PLIS
@@ -117,6 +126,12 @@ const BoardGame = () => {
     setWestPlis([]);
     setNorthPlis([]);
     setEastPlis([]);
+
+    // NEW DOM HANDS
+    setHandSpides([]);
+    setHandHearts([]);
+    setHandCloves([]);
+    setHandDiamonds([]);
 
     // NEW SCORE
     setSouthScore(0);
@@ -126,6 +141,11 @@ const BoardGame = () => {
 
     // NEW DECK
     setNewDeck(shuffle(cards));
+    console.log("New Deck = ", newDeck);
+    console.log("New Deck S = ", newDeck.slice(0, 8));
+    console.log("New Deck W = ", newDeck.slice(8, 16));
+    console.log("New Deck N = ", newDeck.slice(16, 24));
+    console.log("New Deck E = ", newDeck.slice(24, 32));
 
     update(ref(database, 'game/current/'), {
       colorAsk: "",
@@ -160,6 +180,42 @@ const BoardGame = () => {
       }
     }
     return playaz;
+  }
+
+  const sortHand = (hand) => {
+
+    if(!hand) return [];
+
+    let old_hand = hand;
+    let new_hand = [];
+    let colors = ['s', 'h', 'c', 'd'];
+    let colored_hand = [];
+    let iColor = 0;
+    
+    // sort values
+    while(old_hand.length > 0) {
+      
+      let bigger = 0;
+      for (let i=1; i < old_hand.length; i++) {
+        if(cardValues.indexOf(old_hand[i].charAt(0)) > cardValues.indexOf(old_hand[bigger].charAt(0))) {
+          bigger = i;
+        }
+      }
+
+      new_hand.push(old_hand[bigger]);
+      old_hand.splice(bigger, 1);
+    }
+
+    while(iColor < 4) {
+      for (let j = 0; j < new_hand.length; j++) {
+        if(new_hand[j].charAt(1) === colors[iColor]) {
+          colored_hand.push(new_hand[j]);
+        }
+      }
+      iColor++;
+    }
+
+    return colored_hand;
   }
 
   // TODO : sortPlayerz with UID 
@@ -317,6 +373,17 @@ const BoardGame = () => {
     return number;
   }
 
+  const getDomScore = (index) => {
+
+    switch(index) {
+      case 0 : return 50;
+      case 1 : return 25;
+      case 2 : return 0;
+      //case 3 : return -25;
+      default: break;
+    }
+  }
+
   const cleanBoard = (diBoard) => {
 
     if(diBoard.length === 4) {
@@ -446,18 +513,15 @@ const BoardGame = () => {
       console.log("2.2 BOARDGAME // handleHearts() - northGlobalScore : ", northGlobalScore);
       console.log("2.2 BOARDGAME // handleHearts() - eastGlobalScore : ", eastGlobalScore);
 
-      // nbClic = 31;
-      // update(ref(database, 'game/current/'), { 
-      //   nbClic: nbClic 
-      // });
-
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[1]);
 
       console.log("6. BOARDGAME // END OF CONTRACT ||");
       alert('6. BOARDGAME // END OF CONTRACT || ');
 
-      initHands();
+      setTimeout(() => {
+        initHands();
+      }, 1000);
     }
   }
 
@@ -471,9 +535,22 @@ const BoardGame = () => {
       nbContractsDone = contractsDone.length;
       //setNbContractsDone(nbContractsDone);
 
-      /**
-       * TODO 
-       */
+      if(!dominoDone.includes("SOUTH")) southScore += -25;
+      if(!dominoDone.includes("WEST"))  westScore  += -25;
+      if(!dominoDone.includes("NORTH")) northScore += -25;
+      if(!dominoDone.includes("EAST"))  eastScore  += -25;
+
+      for (let i = 0; i < dominoDone.length; i++) {
+
+        switch(dominoDone[i]) {
+          case "SOUTH" : southScore += getDomScore(i); break;
+          case "WEST"  : westScore  += getDomScore(i); break;
+          case "NORTH" : northScore += getDomScore(i); break;
+          case "EAST"  : eastScore  += getDomScore(i); break;
+               default :  break;
+        }
+        
+      }
 
       console.log("2.2 BOARDGAME // handleDomino() - southScore : ", southScore);
       console.log("2.2 BOARDGAME // handleDomino() - westScore : ", westScore);
@@ -493,6 +570,10 @@ const BoardGame = () => {
 
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[2]);
+
+      update(ref(database, 'game/current/'), { 
+        hasToPlay: getPlaceByUid(contractor), 
+      });
     }
   }
 
@@ -657,7 +738,6 @@ const BoardGame = () => {
     console.log("2.2 BOARDGAME // handleContract() - place : ", p);
     console.log("2.2 BOARDGAME // handleContract() - contract : ", c);
     console.log("2.2 BOARDGAME // handleContract() - allPlis : ", allPlis);
-
 
     if((c === "Barbu" && presenceIn('kh')) || ((nbClic === 31) && (allPlis === 8))) {
       
@@ -883,110 +963,374 @@ const BoardGame = () => {
     }
   }
 
+  const getDomHand = (abbr) => {
+
+    switch(abbr) {
+      case 's' : return handSpides;
+      case 'h' : return handHearts;
+      case 'c' : return handCloves;
+      case 'd' : return handDiamonds;
+       default : break;
+    }
+  }
+
+  const isPlayableDominoCard = (card, hand) => {
+
+    console.log("1. BOARDGAME // hand = ", hand);
+
+    switch(card.charAt(0)) {
+
+      case "a" : 
+        if(hand.includes('k'+card.charAt(1))) return true
+        else return false;
+
+      case "k" : 
+        if(hand.includes('q'+card.charAt(1))) return true
+        else return false;
+
+      case "q" : 
+        if(hand.includes('j'+card.charAt(1))) return true
+        else return false;
+
+      case "j" : 
+        if(hand.length === 0) return true
+        else return false;
+
+      case "t" : 
+        if(hand.includes('j'+card.charAt(1))) return true
+        else return false;
+
+      case "9" : 
+        if(hand.includes('t'+card.charAt(1))) return true
+        else return false;
+
+      case "8" : 
+        if(hand.includes('9'+card.charAt(1))) return true
+        else return false;
+
+      case "7" : 
+        if(hand.includes('8'+card.charAt(1))) return true
+        else return false;
+
+       default : break;
+    }
+
+  }
+
+  const handleDominoCard = (card) => {
+
+    // Check Hands
+    switch(card.charAt(1)) {
+
+      case "s" : if(isPlayableDominoCard(card, handSpides))   return true;
+      case "h" : if(isPlayableDominoCard(card, handHearts))   return true;
+      case "c" : if(isPlayableDominoCard(card, handCloves))   return true;
+      case "d" : if(isPlayableDominoCard(card, handDiamonds)) return true;
+      default  : break;
+    }
+
+    return false;
+  }
+
+  const whoCanPlay = (player) => {
+    console.log("3. BOARDGAME // onClickBoard // whoCanPlay() DOMINO from ", player);
+    // Check les cartes du joueur suivant en fonction du joueur actuel.
+
+    switch(player) {
+      
+      case "SOUTH" : 
+        if(westHand) {
+          for (let i = 0; i < westHand.length; i++) {
+            if(isPlayableDominoCard(westHand[i], getDomHand(westHand[i].charAt(1)))) return "WEST";
+          }
+        }
+        if(northHand) {
+          for (let i = 0; i < northHand.length; i++) {
+            if(isPlayableDominoCard(northHand[i], getDomHand(northHand[i].charAt(1)))) return "NORTH";
+          }
+        }
+        if(eastHand) {
+          for (let i = 0; i < eastHand.length; i++) {
+            if(isPlayableDominoCard(eastHand[i], getDomHand(eastHand[i].charAt(1)))) return "EAST";
+          }
+        }
+      return "SOUTH";
+      
+      case "WEST" :
+        if(northHand) { 
+          for (let i = 0; i < northHand.length; i++) {
+            if(isPlayableDominoCard(northHand[i], getDomHand(northHand[i].charAt(1)))) return "NORTH";
+          }
+        }
+        if(eastHand) {
+          for (let i = 0; i < eastHand.length; i++) {
+            if(isPlayableDominoCard(eastHand[i], getDomHand(eastHand[i].charAt(1)))) return "EAST";
+          }
+        }
+        if(southHand) {
+          for (let i = 0; i < southHand.length; i++) {
+            if(isPlayableDominoCard(southHand[i], getDomHand(southHand[i].charAt(1)))) return "SOUTH";
+          }
+        }
+        return "WEST";
+       
+      case "NORTH" : 
+        if(eastHand) {
+          for (let i = 0; i < eastHand.length; i++) {
+            if(isPlayableDominoCard(eastHand[i], getDomHand(eastHand[i].charAt(1)))) return "EAST";
+          }
+        }
+        if(southHand) {
+          for (let i = 0; i < southHand.length; i++) {
+            if(isPlayableDominoCard(southHand[i], getDomHand(southHand[i].charAt(1)))) return "SOUTH";
+          }
+        }
+        if(westHand) {
+          for (let i = 0; i < westHand.length; i++) {
+            if(isPlayableDominoCard(westHand[i], getDomHand(westHand[i].charAt(1)))) return "WEST";
+          }
+        }
+        return "NORTH";
+       
+      case "EAST" : 
+        console.log("whoCanPlay // southHand = ", southHand);
+        if(southHand) {
+          for (let i = 0; i < southHand.length; i++) {
+            if(isPlayableDominoCard(southHand[i], getDomHand(southHand[i].charAt(1)))) return "SOUTH";
+          }
+        }
+        if(westHand) {
+          for (let i = 0; i < westHand.length; i++) {
+            if(isPlayableDominoCard(westHand[i], getDomHand(westHand[i].charAt(1)))) return "WEST";
+          }
+        }
+        if(northHand) { 
+          for (let i = 0; i < northHand.length; i++) {
+            if(isPlayableDominoCard(northHand[i], getDomHand(northHand[i].charAt(1)))) return "NORTH";
+          }
+        }
+        return "EAST";
+           
+      default : break;
+    }
+
+  }
+
   const onClickBoard = async (click) => {
-    console.log("1. BOARDGAME // onClickBoard(", click,") // board : ", board, " // colorAsked = ", colorAsked);
 
-    if(board.length === 0) {
-      update(ref(database, 'game/current/'), { 
-        colorAsk: click[1].charAt(1)
-      });
+    if(contract === "Domino") {
+      console.log("1. BOARDGAME // onClickDomino(", click,")");
+      console.log("1. BOARDGAME // handSpides = ", handSpides);
+      console.log("1. BOARDGAME // handHearts = ", handHearts);
+      console.log("1. BOARDGAME // handCloves = ", handCloves);
+      console.log("1. BOARDGAME // handDiamonds = ", handDiamonds);
 
-      // colorAsked = click[1].charAt(1);
-      // setColorAsked(colorAsked);
-      // setPlaceAsked(click[0]);
-      console.log("1.1 BOARDGAME // onClickBoard // Updated colorAsked !");
-    }
+      // CHECK IF PLAYER HAS TO PLAY.
+      if(click[0] !== hasToPlay) { 
+        alert(hasToPlay+" has to play !"); 
+        return; 
+      }
 
-    // CHECK IF PLAYER HAS TO PLAY.
-    if(click[0] !== hasToPlay) { 
-      alert(hasToPlay+" has to play !"); 
-      return; 
-    }
-
-    // CHECK IF CARD IS THE GOOD ONE.
-    if(board.length > 0 && (click[1].charAt(1) !== colorAsked)) {
-      if(hasColorAsked(click[0])) {
-        alert("Wrong Color !");
+      // CHECK IF CARD IS THE GOOD ONE.
+      if(!handleDominoCard(click[1])) {
+        alert("Wrong Card !");
         return;
       }
-    }
+      
+      // Save clicked card in Database table "HANDX".
+      console.log("2. BOARDGAME // onClickBoard // ", click[0]," ADDED ", click[1]," TO BOARD DOMINO.");
+      switch(click[1].charAt(1)) {
 
-    // Save clicked card in Database table "Board".
-    console.log("2. BOARDGAME // onClickBoard // ", click[0]," ADDED ", click[1]," TO BOARD.");
-    await set(ref(database, 'game/board/'+click[0]), {
-      value: click[1],
-      place: click[0],
-      rank: board.length,
-    });
-        
-    console.log("3. BOARDGAME // onClickBoard // BOARD (", board.length ,") // switch() from ", hasToPlay);
-    if(board.length < 3) {
-      switch(hasToPlay) {
-        case "SOUTH": 
-        update(ref(database, 'game/current/'), { 
-          hasToPlay: "WEST" 
-        }); break;
-      case "WEST":  
-        update(ref(database, 'game/current/'), { 
-          hasToPlay: "NORTH" 
-        }); break;
-      case "NORTH":  
-        update(ref(database, 'game/current/'), { 
-          hasToPlay: "EAST" 
-        }); break;
-      case "EAST":
-        update(ref(database, 'game/current/'), { 
-          hasToPlay: "SOUTH" 
-        }); break;
-      default: break;
+        case "s" : 
+          setHandSpides(handSpides.push(click[1]));
+          await update(ref(database, 'game/boardDomino/'), {
+            SPIDES: handSpides,
+          }); break;
+
+        case "h" : 
+          setHandHearts(handHearts.push(click[1]));
+          await update(ref(database, 'game/boardDomino/'), {
+            HEARTS: handHearts,
+          }); break;
+
+        case "c" : 
+          setHandCloves(handCloves.push(click[1]));
+          await update(ref(database, 'game/boardDomino/'), {
+            CLOVES: handCloves,
+          }); break;
+
+        case "d" : 
+          setHandDiamonds(handDiamonds.push(click[1]));
+          await update(ref(database, 'game/boardDomino/'), {
+            DIAMONDS: handDiamonds,
+          }); break;
+
+        default : break;
       }
-    }
+      
+      // WHO CAN PLAY NEXT.
+      console.log("3. BOARDGAME // onClickBoard // BOARD DOMINO // switch() from ", hasToPlay);
 
-    // Remove from HANDS in Database table "Hands".
-    // TODO PROD : ONLY "SOUTH" updating with uid.
-    console.log("4. BOARDGAME // onClickBoard // SPLICE // UPDATE HANDS");
-    switch(click[0]) {
-      case "SOUTH":
-        setSouthHand(southHand.splice(southHand.indexOf(click[1]), 1));
-        update(ref(database, 'game/hands/'), {
-          SOUTH: southHand,
-          }); break;
-      case "WEST":
-        setWestHand(westHand.splice(westHand.indexOf(click[1]), 1));  
-        update(ref(database, 'game/hands/'), {
-          WEST: westHand,
-          }); break;
-      case "NORTH":
-        setNorthHand(northHand.splice(northHand.indexOf(click[1]), 1)); 
-        update(ref(database, 'game/hands/'), {
-          NORTH: northHand,
-          }); break;
-      case "EAST":
-        setEastHand(eastHand.splice(eastHand.indexOf(click[1]), 1));
-        update(ref(database, 'game/hands/'), {
-          EAST: eastHand,
-          }); break;
+      await update(ref(database, 'game/current/'), { 
+        hasToPlay: whoCanPlay(hasToPlay),
+      });
 
-      default: break;
-    }
+      // Remove from HANDS in Database table "Hands".
+      // TODO PROD : ONLY "SOUTH" updating with uid.
+      console.log("4. BOARDGAME // onClickBoard // SPLICE // UPDATE HANDS on DOMINO");
+      switch(click[0]) {
+        case "SOUTH":
+          setSouthHand(southHand.splice(southHand.indexOf(click[1]), 1));
+          update(ref(database, 'game/hands/'), {
+            SOUTH: southHand,
+            }); break;
+        case "WEST":
+          setWestHand(westHand.splice(westHand.indexOf(click[1]), 1));  
+          update(ref(database, 'game/hands/'), {
+            WEST: westHand,
+            }); break;
+        case "NORTH":
+          setNorthHand(northHand.splice(northHand.indexOf(click[1]), 1)); 
+          update(ref(database, 'game/hands/'), {
+            NORTH: northHand,
+            }); break;
+        case "EAST":
+          setEastHand(eastHand.splice(eastHand.indexOf(click[1]), 1));
+          update(ref(database, 'game/hands/'), {
+            EAST: eastHand,
+            }); break;
+  
+        default: break;
+      }
 
-    // HANDLE CHOOSEN CONTRACT.
-    console.log("5. BOARDGAME // CONTRACT // HANDLE CHOOSEN");
+      // UPDATE NB CLIC INCREMENT.
+      update(ref(database, 'game/current/'), { 
+        nbClic: nbClic+1 
+      });
 
-    // UPDATE NB CLIC INCREMENT.
-    update(ref(database, 'game/current/'), { 
-      nbClic: nbClic+1 
-    });
-
-    // MAYBE CHECK ON TEMPO PLI SIZE
-    // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
-    if(nbClic === 31) {
-      console.log("6. BOARDGAME // onClickBoard // END OF CONTRACT ||");
-      alert('6. BOARDGAME // onClickBoard // END OF CONTRACT || ');
-
-      initHands();
-    }
+      if(southHand.length === 0 && !dominoDone.includes("SOUTH")) dominoDone.push("SOUTH");
+      if(westHand.length  === 0 && !dominoDone.includes("WEST"))  dominoDone.push("WEST");
+      if(northHand.length === 0 && !dominoDone.includes("NORTH")) dominoDone.push("NORTH");
+      if(eastHand.length  === 0 && !dominoDone.includes("EAST"))  dominoDone.push("EAST");
     
+      // HANDLE CHOOSEN CONTRACT.
+      console.log("5. BOARDGAME // CONTRACT // HANDLE CHOOSEN || Done : ", dominoDone);
+
+      // MAYBE CHECK ON TEMPO PLI SIZE
+      // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
+      if(dominoDone.length === 3) {
+        console.log("6. BOARDGAME // onClickBoard // END OF DOMINO || Done : ", dominoDone);
+        handleDomino();
+        
+        alert('6. BOARDGAME // onClickBoard // END OF DOMINO || ');
+        initHands();
+      }
+
+    } else {
+      console.log("1. BOARDGAME // onClickBoard(", click,") // board : ", board, " // colorAsked = ", colorAsked);
+
+      if(board.length === 0) {
+        update(ref(database, 'game/current/'), { 
+          colorAsk: click[1].charAt(1)
+        });
+  
+        // colorAsked = click[1].charAt(1);
+        // setColorAsked(colorAsked);
+        // setPlaceAsked(click[0]);
+        console.log("1.1 BOARDGAME // onClickBoard // Updated colorAsked !");
+      }
+  
+      // CHECK IF PLAYER HAS TO PLAY.
+      if(click[0] !== hasToPlay) { 
+        alert(hasToPlay+" has to play !"); 
+        return; 
+      }
+  
+      // CHECK IF CARD IS THE GOOD ONE.
+      if(board.length > 0 && (click[1].charAt(1) !== colorAsked)) {
+        if(hasColorAsked(click[0])) {
+          alert("Wrong Color !");
+          return;
+        }
+      }
+  
+      // Save clicked card in Database table "Board".
+      console.log("2. BOARDGAME // onClickBoard // ", click[0]," ADDED ", click[1]," TO BOARD.");
+      await set(ref(database, 'game/board/'+click[0]), {
+        value: click[1],
+        place: click[0],
+        rank: board.length,
+      });
+          
+      console.log("3. BOARDGAME // onClickBoard // BOARD (", board.length ,") // switch() from ", hasToPlay);
+      if(board.length < 3) {
+        switch(hasToPlay) {
+          case "SOUTH": 
+          update(ref(database, 'game/current/'), { 
+            hasToPlay: "WEST" 
+          }); break;
+        case "WEST":  
+          update(ref(database, 'game/current/'), { 
+            hasToPlay: "NORTH" 
+          }); break;
+        case "NORTH":  
+          update(ref(database, 'game/current/'), { 
+            hasToPlay: "EAST" 
+          }); break;
+        case "EAST":
+          update(ref(database, 'game/current/'), { 
+            hasToPlay: "SOUTH" 
+          }); break;
+        default: break;
+        }
+      }
+  
+      // Remove from HANDS in Database table "Hands".
+      // TODO PROD : ONLY "SOUTH" updating with uid.
+      console.log("4. BOARDGAME // onClickBoard // SPLICE // UPDATE HANDS");
+      switch(click[0]) {
+        case "SOUTH":
+          setSouthHand(southHand.splice(southHand.indexOf(click[1]), 1));
+          update(ref(database, 'game/hands/'), {
+            SOUTH: southHand,
+            }); break;
+        case "WEST":
+          setWestHand(westHand.splice(westHand.indexOf(click[1]), 1));  
+          update(ref(database, 'game/hands/'), {
+            WEST: westHand,
+            }); break;
+        case "NORTH":
+          setNorthHand(northHand.splice(northHand.indexOf(click[1]), 1)); 
+          update(ref(database, 'game/hands/'), {
+            NORTH: northHand,
+            }); break;
+        case "EAST":
+          setEastHand(eastHand.splice(eastHand.indexOf(click[1]), 1));
+          update(ref(database, 'game/hands/'), {
+            EAST: eastHand,
+            }); break;
+  
+        default: break;
+      }
+  
+      // HANDLE CHOOSEN CONTRACT.
+      console.log("5. BOARDGAME // CONTRACT // HANDLE CHOOSEN");
+  
+      // UPDATE NB CLIC INCREMENT.
+      update(ref(database, 'game/current/'), { 
+        nbClic: nbClic+1 
+      });
+  
+      // MAYBE CHECK ON TEMPO PLI SIZE
+      // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
+      if(nbClic === 31) {
+        console.log("6. BOARDGAME // onClickBoard // END OF CONTRACT ||");
+        alert('6. BOARDGAME // onClickBoard // END OF CONTRACT || ');
+  
+        initHands();
+      }  
+    }
+
   }
 
   useEffect(() => {
@@ -1038,25 +1382,65 @@ const BoardGame = () => {
 
     onValue(
       ref(database, 'game/hands/SOUTH' ), (snapshot) => {
-        setSouthHand(snapshot.val());
+        setSouthHand(sortHand(snapshot.val()));
       }
     );
 
     onValue(
       ref(database, 'game/hands/WEST' ), (snapshot) => {
-        setWestHand(snapshot.val());
+        setWestHand(sortHand(snapshot.val()));
       }
     );
 
     onValue(
       ref(database, 'game/hands/NORTH' ), (snapshot) => {
-        setNorthHand(snapshot.val());
+        setNorthHand(sortHand(snapshot.val()));
       }
     );
 
     onValue(
       ref(database, 'game/hands/EAST' ), (snapshot) => {
-        setEastHand(snapshot.val());
+        setEastHand(sortHand(snapshot.val()));
+      }
+    );
+
+    onValue(
+      ref(database, 'game/boardDomino/SPIDES' ), (snapshot) => {
+        let hand_s = [];
+        snapshot.forEach((doc) => {
+          hand_s.push(doc.val());
+        });
+        setHandSpides(sortHand(hand_s));
+      }
+    );
+
+    onValue(
+      ref(database, 'game/boardDomino/HEARTS' ), (snapshot) => {
+        let hand_h = [];
+        snapshot.forEach((doc) => {
+          hand_h.push(doc.val());
+        });
+        setHandHearts(sortHand(hand_h));
+      }
+    );
+
+    onValue(
+      ref(database, 'game/boardDomino/CLOVES' ), (snapshot) => {
+        let hand_c = [];
+        snapshot.forEach((doc) => {
+          hand_c.push(doc.val());
+        });
+        setHandCloves(sortHand(hand_c));
+      }
+    );
+
+    onValue(
+      ref(database, 'game/boardDomino/DIAMONDS' ), (snapshot) => {
+        let hand_d = [];
+        snapshot.forEach((doc) => {
+          hand_d.push(doc.val());
+        });
+        setHandDiamonds(sortHand(hand_d));
       }
     );
 
@@ -1120,6 +1504,21 @@ const BoardGame = () => {
 
     <div>
 
+      {
+        contract === "Domino"
+          ?
+        <BoardDomino
+          cardSpides={handSpides}
+          cardHearts={handHearts}
+          cardCloves={handCloves}
+          cardDiamonds={handDiamonds}
+        />
+          :
+        <Board
+          oneBoard={board}
+        />
+      }
+
       <PlayerBox
         id="EAST"
         board={board}
@@ -1172,16 +1571,13 @@ const BoardGame = () => {
           endOfContract 
               ?
             <Panel 
-
+              whoCanPlayDom={(p) => whoCanPlay(p)}
             />
               :
             <ContractName value={contract} />
         }
 
-        <Board
-          oneBoard={board}
-        />
-        
+ 
     </div>
 
   )

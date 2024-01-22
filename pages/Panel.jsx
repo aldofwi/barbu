@@ -18,7 +18,7 @@ const spanClass = 'block rounded-full px-3 py-2 hover:text-blue-500 text-xl font
 const btnClassOFF = "text-white disabled cursor-not-allowed bg-[grey] focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-normal rounded-lg text-base px-14 py-1.5 text-center inline-flex items-center dark:focus:ring-[#050708]/50 mr-2 mb-0";
 const spanClassOFF = 'block disabled cursor-not-allowed bg-[grey] rounded-full px-3 py-2 text-xl font-[courier]';
 
-const Panel = ({ }) => {
+const Panel = ({ whoCanPlayDom }) => {
 
   const [rataDone, setRATADone]     = useState(false);
   const [barbuDone, setBarbuDone]   = useState(false);
@@ -35,7 +35,26 @@ const Panel = ({ }) => {
       endOfContract: false, 
     });
 
-    // alert(contractor+" choosed "+ choice);
+    if(choice === "Domino") {
+
+      // INIT Hands Domino
+      set(ref(database, 'game/boardDomino/'), {
+        SPIDES:   [],
+        HEARTS:   [],
+        CLOVES:   [],
+        DIAMONDS: [],   
+      });
+
+      // Check if contractor can play first.
+      /**
+       * TODO : Replace EAST by previous ID.
+       */
+      update(ref(database, 'game/current/'), { 
+        hasToPlay: whoCanPlayDom("EAST"),
+      });
+      
+    }
+
   }
 
   useEffect(() => {
@@ -162,7 +181,3 @@ const Panel = ({ }) => {
 }
 
 export default Panel;
-
-/*
- className='cursor-not-allowed bg-[grey]'
-*/

@@ -30,7 +30,19 @@ const getNameOfClassCard = (style) => {
           return "boardCN";
 
       case "eastBoard":
-          return "boardCE";
+          return "boardCE"; 
+
+      case "SPIDES":
+          return "relative left-96 top-44 px-2 py-0 w-24";
+
+      case "HEARTS":
+          return "relative left-96 top-48 px-2 py-0 w-24";
+
+      case "CLOVES":
+          return "relative left-96 top-52 px-2 py-0 w-24";
+
+      case "DIAMONDS":
+          return "relative left-96 top-56 px-2 py-0 w-24";
   
       default:
           return "relative";
@@ -58,8 +70,9 @@ const Card = ({ value, flip, picked, cardStyle, onClickCard }) => {
       else {
         onClickCard(c);
       }
-    } else { //if(cardStyle === "mainPlayer") {
-
+    } else if(cardStyle === "SPIDES" || cardStyle === "HEARTS" || cardStyle === "CLOVES" || cardStyle === "DIAMONDS") {
+      return;
+    } else {
       // If whoHasToPlay() === "SOUTH" 
       onClickCard([cardStyle, c]);
     }

@@ -107,7 +107,7 @@ const BoardGame = () => {
 
   let [contractsDone, setContractsDone] = useState([]);
   let [nbContractsDone, setNbContractsDone] = useState(0); // Max is 28.
-  const [playersDone, setplayersDone] = useState([]); // Max length is 4.
+  const [playersDone, setPlayersDone] = useState([]); // Max length is 4.
 
   const [endOfContract, setEndOfContract] = useState(false);
   const [endOfSeven,    setEndOfSeven] = useState(false);
@@ -398,7 +398,6 @@ const BoardGame = () => {
       case "EAST"  : return "SOUTH";
         default : break;
     }
-    
   }
 
   const cleanBoard = (diBoard) => {
@@ -411,6 +410,23 @@ const BoardGame = () => {
         // console.log("BOARDGAME // CleanBoard() - Done");
       }, 1500);
     }
+  }
+
+  const cleanContracts = () => {
+    console.log("8. checkEndOf7() // cleanContracts()")
+
+    update(ref(database, 'game/contracts/'), {
+      barbu: false,
+      coeurs: false,
+      dames: false,
+      domino: false,
+      dp: false,
+      plis: false,
+      rata: false,
+    });
+
+    setContractsDone([]);
+    setEndOfSeven(false);
   }
 
   const hasColorAsked = (place) => {
@@ -438,9 +454,7 @@ const BoardGame = () => {
   const handleRata = (player) => {
 
     if(!contractsDone.includes("RATA")) {
-
-      contractsDone.push("RATA");
-      nbContractsDone = contractsDone.length;
+      console.log("2.2 BOARDGAME // handleRata()");
 
       if(!getRata()) {
 
@@ -502,22 +516,17 @@ const BoardGame = () => {
   const handleBarbu = () => {
 
     if(!contractsDone.includes("Barbu")) {
-
-      contractsDone.push("Barbu");
-      //setContractsDone(contractsDone);
-
-      nbContractsDone = contractsDone.length;
-      //setNbContractsDone(nbContractsDone);
+      console.log("2.2 BOARDGAME // handleBarbu()");
 
       southScore = getBarbu(southPlis);
       westScore  = getBarbu(westPlis);
       northScore = getBarbu(northPlis);
       eastScore  = getBarbu(eastPlis);
 
-      console.log("2.2 BOARDGAME // handleHearts() - southScore : ", southScore);
-      console.log("2.2 BOARDGAME // handleHearts() - westScore : ", westScore);
-      console.log("2.2 BOARDGAME // handleHearts() - northScore : ", northScore);
-      console.log("2.2 BOARDGAME // handleHearts() - eastScore : ", eastScore);
+      console.log("2.2 BOARDGAME // handleBarbu() - southScore : ", southScore);
+      console.log("2.2 BOARDGAME // handleBarbu() - westScore : ", westScore);
+      console.log("2.2 BOARDGAME // handleBarbu() - northScore : ", northScore);
+      console.log("2.2 BOARDGAME // handleBarbu() - eastScore : ", eastScore);
   
       // UPDATE GLOBAL
       southGlobalScore += southScore; setSouthGlobalScore(southGlobalScore);
@@ -525,10 +534,10 @@ const BoardGame = () => {
       northGlobalScore += northScore; setNorthGlobalScore(northGlobalScore);
       eastGlobalScore += eastScore;   setEastGlobalScore(eastGlobalScore);
 
-      console.log("2.2 BOARDGAME // handleHearts() - southGlobalScore : ", southGlobalScore);
-      console.log("2.2 BOARDGAME // handleHearts() - westGlobalScore : ", westGlobalScore);
-      console.log("2.2 BOARDGAME // handleHearts() - northGlobalScore : ", northGlobalScore);
-      console.log("2.2 BOARDGAME // handleHearts() - eastGlobalScore : ", eastGlobalScore);
+      console.log("2.2 BOARDGAME // handleBarbu() - southGlobalScore : ", southGlobalScore);
+      console.log("2.2 BOARDGAME // handleBarbu() - westGlobalScore : ", westGlobalScore);
+      console.log("2.2 BOARDGAME // handleBarbu() - northGlobalScore : ", northGlobalScore);
+      console.log("2.2 BOARDGAME // handleBarbu() - eastGlobalScore : ", eastGlobalScore);
 
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[1]);
@@ -543,14 +552,9 @@ const BoardGame = () => {
   }
 
   const handleDomino = () => {
+    console.log("2.2 BOARDGAME // handleDomino()");
 
     if(!contractsDone.includes("Domino")) {
-
-      contractsDone.push("Domino");
-      //setContractsDone(contractsDone);
-
-      nbContractsDone = contractsDone.length;
-      //setNbContractsDone(nbContractsDone);
 
       if(!dominoDone.includes("SOUTH")) southScore += -25;
       if(!dominoDone.includes("WEST"))  westScore  += -25;
@@ -602,16 +606,10 @@ const BoardGame = () => {
     }
   }
 
-  // Watch out if all hearts are played !!!
   const handleHearts = () => {
+    console.log("2.2 BOARDGAME // handleHearts()");
 
     if(!contractsDone.includes("Coeurs")) {
-
-      contractsDone.push("Coeurs");
-      //setContractsDone(contractsDone);
-
-      nbContractsDone = contractsDone.length;
-      //setNbContractsDone(nbContractsDone);
 
       southScore = getNbHearts(southPlis) * -5;
       westScore  = getNbHearts(westPlis) * -5;
@@ -636,18 +634,20 @@ const BoardGame = () => {
 
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[3]);
+
+      console.log("6. BOARDGAME // END OF CONTRACT ||");
+      alert('6. BOARDGAME // END OF CONTRACT || ');
+
+      setTimeout(() => {
+        initHands();
+      }, 1000);
     }
   }
 
   const handleQueens = () => {
+    console.log("2.2 BOARDGAME // handleQueens()");
 
     if(!contractsDone.includes("Dames")) {
-
-      contractsDone.push("Dames");
-      setContractsDone(contractsDone);
-
-      nbContractsDone = contractsDone.length;
-      setNbContractsDone(nbContractsDone);
 
       southScore = getNbQueens(southPlis) * -10;
       westScore  = getNbQueens(westPlis) * -10;
@@ -672,18 +672,20 @@ const BoardGame = () => {
 
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[4]);
+
+      console.log("6. BOARDGAME // END OF CONTRACT ||");
+      alert('6. BOARDGAME // END OF CONTRACT || ');
+
+      setTimeout(() => {
+        initHands();
+      }, 1000);
     }
   }
 
   const handlePlis = () => {
+    console.log("2.2 BOARDGAME // handlePlis()");
 
     if(!contractsDone.includes("Plis")) {
-
-      contractsDone.push("Plis");
-      //setContractsDone(contractsDone);
-
-      nbContractsDone = contractsDone.length;
-      //setNbContractsDone(nbContractsDone);
 
       southScore = southPlis.length * -5;
       westScore  = westPlis.length * -5;
@@ -701,16 +703,13 @@ const BoardGame = () => {
       northGlobalScore += northScore; // setNorthGlobalScore(northGlobalScore);
       eastGlobalScore += eastScore;   // setEastGlobalScore(eastGlobalScore);
 
-      // RECORD CONTRACT ON BASE.
-      recordContract(contracts[5]);
-
-      // RECORD GLOBAL ON BASE.
-      // recordScore();
-
       console.log("2.2 BOARDGAME // handlePlis() - southGlobalScore : ", southGlobalScore);
       console.log("2.2 BOARDGAME // handlePlis() - westGlobalScore : ", westGlobalScore);
       console.log("2.2 BOARDGAME // handlePlis() - northGlobalScore : ", northGlobalScore);
       console.log("2.2 BOARDGAME // handlePlis() - eastGlobalScore : ", eastGlobalScore);
+
+      // RECORD CONTRACT ON BASE.
+      recordContract(contracts[5]);
     }
   }
 
@@ -719,12 +718,6 @@ const BoardGame = () => {
     if(!contractsDone.includes("Dernier Pli")) {
       console.log("2.3 BOARDGAME // handleDP - Dernier Pli pour ", player);
 
-      contractsDone.push("Dernier Pli");
-      //setContractsDone(contractsDone);
-
-      nbContractsDone = contractsDone.length;
-      //setNbContractsDone(nbContractsDone);
-      
       // UPDATE GLOBAL
       switch(player) {
         case "SOUTH" : 
@@ -752,9 +745,6 @@ const BoardGame = () => {
 
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[6]);
-
-      // RECORD GLOBAL ON BASE.
-      // recordScore();
     }
   }
 
@@ -765,7 +755,10 @@ const BoardGame = () => {
     console.log("2.2 BOARDGAME // handleContract() - contract : ", c);
     console.log("2.2 BOARDGAME // handleContract() - allPlis : ", allPlis);
 
-    if((c === "Barbu" && presenceIn('kh')) || ((nbClic === 31) && (allPlis === 8))) {
+    if(   (nbClic === 31  && allPlis === 8)
+      ||  (c === "Barbu"  && presenceIn('kh')) 
+      ||  (c === "Coeurs" && presenceIn('ah') && presenceIn('kh') && presenceIn('qh') && presenceIn('jh') && presenceIn('th') && presenceIn('9h') && presenceIn('8h') && presenceIn('7h'))
+      ||  (c === "Dames"  && presenceIn('qs') && presenceIn('qh') && presenceIn('qc') && presenceIn('qd')) ) {
       
       switch(c) {
         case "RATA"        : handleRata(p);   break;
@@ -777,12 +770,7 @@ const BoardGame = () => {
           default : break;
       }
 
-      // RECORD GLOBAL ON BASE.
-      //recordScore();
-
       console.log("2.2 BOARDGAME // handleContract() - contractsDone : ", contractsDone);
-      //console.log("2.2 BOARDGAME // handleContract() - NbContractsDone : ", nbContractsDone);
-
       console.log("2.2 BOARDGAME // handleContract() - southPlis : ", southPlis);
       console.log("2.2 BOARDGAME // handleContract() - westPlis : ", westPlis);
       console.log("2.2 BOARDGAME // handleContract() - northPlis : ", northPlis);
@@ -798,20 +786,25 @@ const BoardGame = () => {
   }
 
   const checkEndOf7 = () => {
+    console.log("7. BOARDGAME // onClickBoard // checkEndOf7() - nb ContractsDone :", contractsDone.length);
 
     let nextPlayer = "";
-
-    if(nbContractsDone === 7) {
+    if(contractsDone.length === 7) {
 
       setEndOfSeven(true);
       playersDone.push(contractor);
+      setPlayersDone(playersDone);
+
+      // CLEAN CONTRACTS
+      cleanContracts();
 
       if(playersDone.length === 4) {
 
         setEndOfGame(true);
-        alert("End of BARBU !");
+        alert("End of whole GAME !");
       } else {
         nextPlayer = getNextPlayer(getPlaceByUid(contractor));
+        //setContractor(nextPlayerUID);
 
         update(ref(database, 'game/current/'), { 
           hasToPlay: nextPlayer,
@@ -827,25 +820,25 @@ const BoardGame = () => {
 
     for (let i = 0; i < southPlis.length; i++) {
       if(southPlis[i].includes(temp)) {
-        console.log("2.2 BOARDGAME // RecordBoard() - ", temp," IS IN SOUTH");
+        console.log("2.2 BOARDGAME // presenceIn() - ", temp," IS IN SOUTH");
         return true;
       }
     }
     for (let i = 0; i < westPlis.length; i++) {
       if(westPlis[i].includes(temp)) {
-        console.log("2.2 BOARDGAME // RecordBoard() - ", temp," IS IN WEST");
+        console.log("2.2 BOARDGAME // presenceIn() - ", temp," IS IN WEST");
         return true;
       }
     }
     for (let i = 0; i < northPlis.length; i++) {
       if(northPlis[i].includes(temp)) {
-        console.log("2.2 BOARDGAME // RecordBoard() - ", temp," IS IN NORTH");
+        console.log("2.2 BOARDGAME // presenceIn() - ", temp," IS IN NORTH");
         return true;
       }
     }
     for (let i = 0; i < eastPlis.length; i++) {
       if(eastPlis[i].includes(temp)) {
-        console.log("2.2 BOARDGAME // RecordBoard() - ", temp," IS IN EAST");
+        console.log("2.2 BOARDGAME // presenceIn() - ", temp," IS IN EAST");
         return true;
       }
     }
@@ -854,6 +847,12 @@ const BoardGame = () => {
 
   const recordContract = (c) => {
     console.log(" ----------------------------------------------> RECORD CONTRACT & SCORES IN");
+
+    contractsDone.push(c);
+    setContractsDone(contractsDone);
+
+    nbContractsDone = contractsDone.length;
+    setNbContractsDone(nbContractsDone);
 
     switch(c) {
       case "RATA" : 
@@ -958,13 +957,6 @@ const BoardGame = () => {
     let color = verifyColor(daBoard);
     console.log("2.1 BOARDGAME // whoIsTheMaster() // daBoard = ", daBoard, " // color = ", color);
 
-    /**
-     * 
-     * TODO : BUG Répartition des plis 
-     * Check on Color Asked -->> PUT VALUE ON BASE.
-     * 
-     */
-
     if(daBoard.length === 4 && color !== "") {
 
       let masterKey = 0;
@@ -1007,8 +999,6 @@ const BoardGame = () => {
         console.log("2.2 BOARDGAME // handleContract() - eastPlis : ", eastPlis);
 
         console.log("2.1 BOARDGAME // whoIsTheMaster() = ", masterPlace, " // END");
-
-        // alert("southPlis : "+southPlis.length+"\n || westPlis : "+westPlis.length+"\n || northPlis : "+northPlis.length+"\n || eastPlis : "+ eastPlis.length);
       }
 
       return(masterPlace);
@@ -1557,6 +1547,10 @@ const BoardGame = () => {
   console.log("BOARDGAME // colorAsked = ", colorAsked);
   console.log("BOARDGAME // contractor = ", getPlaceByUid(contractor));
   console.log("BOARDGAME // endOfContract = ", endOfContract);
+  console.log("BOARDGAME // ContractsDone = ", contractsDone);
+  console.log("BOARDGAME // nb ContractsDone = ", contractsDone.length);
+  console.log("BOARDGAME // playersDone = ", playersDone);
+  console.log("BOARDGAME // endOfSeven = ", endOfSeven);
   console.log("BOARDGAME -____________________-");
 
   return (

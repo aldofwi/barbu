@@ -38,7 +38,7 @@ const Panel = ({ whoCanPlayDom }) => {
     if(choice === "Domino") {
 
       // INIT Hands Domino
-      set(ref(database, 'game/boardDomino/'), {
+      update(ref(database, 'game/boardDomino/'), {
         SPIDES:   [],
         HEARTS:   [],
         CLOVES:   [],

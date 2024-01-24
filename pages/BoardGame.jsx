@@ -107,9 +107,11 @@ const BoardGame = () => {
 
   let [contractsDone, setContractsDone] = useState([]);
   let [nbContractsDone, setNbContractsDone] = useState(0); // Max is 28.
+  const [playersDone, setplayersDone] = useState([]); // Max length is 4.
 
   const [endOfContract, setEndOfContract] = useState(false);
-  const [endOfGame, setEndOfGame] = useState(false);
+  const [endOfSeven,    setEndOfSeven] = useState(false);
+  const [endOfGame,     setEndOfGame] = useState(false);
 
   // INIT Hands
   set(ref(database, 'game/hands/'), {
@@ -161,6 +163,8 @@ const BoardGame = () => {
       NORTH:  newDeck.slice(16, 24),
       EAST:   newDeck.slice(24, 32), 
     });
+
+    if(endOfSeven) setEndOfSeven(false);
 
   }
 
@@ -384,6 +388,19 @@ const BoardGame = () => {
     }
   }
 
+  // TO DO : Replace by real IDs
+  const getNextPlayer = (place) => {
+
+    switch(place) {
+      case "SOUTH" : return "WEST";
+      case "WEST"  : return "NORTH";
+      case "NORTH" : return "EAST";
+      case "EAST"  : return "SOUTH";
+        default : break;
+    }
+    
+  }
+
   const cleanBoard = (diBoard) => {
 
     if(diBoard.length === 4) {
@@ -571,12 +588,21 @@ const BoardGame = () => {
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[2]);
 
+      // INIT Hands Domino
+      update(ref(database, 'game/boardDomino/'), {
+        SPIDES:   [],
+        HEARTS:   [],
+        CLOVES:   [],
+        DIAMONDS: [],   
+      });
+
       update(ref(database, 'game/current/'), { 
         hasToPlay: getPlaceByUid(contractor), 
       });
     }
   }
 
+  // Watch out if all hearts are played !!!
   const handleHearts = () => {
 
     if(!contractsDone.includes("Coeurs")) {
@@ -769,6 +795,32 @@ const BoardGame = () => {
       return getPlaceByUid(contractor);
     }
     return p;
+  }
+
+  const checkEndOf7 = () => {
+
+    let nextPlayer = "";
+
+    if(nbContractsDone === 7) {
+
+      setEndOfSeven(true);
+      playersDone.push(contractor);
+
+      if(playersDone.length === 4) {
+
+        setEndOfGame(true);
+        alert("End of BARBU !");
+      } else {
+        nextPlayer = getNextPlayer(getPlaceByUid(contractor));
+
+        update(ref(database, 'game/current/'), { 
+          hasToPlay: nextPlayer,
+        });
+
+        // TODO : update contractor in base
+      }
+    } 
+
   }
 
   const presenceIn = (temp) => {
@@ -1093,7 +1145,12 @@ const BoardGame = () => {
         return "NORTH";
        
       case "EAST" : 
-        console.log("whoCanPlay // southHand = ", southHand);
+        
+      console.log("1. BOARDGAME // handSpides = ", handSpides);
+      console.log("1. BOARDGAME // handHearts = ", handHearts);
+      console.log("1. BOARDGAME // handCloves = ", handCloves);
+      console.log("1. BOARDGAME // handDiamonds = ", handDiamonds);
+
         if(southHand) {
           for (let i = 0; i < southHand.length; i++) {
             if(isPlayableDominoCard(southHand[i], getDomHand(southHand[i].charAt(1)))) return "SOUTH";
@@ -1221,6 +1278,7 @@ const BoardGame = () => {
       if(dominoDone.length === 3) {
         console.log("6. BOARDGAME // onClickBoard // END OF DOMINO || Done : ", dominoDone);
         handleDomino();
+        checkEndOf7();
         
         alert('6. BOARDGAME // onClickBoard // END OF DOMINO || ');
         initHands();
@@ -1325,8 +1383,9 @@ const BoardGame = () => {
       // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
       if(nbClic === 31) {
         console.log("6. BOARDGAME // onClickBoard // END OF CONTRACT ||");
+        checkEndOf7();
+
         alert('6. BOARDGAME // onClickBoard // END OF CONTRACT || ');
-  
         initHands();
       }  
     }

@@ -15,7 +15,6 @@ export default function Auth() {
   const github = useSocialSignup(githubProvider);
 
   const { user } = useAuthContext();
-  // useEffect(() => console.log(user), [user]);
 
   return (
       <div className="utility__page">
@@ -52,5 +51,3 @@ export default function Auth() {
       </div>
   )
 };
-
-// <div className="auth_title mb-9 text-5xl font-bold">Welcome to Barbu</div>

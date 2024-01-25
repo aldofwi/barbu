@@ -6,8 +6,7 @@ import React from 'react';
 
 const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }) => {
 
-  const { user } = useAuthContext();
-  const myLoader = ({ src }) => { return player.picture };
+  const myLoader = ({ }) => { return player.picture };
 
   return (
 

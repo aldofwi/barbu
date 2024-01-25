@@ -20,7 +20,7 @@ const values = {
 
 const FirstBoard = async () => {
 
-    //const { user } =   useAuthContext();
+    // const { user } =   useAuthContext();
     // const [isOrderSet, setIsOrderSet] = useState(true);
 
     // getPositionByID when Order is setted.
@@ -45,8 +45,6 @@ const FirstBoard = async () => {
         }
       }
 
-      // console.log("otherCards = ", otherCards);
-
       for(let k=0; k<players.length; k++) {
         if(players[k].username !== user.displayName) {
           
@@ -61,8 +59,6 @@ const FirstBoard = async () => {
         }
       }
 
-      // console.log("Rank = ", numb);
-      
       update(ref(database, '/game/players/' + user.uid), {
         rank: numb,
       });
@@ -88,9 +84,6 @@ const FirstBoard = async () => {
 
       return numb;
     }
-
-    // className="h-full w-full flex flex-col text-white bg-[#121212] inset-y-0"
-    // rank={getRank()}
 
   return (
 

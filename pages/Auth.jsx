@@ -5,7 +5,6 @@ import { useAuthContext } from "@/context/AuthContext";
 import FacebookIcon from "../public/images/facebookIcon.png";
 import GoogleIcon from "../public/images/googleIcon.png";
 import GithubIcon from "../public/images/gitLogo.png";
-import { useEffect } from "react";
 import Image from "next/image";
 
 export default function Auth() {
@@ -16,7 +15,13 @@ export default function Auth() {
 
   const { user } = useAuthContext();
 
+  /**
+   * TODO : 
+   * Ajouter l'Authentification EMAIL/PWD
+   */
+
   return (
+
       <div className="utility__page">
 
             <Card>

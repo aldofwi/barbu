@@ -78,9 +78,8 @@ export const useEmailSignup = (provider) => {
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-
+                setIsCancelled(true);
                 console.log("("+errorCode+")"+ errorMessage);
-                        
             });
 
         if(!isCancelled) {

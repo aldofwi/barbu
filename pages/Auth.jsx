@@ -1,18 +1,23 @@
-import { googleProvider, facebookProvider, githubProvider } from "../firebase/config";
-import { Card, CardHeader, CardBody, Heading, Input, Stack, StackDivider, Box } from "@chakra-ui/react";
+import { googleProvider, facebookProvider, githubProvider, database } from "../firebase/config";
+import { Card, CardHeader, CardBody, Heading, Input, Stack, StackDivider, Box, useToast } from "@chakra-ui/react";
+import { push, ref, serverTimestamp, set } from "firebase/database";
 import { useSocialSignup } from "../hooks/useSocialSignup";
 import { useAuthContext } from "@/context/AuthContext";
+
 import FacebookIcon from "../public/images/facebookIcon.png";
 import GoogleIcon from "../public/images/googleIcon.png";
 import GithubIcon from "../public/images/gitLogo.png";
+import someUser from '/public/images/unknow.png';
 import Image from "next/image";
-import { useState } from "react";
-import { useEmailSignup } from "@/hooks/useEmailSignup";
-import { getAuth, sendSignInLinkToEmail } from "firebase/auth";
+
+import { useEffect, useState } from "react";
+import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 
 export default function Auth() {
 
   const auth = getAuth();
+  const { user, dispatch } = useAuthContext();
+  const toast = useToast();
 
   const google = useSocialSignup(googleProvider);
   const facebook = useSocialSignup(facebookProvider);
@@ -24,12 +29,15 @@ export default function Auth() {
   const [loginError, setLoginError] = useState("");
   const [infoMsg, setInfoMsg] = useState("");
 
+  const [initialLoading, setInitialLoading] = useState(false);
+  const [initialError, setInitialError] = useState("");
+
   const handleMail = async (e) => {
     e.preventDefault();
     setLoginLoading(true);
 
     sendSignInLinkToEmail(auth, email, {        
-      url: "http://localhost:3000/LOGIN",
+      url: "http://localhost:3000/",
       handleCodeInApp: true,})
       .then(() => {
           // The link was successfully sent. Inform the user.
@@ -44,13 +52,79 @@ export default function Auth() {
           setLoginLoading(false);
           setLoginError("["+error.code+"] "+ error.message);
       });
-    // mailSign.signInWithEmail(e.target.mail.value);
   }
-  /**
-   * TODO : 
-   * Ajouter l'Authentification EMAIL/PWD
-   */
 
+  useEffect(() => {
+    
+    const recordUserMail = async (response) => {
+
+      let mail = response.user.email;
+      let name = mail.slice(0, mail.indexOf('@'));
+
+      console.log("Record // Email = ", mail);
+      console.log("Record // Name = ", name);
+      console.log("Response // User = ", response.user);
+      console.log("AuthContext // User = ", user);
+  
+      set(ref(database, 'users/' + response.user.uid), {
+          username: name,
+          email: response.user.email,
+          picture: "https://e7.pngegg.com/pngimages/416/62/png-clipart-anonymous-person-login-google-account-computer-icons-user-activity-miscellaneous-computer-thumbnail.png",
+      });
+  
+      console.log("-> New user recorded :", name);
+  
+      toast({
+          title: "You are logged in as " + name,
+          status: "success",
+          duration: 2000,
+          position: "top",
+      });
+  
+      const msgRef = ref(database, 'messages/');
+      const newItem = await push(msgRef);
+  
+      set(newItem, 
+          {
+              createdAt: serverTimestamp(),
+              msg: name+" has just connected!",
+              name: "[J@rvis]",
+              uid: "basic101",
+          });
+    }
+
+    // user not signed in but link is valid.
+    if(isSignInWithEmailLink(auth, window.location.href)) {
+      // In case user clicks link on a different device, email confirmat° asked.
+      let email = localStorage.getItem('emailForSignIn');
+      if(!email) {
+          email = window.prompt('Please provide your email.');
+      }
+      // And complete log in process
+      setInitialLoading(true);
+      signInWithEmailLink(auth, email, window.location.href)
+      .then((result) => {
+
+          result.user.displayName = result.user.email.slice(0, result.user.email.indexOf('@'));;
+          result.user.photoURL = "https://e7.pngegg.com/pngimages/416/62/png-clipart-anonymous-person-login-google-account-computer-icons-user-activity-miscellaneous-computer-thumbnail.png";
+          
+          console.log("Res User Email = ", result.user.email);
+          localStorage.removeItem('emailForSignIn');
+  
+          setInitialLoading(false);
+          setInitialError("");
+          dispatch({ type: "LOGIN", payload: result.user });
+          recordUserMail(result);
+      })
+      .catch((error) => {
+          setInitialLoading(false);
+          setInitialError(error.message);
+      })
+  } else console.log("Enter email & Sign In.");
+
+  }, [auth, dispatch, toast, user]);
+
+  
   return (
 
       <div className="utility__page">
@@ -63,35 +137,46 @@ export default function Auth() {
               <CardBody>
                 <Stack divider={<StackDivider />} spacing='4'>
                   <Box>
-                    <form onSubmit={handleMail}>
-                      <Input 
-                        required 
-                        name="email" 
-                        id="email" 
-                        type="email" 
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Enter your email" 
-                        className="text-white px-6" 
-                        value={email || ""} />
-                      <button type="submit" className="text-white w-full bg-[#050708] hover:bg-[#050708]/30 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-normal rounded-lg text-base px-14 py-1.5 text-center inline-flex items-center dark:focus:ring-[#050708]/50 dark:hover:bg-[#050708]/30 mr-2 mb-0 mt-2">
-                        {loginLoading ? (
-                          <span className='block rounded-full px-3 py-2 hover:text-white text-xl font-[courier]'> Logging you in.. </span>
-                        ) 
-                          : (
-                            <span className='block rounded-full px-3 py-2 hover:text-white text-xl font-[courier]'> Log IN </span>
+                    {
+                      initialLoading ? (
+                        <div className="text-blue-500">Loading...</div>
+                      ) : (
+                        initialError !== '' ? (
+                            <div className="text-red-600">{initialError}</div>
+                          ) : null
                           )
-                        }
-                      </button>
+                    }
 
-                        {loginError !== "" && (
-                            <div className="error-msg">{loginError}</div>
-                        )}
-                        
-                        {infoMsg !== "" && (
-                          <div className="info-msg">{infoMsg}</div>
-                        )}                     
+                  <form onSubmit={handleMail}>
+                    <Input 
+                      required 
+                      name="email" 
+                      id="email" 
+                      type="email" 
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email" 
+                      className="text-white px-6" 
+                      value={email || ""} />
+                    <button type="submit" className="text-white w-full bg-[#050708] hover:bg-[#050708]/30 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-normal rounded-lg text-base px-14 py-1.5 text-center inline-flex items-center dark:focus:ring-[#050708]/50 dark:hover:bg-[#050708]/30 mr-2 mb-0 mt-2">
+                      {loginLoading ? (
+                        <span className='block rounded-full px-3 py-2 hover:text-white text-xl font-[courier]'> Logging you in.. </span>
+                      ) 
+                        : (
+                          <span className='block rounded-full px-3 py-2 hover:text-white text-xl font-[courier]'> Log IN </span>
+                        )
+                      }
+                    </button>
+
+                      {loginError !== "" && (
+                          <div className="error-msg">{loginError}</div>
+                      )}
                       
-                    </form>
+                      {infoMsg !== "" && (
+                        <div className="info-msg">{infoMsg}</div>
+                      )}                     
+                    
+                  </form>
+
                   </Box>
                   <Box>
                     <button onClick={google.signInWithSocial} className="text-white bg-[#050708] hover:bg-[#050708]/30 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-normal rounded-lg text-base px-14 py-1.5 text-center inline-flex items-center dark:focus:ring-[#050708]/50 dark:hover:bg-[#050708]/30 mr-2 mb-0">

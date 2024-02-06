@@ -14,11 +14,11 @@ import { getAuth } from 'firebase/auth';
 
 const Home = () => {
 
-    const auth = getAuth();
-    const toast = useToast();
+  const auth = getAuth();
+  const toast = useToast();
 
-    const { user }                  = useAuthContext();
-    const [connected, setConnected] = useState([]);
+  const { user }                  = useAuthContext();
+  const [connected, setConnected] = useState([]);
 
     useEffect(() => {
   
@@ -32,7 +32,7 @@ const Home = () => {
         }
       );
   
-    }, []);
+    }, [user]);
 
   return (
     <div className="utility__page">

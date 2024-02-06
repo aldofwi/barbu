@@ -8,7 +8,7 @@ export default function App() {
     const { user, authIsReady } = useAuthContext();
 
     if(!authIsReady) return null;
-
+ 
     return (
             
         <main>

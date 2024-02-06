@@ -99,18 +99,22 @@ const Navbar = () => {
                             </ModalContent>
                         </Modal>
                     </li>
-                    <li className='px-6 py-2'>
-                        <Tooltip label={user?.displayName} bg='burlywood' textColor="black">
-                            <Image
-                                className="profile_img"
-                                src={user?.photoURL}
-                                unoptimized
-                                loader={myLoader}
-                                width={30}
-                                height={30}
-                                alt="pp" />
-                        </Tooltip>
-                    </li>
+                    {user.photoURL &&
+                        <li className='px-6 py-2'>
+                            <Tooltip label={user?.displayName} bg='burlywood' textColor="black">
+    
+                                    <Image
+                                        className="profile_img"
+                                        src={user?.photoURL}
+                                        unoptimized
+                                        loader={myLoader}
+                                        width={30}
+                                        height={30}
+                                        alt="pp" />
+                                
+                            </Tooltip>
+                        </li>
+                    }
                     <li className="pl-8 pr-12 py-3">
                     <Tooltip hasArrow label='Log Out' bg='white' textColor="black">
                         <button 

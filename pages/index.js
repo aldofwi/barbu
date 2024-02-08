@@ -6,7 +6,7 @@ import Home from "./Home";
 export default function App() {
 
     const { user, authIsReady } = useAuthContext();
-
+    // No Comment
     if(!authIsReady) return null;
  
     return (

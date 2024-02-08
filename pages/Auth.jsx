@@ -168,11 +168,11 @@ export default function Auth() {
                     </button>
 
                       {loginError !== "" && (
-                          <div className="error-msg">{loginError}</div>
+                          <div className="text-red-600">{loginError}</div>
                       )}
                       
                       {infoMsg !== "" && (
-                        <div className="info-msg">{infoMsg}</div>
+                        <div className="text-blue-500">{infoMsg}</div>
                       )}                     
                     
                   </form>

@@ -24,12 +24,6 @@ export const useLogout = () => {
         setIsPending(true); // Indicating logout in progress.
 
         try {
-            await remove(ref(database, 'users/' + user.uid));
-                        
-            // Initiating the logout using Firebase's signout function.
-            await signOut(auth);
-            dispatch({ type : "LOGOUT" });
-
             console.log("-> user", user.displayName, "removed.");
             const msgRef = ref(database, 'messages/');
             const newItem = await push(msgRef);
@@ -40,6 +34,13 @@ export const useLogout = () => {
                     name: "[J@rvis]",
                     uid: "basic101",
                 });
+                
+            // Initiating the logout removing user from db.
+            await remove(ref(database, 'users/' + user.uid));
+                     
+            // Initiating the logout using Firebase's signout function.
+            await signOut(auth);
+            dispatch({ type : "LOGOUT" });
 
             // If the operation wasn't cancelled, reset pending state and error.
             if(!isCancelled) {

@@ -21,51 +21,41 @@ const values = {
 
 const Welcome = () => {
 
+  const [isOrderSet, setIsOrderSet]   = useState(false);
   const [isPartyFull, setIsPartyFull] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+  const [players, setPlayers] = useState([]);
   
   const handlePlay = () => {
 
-    set(ref(database, 'game/contracts'), {
-      rata: false,
-      barbu: false,
-      domino: false,
-      coeurs: false,
-      dames: false,
-      plis: false,
-      dp: false,
-    });
-
-    update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2'), {
+    set(ref(database, '/game/players/' + user.uid), {
+      picture: user.photoURL,
       score: 0,
-    });
-    update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb3'), {
-      score: 0,
-    });
-    update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb4'), {
-      score: 0,
-    });
-    update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb5'), {
-      score: 0,
-    });
-
-    update(ref(database, 'game/current/'), {
-      colorAsk: "",
-      contract: "",
-      endOfContract: true,
-      hasToPlay: "SOUTH",
-      nbClic: 0,
+      uid: user.uid,
+      username: user.displayName,
     });
 
     setGameStarted(true);
+
+    if(players.length === 4) setIsPartyFull(true);
+
   }
 
-    // ------TEMP -------
 
+  useEffect(() => {
+  
+    onValue(
+      ref(database, 'game/players/' ), (snapshot) => {
+        let playerz = [];
+          snapshot.forEach((doc) => {
+            playerz.push({...doc.val() });
+          });
+          setPlayers(playerz);
+      }
+    );
 
-  // console.log("Value Q = ", values['t']);
-  // If Nb Game Players is less than 4 (FULL)
-  //  className="h-full flex flex-col bg-[#121212] container justify-center items-center"
+  }, []);
+
 
   return (
 
@@ -83,9 +73,11 @@ const Welcome = () => {
                 alt="AldoIcon"
                 priority
             />
-        
         </div>
 
+      {
+        players.length < 4 
+            ?
         <Button
           leftIcon={<IoPlayCircle />}
           colorScheme='teal'
@@ -96,16 +88,62 @@ const Welcome = () => {
         >
         Play
         </Button>
+            :
+          null
+      }
+
     </div>
 
         :
 
-    <BoardGame
+    !isOrderSet
+        ?
 
+    <DeckChoice 
+      setOrderDone={(v) => setIsOrderSet(v)}
     />
+        
+        :
 
-  
+    <BoardGame />
+
   )
 }
 
 export default Welcome;
+
+    // set(ref(database, 'game/contracts'), {
+    //   rata: false,
+    //   barbu: false,
+    //   domino: false,
+    //   coeurs: false,
+    //   dames: false,
+    //   plis: false,
+    //   dp: false,
+    // });
+
+    // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2'), {
+    //   score: 0,
+    // });
+    // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb3'), {
+    //   score: 0,
+    // });
+    // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb4'), {
+    //   score: 0,
+    // });
+    // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb5'), {
+    //   score: 0,
+    // });
+
+    // update(ref(database, 'game/current/'), {
+    //   colorAsk: "",
+    //   contract: "",
+    //   endOfContract: true,
+    //   hasToPlay: "SOUTH",
+    //   nbClic: 0,
+    // });
+
+    // ------TEMP -------
+    // console.log("Value Q = ", values['t']);
+    // If Nb Game Players is less than 4 (FULL)
+    //  className="h-full flex flex-col bg-[#121212] container justify-center items-center"

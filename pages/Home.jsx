@@ -31,6 +31,11 @@ const Home = () => {
             setConnected(users);
         }
       );
+
+      if(user.displayName === null) {
+        user.displayName = user.email.slice(0, user.email.indexOf('@'));;
+        user.photoURL = "https://e7.pngegg.com/pngimages/416/62/png-clipart-anonymous-person-login-google-account-computer-icons-user-activity-miscellaneous-computer-thumbnail.png";
+      }
   
     }, [user]);
 

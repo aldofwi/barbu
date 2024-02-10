@@ -21,10 +21,73 @@ const values = {
 
 const Welcome = () => {
 
+  const [picked, setPicked] = useState([]);
   const [isOrderSet, setIsOrderSet]   = useState(false);
   const [isPartyFull, setIsPartyFull] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [players, setPlayers] = useState([]);
+
+  // getPositionByID when Order is setted.
+  // pass positions to PlayerBox props.
+  // Map players from database.
+
+  const getRank = () => {
+
+    let numb=1;
+    let myCard;
+    let myValue;
+    let otherCards = [];
+    let players = order;
+
+    for(let i=0; i<players.length; i++) {
+      if(players[i].username === user.displayName) {
+        myCard = players[i].pick.charAt(0);
+        for(let j=0; j<cardValues.length; j++) {
+          if(myCard === cardValues[j]) myValue = j;
+        }
+      } else {
+        otherCards.push(players[i].pick.charAt(0));
+      }
+    }
+
+    for(let k=0; k<players.length; k++) {
+      if(players[k].username !== user.displayName) {
+        
+        // console.log("myValue = ", myValue);
+        // console.log("k = ", k, "| players[k].pick.charAt(0) = ", players[k].pick.charAt(0));
+        // console.log("values[players[k].pick.charAt(0)] = ", values[players[k].pick.charAt(0)]);
+        // console.log("myValue < other --> ", myValue  < values[players[k].pick.charAt(0)]);
+
+        if(myValue < values[players[k].pick.charAt(0)]) {
+          numb++;
+        }
+      }
+    }
+
+    update(ref(database, '/game/players/' + user.uid), {
+      rank: numb,
+    });
+
+    if(numb === 1) {
+      set(ref(database, '/game/contractor'), {
+        name: user.displayName,
+        uid: user.uid,
+      });
+    }
+    
+    const msgRef = ref(database, 'messages/');
+    const newItem = push(msgRef);
+
+    set(newItem, 
+      {
+          createdAt: serverTimestamp(),
+          msg: user.displayName+" is contractor N°"+numb,
+          name: "[J@rvis]",
+          uid: "basic101",
+      });
+
+    return numb;
+  }
   
   const handlePlay = () => {
 
@@ -38,9 +101,7 @@ const Welcome = () => {
     setGameStarted(true);
 
     if(players.length === 4) setIsPartyFull(true);
-
   }
-
 
   useEffect(() => {
   
@@ -53,6 +114,11 @@ const Welcome = () => {
           setPlayers(playerz);
       }
     );
+
+    if(picked.length === 4) {
+      getRank();
+      setIsOrderSet(true);
+    } 
 
   }, []);
 
@@ -100,7 +166,7 @@ const Welcome = () => {
         ?
 
     <DeckChoice 
-      setOrderDone={(v) => setIsOrderSet(v)}
+      setPickers={setPicked}
     />
         
         :

@@ -37,6 +37,7 @@ export const useLogout = () => {
                 
             // Initiating the logout removing user from db.
             await remove(ref(database, 'users/' + user.uid));
+            await remove(ref(database, 'game/players/' + user.uid));
                      
             // Initiating the logout using Firebase's signout function.
             await signOut(auth);

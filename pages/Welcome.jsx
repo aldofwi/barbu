@@ -1,4 +1,5 @@
 import { onValue, ref, remove, set, update } from 'firebase/database';
+import { useAuthContext } from '@/context/AuthContext';
 import React, { useEffect, useState } from 'react';
 import { IoPlayCircle } from 'react-icons/io5';
 import { database } from '@/firebase/config';
@@ -7,6 +8,7 @@ import { Button } from '@chakra-ui/react';
 import LoadCard from '/public/images/loadCard.png';
 import BoardGame from './BoardGame';
 import Image from 'next/image';
+import DeckChoice from './DeckChoice';
 
 const values = {
   7: 0,
@@ -21,11 +23,14 @@ const values = {
 
 const Welcome = () => {
 
+  const { user } = useAuthContext();
+
   const [picked, setPicked] = useState([]);
   const [isOrderSet, setIsOrderSet]   = useState(false);
   const [isPartyFull, setIsPartyFull] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [players, setPlayers] = useState([]);
+  const [users, setUsers] = useState([]);
 
   // getPositionByID when Order is setted.
   // pass positions to PlayerBox props.
@@ -91,12 +96,12 @@ const Welcome = () => {
   
   const handlePlay = () => {
 
-    set(ref(database, '/game/players/' + user.uid), {
-      picture: user.photoURL,
-      score: 0,
-      uid: user.uid,
-      username: user.displayName,
-    });
+    // set(ref(database, '/game/players/' + user.uid), {
+    //   picture: user.photoURL,
+    //   score: 0,
+    //   uid: user.uid,
+    //   username: user.displayName,
+    // });
 
     setGameStarted(true);
 
@@ -106,12 +111,12 @@ const Welcome = () => {
   useEffect(() => {
   
     onValue(
-      ref(database, 'game/players/' ), (snapshot) => {
-        let playerz = [];
+      ref(database, 'users/' ), (snapshot) => {
+        let userz = [];
           snapshot.forEach((doc) => {
-            playerz.push({...doc.val() });
+            userz.push({...doc.val() });
           });
-          setPlayers(playerz);
+          setUsers(userz);
       }
     );
 
@@ -142,7 +147,7 @@ const Welcome = () => {
         </div>
 
       {
-        players.length < 4 
+        users.length < 4 
             ?
         <Button
           leftIcon={<IoPlayCircle />}

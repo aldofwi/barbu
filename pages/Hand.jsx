@@ -64,6 +64,7 @@ const Hand = ({ handStyle, cards, others, onClickHand }) => {
     // console.log("cards = ", cards);
     const getFlip = (c) => {
     // Back = TRUE | Front = FALSE
+        console.log("others flip", others);
 
         if(others.length === 0) return true;
         else {

@@ -39,18 +39,16 @@ const DeckChoice = ({ setPickers }) => {
   const { user } = useAuthContext();
   const [myCards, setMyCards] = useState(shuffle(rankh));
   const [contractors, setContractors] = useState([]);
-
+  const [order, setOrder] = useState([])
 
   const onClickChoice = (element) => {
 
-      // set(ref(database, '/game/players/' + user.uid), {
-      //   username: user.displayName,
-      //   picture: user.photoURL,
-      //   pick: element,
-      // });
-
-      set(ref(database, '/game/pick/' + user.uid), {
-        value: element,
+      set(ref(database, '/game/players/' + user.uid), {
+        picture: user.photoURL,
+        pick: element,
+        score: 0,
+        uid: user.uid,
+        username: user.displayName,
       });
 
       const msgRef = ref(database, 'messages/');
@@ -69,14 +67,17 @@ const DeckChoice = ({ setPickers }) => {
   useEffect(() => {
 
     onValue(
-      ref(database, 'game/pick' ), (snapshot) => {
+      ref(database, 'game/players' ), (snapshot) => {
         let picks = [];
           snapshot.forEach((doc) => {
             picks.push({...doc.val()});
           });
           setPickers(picks);
+          setOrder(picks);
+          console.log("picks = ", picks);
       }
     );
+
 
   }, []);
     

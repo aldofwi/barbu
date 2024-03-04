@@ -39,7 +39,7 @@ const DeckChoice = ({ setPickers }) => {
   const { user } = useAuthContext();
   const [myCards, setMyCards] = useState(shuffle(rankh));
   const [contractors, setContractors] = useState([]);
-  const [order, setOrder] = useState([])
+  const [order, setOrder] = useState([]);
 
   const onClickChoice = (element) => {
 
@@ -74,7 +74,7 @@ const DeckChoice = ({ setPickers }) => {
           });
           setPickers(picks);
           setOrder(picks);
-          console.log("picks = ", picks);
+          //console.log("picks = ", picks);
       }
     );
 

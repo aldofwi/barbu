@@ -1,4 +1,4 @@
-import { onValue, ref, remove, set, update } from 'firebase/database';
+import { onValue, push, ref, remove, serverTimestamp, set, update } from 'firebase/database';
 import { useAuthContext } from '@/context/AuthContext';
 import React, { useEffect, useState } from 'react';
 import { IoPlayCircle } from 'react-icons/io5';
@@ -21,6 +21,8 @@ const values = {
   a: 7,
 }
 
+const cardValues = ["7", "8", "9", "t", "j", "q", "k", "a"];
+
 const Welcome = () => {
 
   const { user } = useAuthContext();
@@ -29,20 +31,21 @@ const Welcome = () => {
   const [isOrderSet, setIsOrderSet]   = useState(false);
   const [isPartyFull, setIsPartyFull] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
-  const [players, setPlayers] = useState([]);
-  const [users, setUsers] = useState([]);
+  // const [players, setPlayers] = useState([]);
+  // const [users, setUsers] = useState([]);
 
   // getPositionByID when Order is setted.
   // pass positions to PlayerBox props.
   // Map players from database.
 
   const getRank = () => {
+    console.log("WELCOME // getRank()");
 
     let numb=1;
     let myCard;
     let myValue;
     let otherCards = [];
-    let players = order;
+    let players = picked;
 
     for(let i=0; i<players.length; i++) {
       if(players[i].username === user.displayName) {
@@ -50,9 +53,10 @@ const Welcome = () => {
         for(let j=0; j<cardValues.length; j++) {
           if(myCard === cardValues[j]) myValue = j;
         }
-      } else {
-        otherCards.push(players[i].pick.charAt(0));
-      }
+      } 
+      // else {
+      //   otherCards.push(players[i].pick.charAt(0));
+      // }
     }
 
     for(let k=0; k<players.length; k++) {
@@ -96,36 +100,46 @@ const Welcome = () => {
   
   const handlePlay = () => {
 
-    // set(ref(database, '/game/players/' + user.uid), {
-    //   picture: user.photoURL,
-    //   score: 0,
-    //   uid: user.uid,
-    //   username: user.displayName,
-    // });
-
     setGameStarted(true);
-
-    if(players.length === 4) setIsPartyFull(true);
   }
 
-  useEffect(() => {
-  
+  useEffect(() => { 
+
     onValue(
-      ref(database, 'users/' ), (snapshot) => {
-        let userz = [];
-          snapshot.forEach((doc) => {
-            userz.push({...doc.val() });
-          });
-          setUsers(userz);
+      ref(database, 'game/players' ), (snapshot) => {
+        let thePicked = [];
+        snapshot.forEach((doc) => {
+          thePicked.push(doc.val());
+        });
+        setPicked(thePicked);
+
+        if(picked.length === 4) {
+          getRank();
+          setIsPartyFull(true);
+          setIsOrderSet(true);
+        }
       }
     );
 
-    if(picked.length === 4) {
-      getRank();
-      setIsOrderSet(true);
-    } 
-
   }, []);
+
+
+  // useEffect(() => { 
+
+  //   onValue(
+  //     ref(database, 'users/' ), (snapshot) => {
+  //       let userz = [];
+  //         snapshot.forEach((doc) => {
+  //           userz.push({...doc.val() });
+  //         });
+  //         setUsers(userz);
+  //     }
+  //   );
+
+  // }, []);
+
+  // console.log("WELCOME // users : ", users);
+  // console.log("WELCOME // picked : ", picked);
 
 
   return (
@@ -147,7 +161,7 @@ const Welcome = () => {
         </div>
 
       {
-        users.length < 4 
+        picked.length < 4 
             ?
         <Button
           leftIcon={<IoPlayCircle />}
@@ -171,7 +185,7 @@ const Welcome = () => {
         ?
 
     <DeckChoice 
-      setPickers={setPicked}
+      
     />
         
         :
@@ -182,6 +196,8 @@ const Welcome = () => {
 }
 
 export default Welcome;
+
+// setPickers={(a) => setPicked(a)}
 
     // set(ref(database, 'game/contracts'), {
     //   rata: false,

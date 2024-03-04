@@ -4,11 +4,13 @@ import { useAuthContext } from '@/context/AuthContext';
 import React, { useEffect, useState } from 'react';
 import { database } from '@/firebase/config';
 
+import LoadCard from '/public/images/loadCard.png';
 import ContractName from './ContractName';
+import BoardDomino from './BoardDomino';
 import PlayerBox from './PlayerBox';
+import Image from 'next/image';
 import Board from './Board';
 import Panel from './Panel';
-import BoardDomino from './BoardDomino';
 
 const cardValues = ["7", "8", "9", "t", "j", "q", "k", "a"];
 
@@ -97,6 +99,7 @@ const BoardGame = () => {
   const [contractor, setContractor] = useState("");
 
   const [dominoDone, setDominoDone] = useState([]);
+  const [amIContractor, setAmIContractor] = useState(false);
   const [displayLoading, setDisplayLoading] = useState(false);
 
   const [hasToPlay, setHasToPlay] = useState("");
@@ -1387,6 +1390,7 @@ const BoardGame = () => {
     onValue(
       ref(database, 'game/contractor/uid' ), (snapshot) => {
         setContractor(snapshot.val());
+        setAmIContractor(contractor === user.uid);
       }
     );
 
@@ -1621,15 +1625,26 @@ const BoardGame = () => {
       />
 
         {
-          endOfContract 
+          !endOfContract 
               ?
+          <ContractName value={contract} />
+              :
+            amIContractor
+                ?
             <Panel 
               whoCanPlayDom={(p) => whoCanPlay(p)}
             />
-              :
-            <ContractName value={contract} />
+                :
+            <div className="flex w-1/5 pt-10 flex-col right-10">
+                <Image 
+                    className='home-logo top-20'
+                    src={LoadCard}
+                    width={175}
+                    alt="AldoIcon"
+                    priority
+                />
+            </div>
         }
-
  
     </div>
 

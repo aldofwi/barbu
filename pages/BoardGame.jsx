@@ -116,13 +116,15 @@ const BoardGame = () => {
   const [endOfSeven,    setEndOfSeven] = useState(false);
   const [endOfGame,     setEndOfGame] = useState(false);
 
+  if(amIContractor) initHands();
+
   // INIT Hands
-  set(ref(database, 'game/hands/'), {
-    SOUTH:  southHand,
-    WEST:   westHand,
-    NORTH:  northHand,
-    EAST:   eastHand,   
-  });
+  // set(ref(database, 'game/hands/'), {
+  //   SOUTH:  southHand,
+  //   WEST:   westHand,
+  //   NORTH:  northHand,
+  //   EAST:   eastHand,   
+  // });
 
   const initHands = () => {
 
@@ -1268,7 +1270,7 @@ const BoardGame = () => {
 
       // MAYBE CHECK ON TEMPO PLI SIZE
       // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
-      if(dominoDone.length === 3) {
+      if(amIContractor && dominoDone.length === 3) {
         console.log("6. BOARDGAME // onClickBoard // END OF DOMINO || Done : ", dominoDone);
         handleDomino();
         checkEndOf7();
@@ -1280,6 +1282,12 @@ const BoardGame = () => {
     } else {
       console.log("1. BOARDGAME // onClickBoard(", click,") // board : ", board, " // colorAsked = ", colorAsked);
 
+      // CHECK IF PLAYER HAS TO PLAY.
+      if(click[0] !== hasToPlay) { 
+        alert(hasToPlay+" has to play !"); 
+        return; 
+      }
+
       if(board.length === 0) {
         update(ref(database, 'game/current/'), { 
           colorAsk: click[1].charAt(1)
@@ -1289,12 +1297,6 @@ const BoardGame = () => {
         // setColorAsked(colorAsked);
         // setPlaceAsked(click[0]);
         console.log("1.1 BOARDGAME // onClickBoard // Updated colorAsked !");
-      }
-  
-      // CHECK IF PLAYER HAS TO PLAY.
-      if(click[0] !== hasToPlay) { 
-        alert(hasToPlay+" has to play !"); 
-        return; 
       }
   
       // CHECK IF CARD IS THE GOOD ONE.
@@ -1374,7 +1376,7 @@ const BoardGame = () => {
   
       // MAYBE CHECK ON TEMPO PLI SIZE
       // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
-      if(nbClic === 31) {
+      if(amIContractor && nbClic === 31) {
         console.log("6. BOARDGAME // onClickBoard // END OF CONTRACT ||");
         checkEndOf7();
 
@@ -1427,7 +1429,7 @@ const BoardGame = () => {
 
         //alert('colorAsked : '+colorAsked);
 
-        if(theBoard.length === 4 && colorAsked !== "") {
+        if(amIContractor && theBoard.length === 4 && colorAsked !== "") {
           setHasToPlay(whoIsTheMaster(theBoard));
           cleanBoard(theBoard);
         }
@@ -1544,6 +1546,7 @@ const BoardGame = () => {
 
   console.log("BOARDGAME _--------------------_");
   console.log("BOARDGAME // myRank = ", myRank);
+  console.log("BOARDGAME // amIContractor = ", amIContractor);
   console.log("BOARDGAME // board = ", board.length);
   console.log("BOARDGAME // master = ", master);
   console.log("BOARDGAME // nbClic = ", nbClic);

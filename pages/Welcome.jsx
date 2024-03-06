@@ -9,6 +9,7 @@ import LoadCard from '/public/images/loadCard.png';
 import BoardGame from './BoardGame';
 import Image from 'next/image';
 import DeckChoice from './DeckChoice';
+import BoardGaming from './BoardGaming';
 
 const values = {
   7: 0,
@@ -38,15 +39,17 @@ const Welcome = () => {
   // pass positions to PlayerBox props.
   // Map players from database.
 
-  const getRank = () => {
+  const getRank = (cardsPicked) => {
     console.log("WELCOME // getRank()");
+    setPicked(cardsPicked);
 
     let numb=1;
     let myCard;
     let myValue;
     let otherCards = [];
-    let players = picked;
+    let players = cardsPicked;
 
+    // Récupère la valeur de ma carte.
     for(let i=0; i<players.length; i++) {
       if(players[i].username === user.displayName) {
         myCard = players[i].pick.charAt(0);
@@ -54,19 +57,11 @@ const Welcome = () => {
           if(myCard === cardValues[j]) myValue = j;
         }
       } 
-      // else {
-      //   otherCards.push(players[i].pick.charAt(0));
-      // }
     }
 
+    // Compare la valeur de ma carte avec les autres.
     for(let k=0; k<players.length; k++) {
       if(players[k].username !== user.displayName) {
-        
-        // console.log("myValue = ", myValue);
-        // console.log("k = ", k, "| players[k].pick.charAt(0) = ", players[k].pick.charAt(0));
-        // console.log("values[players[k].pick.charAt(0)] = ", values[players[k].pick.charAt(0)]);
-        // console.log("myValue < other --> ", myValue  < values[players[k].pick.charAt(0)]);
-
         if(myValue < values[players[k].pick.charAt(0)]) {
           numb++;
         }
@@ -94,54 +89,19 @@ const Welcome = () => {
     //       name: "[J@rvis]",
     //       uid: "basic101",
     //   });
+    console.log(user.displayName+" is contractor N°"+numb);
 
-    return numb;
+    setIsPartyFull(true);
+    setIsOrderSet(true);
+    // return numb;
   }
   
   const handlePlay = () => {
-
     setGameStarted(true);
   }
 
-  useEffect(() => { 
-
-    onValue(
-      ref(database, 'game/players' ), (snapshot) => {
-        let thePicked = [];
-        snapshot.forEach((doc) => {
-          thePicked.push(doc.val());
-        });
-        setPicked(thePicked);
-        console.log("WELCOME // the Picked = ", thePicked.length);
-
-        if(thePicked.length === 4) {
-          getRank();
-          setIsPartyFull(true);
-          setIsOrderSet(true);
-        }
-      }
-    );
-
-  }, []);
-
-
-  // useEffect(() => { 
-
-  //   onValue(
-  //     ref(database, 'users/' ), (snapshot) => {
-  //       let userz = [];
-  //         snapshot.forEach((doc) => {
-  //           userz.push({...doc.val() });
-  //         });
-  //         setUsers(userz);
-  //     }
-  //   );
-
-  // }, []);
-
-  // console.log("WELCOME // users : ", users);
-  // console.log("WELCOME // picked : ", picked);
-
+  console.log("WELCOME // isOrderSet = ", isOrderSet);
+  console.log("WELCOME // isPartyFull = ", isPartyFull);
 
   return (
 
@@ -186,52 +146,58 @@ const Welcome = () => {
         ?
 
     <DeckChoice 
-      
+      getRanking={(p) => getRank(p)}
     />
         
         :
 
-    <BoardGame />
+    <BoardGaming />
 
   )
 }
 
 export default Welcome;
 
-// setPickers={(a) => setPicked(a)}
 
-    // set(ref(database, 'game/contracts'), {
-    //   rata: false,
-    //   barbu: false,
-    //   domino: false,
-    //   coeurs: false,
-    //   dames: false,
-    //   plis: false,
-    //   dp: false,
-    // });
+  // useEffect(() => { 
 
-    // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2'), {
-    //   score: 0,
-    // });
-    // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb3'), {
-    //   score: 0,
-    // });
-    // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb4'), {
-    //   score: 0,
-    // });
-    // update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb5'), {
-    //   score: 0,
-    // });
+  //   onValue(
+  //     ref(database, 'game/players' ), (snapshot) => {
+  //       let thePicked = [];
+  //       snapshot.forEach((doc) => {
+  //         thePicked.push(doc.val());
+  //       });
+  //       setPicked(thePicked);
+  //       console.log("WELCOME // the Picked = ", thePicked.length);
 
-    // update(ref(database, 'game/current/'), {
-    //   colorAsk: "",
-    //   contract: "",
-    //   endOfContract: true,
-    //   hasToPlay: "SOUTH",
-    //   nbClic: 0,
-    // });
+  //       if(thePicked.length === 4) {
+  //         getRank();
+  //         setIsPartyFull(true);
+  //         setIsOrderSet(true);
+  //       }
+  //     }
+  //   );
 
-    // ------TEMP -------
-    // console.log("Value Q = ", values['t']);
-    // If Nb Game Players is less than 4 (FULL)
-    //  className="h-full flex flex-col bg-[#121212] container justify-center items-center"
+  // }, []);
+
+  // useEffect(() => { 
+
+  //   onValue(
+  //     ref(database, 'users/' ), (snapshot) => {
+  //       let userz = [];
+  //         snapshot.forEach((doc) => {
+  //           userz.push({...doc.val() });
+  //         });
+  //         setUsers(userz);
+  //     }
+  //   );
+
+  // }, []);
+
+  // console.log("WELCOME // users : ", users);
+  // console.log("WELCOME // picked : ", picked);
+    
+  // console.log("myValue = ", myValue);
+  // console.log("k = ", k, "| players[k].pick.charAt(0) = ", players[k].pick.charAt(0));
+  // console.log("values[players[k].pick.charAt(0)] = ", values[players[k].pick.charAt(0)]);
+  // console.log("myValue < other --> ", myValue  < values[players[k].pick.charAt(0)]);

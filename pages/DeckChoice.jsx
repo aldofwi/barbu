@@ -34,7 +34,7 @@ const shuffle = (tab) => {
     return newTab;
 }
 
-const DeckChoice = ({ }) => {
+const DeckChoice = ({ getRanking }) => {
 
   const { user } = useAuthContext();
   const [myCards, setMyCards] = useState(shuffle(rankh));
@@ -61,7 +61,7 @@ const DeckChoice = ({ }) => {
       //         name: "[J@rvis]",
       //         uid: "basic101",
       //     });
-
+      console.log(user.displayName+" a pris le "+cardSpell[element]);
   }
 
   useEffect(() => {
@@ -74,6 +74,8 @@ const DeckChoice = ({ }) => {
           });
           //setPickers(picks);
           setOrder(picks);
+          
+          if(picks.length === 4) getRanking(picks);
           //console.log("picks = ", picks);
       }
     );

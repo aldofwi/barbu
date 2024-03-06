@@ -84,16 +84,16 @@ const Welcome = () => {
       });
     }
     
-    const msgRef = ref(database, 'messages/');
-    const newItem = push(msgRef);
+    // const msgRef = ref(database, 'messages/');
+    // const newItem = push(msgRef);
 
-    set(newItem, 
-      {
-          createdAt: serverTimestamp(),
-          msg: user.displayName+" is contractor N°"+numb,
-          name: "[J@rvis]",
-          uid: "basic101",
-      });
+    // set(newItem, 
+    //   {
+    //       createdAt: serverTimestamp(),
+    //       msg: user.displayName+" is contractor N°"+numb,
+    //       name: "[J@rvis]",
+    //       uid: "basic101",
+    //   });
 
     return numb;
   }
@@ -112,8 +112,9 @@ const Welcome = () => {
           thePicked.push(doc.val());
         });
         setPicked(thePicked);
+        console.log("WELCOME // the Picked = ", thePicked.length);
 
-        if(picked.length === 4) {
+        if(thePicked.length === 4) {
           getRank();
           setIsPartyFull(true);
           setIsOrderSet(true);

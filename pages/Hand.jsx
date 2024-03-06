@@ -63,7 +63,7 @@ const Hand = ({ handStyle, cards, others, onClickHand }) => {
 
     // console.log("cards = ", cards);
     const getFlip = (c) => {
-    // Back = TRUE | Front = FALSE
+        // Back = TRUE | Front = FALSE
         console.log("others flip", others);
 
         if(others.length === 0) return true;
@@ -75,13 +75,31 @@ const Hand = ({ handStyle, cards, others, onClickHand }) => {
         }
     }
 
+    const getPlace = (place) => {
+
+        switch(place) {
+            case "SOUTH" : return false;
+            case "WEST"  : return true;
+            case "NORTH" : return true;
+            case "EAST"  : return true;
+
+            case "SPIDES"  : return false;
+            case "HEARTS"  : return false;
+            case "CLOVES"  : return false;
+            case "DIAMONDS": return false;
+
+            case "board" : return false;
+                default : break;
+        }
+    }
+
   return (
     // TODO : correct flip condition
         <div className={getNameOfClass(handStyle)}>
             {cards?.map((element, i) =>
                 <Card
                     value={element}
-                    flip={handStyle === "positionPick" ? getFlip(element) : false}
+                    flip={handStyle === "positionPick" ? getFlip(element) : getPlace(handStyle)}
                     key={i}
                     picked={others}
                     cardStyle={handStyle === "board" ? getCardPos(i) : handStyle}

@@ -1390,6 +1390,7 @@ const BoardGame = () => {
     onValue(
       ref(database, 'game/contractor/uid' ), (snapshot) => {
         setContractor(snapshot.val());
+        setHasToPlay(snapshot.val());
         setAmIContractor(contractor === user.uid);
       }
     );

@@ -34,7 +34,7 @@ const shuffle = (tab) => {
     return newTab;
 }
 
-const DeckChoice = ({ setPickers }) => {
+const DeckChoice = ({ }) => {
 
   const { user } = useAuthContext();
   const [myCards, setMyCards] = useState(shuffle(rankh));
@@ -51,16 +51,16 @@ const DeckChoice = ({ setPickers }) => {
         username: user.displayName,
       });
 
-      const msgRef = ref(database, 'messages/');
-      const newItem = push(msgRef);
+      // const msgRef = ref(database, 'messages/');
+      // const newItem = push(msgRef);
 
-      set(newItem, 
-          {
-              createdAt: serverTimestamp(),
-              msg: user.displayName+" a pris le "+cardSpell[element],
-              name: "[J@rvis]",
-              uid: "basic101",
-          });
+      // set(newItem, 
+      //     {
+      //         createdAt: serverTimestamp(),
+      //         msg: user.displayName+" a pris le "+cardSpell[element],
+      //         name: "[J@rvis]",
+      //         uid: "basic101",
+      //     });
 
   }
 
@@ -72,7 +72,7 @@ const DeckChoice = ({ setPickers }) => {
           snapshot.forEach((doc) => {
             picks.push({...doc.val()});
           });
-          setPickers(picks);
+          //setPickers(picks);
           setOrder(picks);
           //console.log("picks = ", picks);
       }

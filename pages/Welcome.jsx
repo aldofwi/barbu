@@ -32,6 +32,7 @@ const Welcome = () => {
   const [isOrderSet, setIsOrderSet]   = useState(false);
   const [isPartyFull, setIsPartyFull] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+  let [amIinCharge, setAmIinCharge] = useState(false);
   // const [players, setPlayers] = useState([]);
   // const [users, setUsers] = useState([]);
 
@@ -73,10 +74,14 @@ const Welcome = () => {
     });
 
     if(numb === 1) {
+      amIinCharge = true;
+
       set(ref(database, '/game/contractor'), {
         name: user.displayName,
         uid: user.uid,
       });
+
+      console.log("WELCOME // getRank() // amIinCharge = ", amIinCharge);
     }
     
     // const msgRef = ref(database, 'messages/');
@@ -90,7 +95,7 @@ const Welcome = () => {
     //       uid: "basic101",
     //   });
     console.log(user.displayName+" is contractor N°"+numb);
-
+    
     setIsPartyFull(true);
     setIsOrderSet(true);
     // return numb;
@@ -151,7 +156,9 @@ const Welcome = () => {
         
         :
 
-    <BoardGaming />
+    <BoardGaming
+    
+    />
 
   )
 }

@@ -60,17 +60,23 @@ const shuffle = (tab) => {
   return newTab;
 }
 
-const BoardGame = () => {
+const BoardGame = (props) => {
 
   const { user } = useAuthContext();
 
-  const [myRank, setMyRank] = useState(0);
-  const [newDeck, setNewDeck] = useState(shuffle(cards));
+  const [myRank, setMyRank] = useState(props.persoRank);
+  const [newDeck, setNewDeck] = useState([]);
+  // const [newDeck, setNewDeck] = useState(shuffle(cards));
 
-  const [eastHand,  setEastHand]  = useState(newDeck.slice(24, 32));
-  const [northHand, setNorthHand] = useState(newDeck.slice(16, 24));
-  const [westHand,  setWestHand]  = useState(newDeck.slice(8, 16));
-  const [southHand, setSouthHand] = useState(newDeck.slice(0, 8));
+  // const [eastHand,  setEastHand]  = useState(newDeck.slice(24, 32));
+  // const [northHand, setNorthHand] = useState(newDeck.slice(16, 24));
+  // const [westHand,  setWestHand]  = useState(newDeck.slice(8, 16));
+  // const [southHand, setSouthHand] = useState(newDeck.slice(0, 8));
+
+  const [hand1, setHand1] = useState([]);
+  const [hand2, setHand2] = useState([]);
+  const [hand3, setHand3] = useState([]);
+  const [hand4, setHand4] = useState([]);
 
   const [handSpides,   setHandSpides]   = useState([]);
   const [handHearts,   setHandHearts]   = useState([]);
@@ -94,12 +100,12 @@ const BoardGame = () => {
 
   const [board, setBoard] = useState([]);
 
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState(props.playaz);
   const [contract, setContract] = useState("");
   const [contractor, setContractor] = useState("");
 
   const [dominoDone, setDominoDone] = useState([]);
-  const [amIContractor, setAmIContractor] = useState(false);
+  const [amIContractor, setAmIContractor] = useState(props.ami);
   const [displayLoading, setDisplayLoading] = useState(false);
 
   const [hasToPlay, setHasToPlay] = useState("");
@@ -116,8 +122,6 @@ const BoardGame = () => {
   const [endOfSeven,    setEndOfSeven] = useState(false);
   const [endOfGame,     setEndOfGame] = useState(false);
 
-  if(amIContractor) initHands();
-
   // INIT Hands
   // set(ref(database, 'game/hands/'), {
   //   SOUTH:  southHand,
@@ -127,6 +131,9 @@ const BoardGame = () => {
   // });
 
   const initHands = () => {
+    console.log("BOARDGAME //", user.displayName," déclenche initHands();");
+
+    setPlayers(props.playaz);
 
     // NEW PLIS
     setSouthPlis([]);
@@ -161,34 +168,50 @@ const BoardGame = () => {
       nbClic: 0,
     });
 
+    // TODO : Switch to UIDs
+    // 'game/players/'+players[1].uid+'/hand'
     // SEND Hands
-    set(ref(database, 'game/hands/'), {
-      SOUTH:  newDeck.slice(0, 8),
-      WEST:   newDeck.slice(8, 16),
-      NORTH:  newDeck.slice(16, 24),
-      EAST:   newDeck.slice(24, 32), 
+    update(ref(database, 'game/players/'+players[0].uid), {
+      hand:  newDeck.slice(0, 8),
+    });
+    update(ref(database, 'game/players/'+players[1].uid), {
+      hand:  newDeck.slice(8, 16),
+    });
+    update(ref(database, 'game/players/'+players[2].uid), {
+      hand:  newDeck.slice(16, 24),
+    });
+    update(ref(database, 'game/players/'+players[3].uid), {
+      hand:  newDeck.slice(24, 32),
     });
 
-    if(endOfSeven) setEndOfSeven(false);
+    // set(ref(database, 'game/hands/'), {
+    //   SOUTH:  newDeck.slice(0, 8),
+    //   WEST:   newDeck.slice(8, 16),
+    //   NORTH:  newDeck.slice(16, 24),
+    //   EAST:   newDeck.slice(24, 32),
+    // });
 
+    if(endOfSeven) setEndOfSeven(false);
   }
 
   const sortPlayz = (playerz) => {
 
     let nb=1;
     let playaz = [];
-    while(nb<5) {
+
+    while(playaz.length !== 4) {
       for(let i=0; i<playerz.length; i++) {
 
         if(playerz[i].uid === user.uid) setMyRank(playerz[i].rank);
         
         if(playerz[i].rank === nb) {
           playaz.push(playerz[i]);
-          nb++;
+          nb++; break;
         }
       }
     }
     return playaz;
+
   }
 
   const sortHand = (hand) => {
@@ -225,6 +248,51 @@ const BoardGame = () => {
     }
 
     return colored_hand;
+  }
+
+  const getHandByRank = (cardinal) => {
+
+    switch(myRank) {
+
+      case 1 : 
+        switch(cardinal) {
+          case "SOUTH"  : return hand1;
+          case "WEST"   : return hand2;
+          case "NORTH"  : return hand3;
+          case "EAST"   : return hand4;
+          default : break;
+        }
+
+      case 2 : 
+        switch(cardinal) {
+          case "SOUTH"  : return hand2;
+          case "WEST"   : return hand3;
+          case "NORTH"  : return hand4;
+          case "EAST"   : return hand1;
+          default : break;
+        }
+
+      case 3 :
+        switch(cardinal) {
+          case "SOUTH"  : return hand3;
+          case "WEST"   : return hand4;
+          case "NORTH"  : return hand1;
+          case "EAST"   : return hand2;
+          default : break;
+        }
+
+      case 4 :
+        switch(cardinal) {
+          case "SOUTH"  : return hand4;
+          case "WEST"   : return hand1;
+          case "NORTH"  : return hand2;
+          case "EAST"   : return hand3;
+          default : break;
+        }
+
+      default : break;
+    }
+
   }
 
   // TODO : sortPlayerz with UID 
@@ -265,6 +333,7 @@ const BoardGame = () => {
           default : break;
         }
       default: break;
+
     }
   }
 
@@ -884,13 +953,14 @@ const BoardGame = () => {
         update(ref(database, 'game/contracts/'), {
           plis: true,
         }); console.log(" Update Plis Done !"); break;
-      case "Dernier Pli" : 
+      case "Dernier Pli" :
         update(ref(database, 'game/contracts/'), {
           dp: true,
         }); console.log(" Update DernierPli Done !"); break;
         default : break;
     }
 
+    // TODO : Switch to real UIDs
     // UPDATE PLAYER1 SCORE
     update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2'), {
       score: southGlobalScore,
@@ -1415,7 +1485,12 @@ const BoardGame = () => {
           snapshot.forEach((doc) => {
             playz.push({...doc.val()});
           });
-          setPlayers(sortPlayz(playz));
+          setPlayers(playz);
+          // setPlayers(sortPlayz(playz));
+
+          for (let i = 0; i < playz.length; i++) {
+            if(playz[i].uid === user.uid) setMyRank(playz[i].rank);
+          }
       }
     );
 
@@ -1428,7 +1503,6 @@ const BoardGame = () => {
         setBoard(theBoard);
 
         //alert('colorAsked : '+colorAsked);
-
         if(amIContractor && theBoard.length === 4 && colorAsked !== "") {
           setHasToPlay(whoIsTheMaster(theBoard));
           cleanBoard(theBoard);
@@ -1437,28 +1511,52 @@ const BoardGame = () => {
     );
 
     onValue(
-      ref(database, 'game/hands/SOUTH' ), (snapshot) => {
-        setSouthHand(sortHand(snapshot.val()));
+      ref(database, 'game/players/'+players[0].uid+'/hand' ), (snapshot) => {
+        setHand1(sortHand(snapshot.val()));
       }
     );
 
     onValue(
-      ref(database, 'game/hands/WEST' ), (snapshot) => {
-        setWestHand(sortHand(snapshot.val()));
+      ref(database, 'game/players/'+players[1].uid+'/hand' ), (snapshot) => {
+        setHand2(sortHand(snapshot.val()));
       }
     );
 
     onValue(
-      ref(database, 'game/hands/NORTH' ), (snapshot) => {
-        setNorthHand(sortHand(snapshot.val()));
+      ref(database, 'game/players/'+players[2].uid+'/hand' ), (snapshot) => {
+        setHand3(sortHand(snapshot.val()));
       }
     );
 
     onValue(
-      ref(database, 'game/hands/EAST' ), (snapshot) => {
-        setEastHand(sortHand(snapshot.val()));
+      ref(database, 'game/players/'+players[3].uid+'/hand' ), (snapshot) => {
+        setHand4(sortHand(snapshot.val()));
       }
     );
+
+    // onValue(
+    //   ref(database, 'game/hands/SOUTH' ), (snapshot) => {
+    //     setSouthHand(sortHand(snapshot.val()));
+    //   }
+    // );
+
+    // onValue(
+    //   ref(database, 'game/hands/WEST' ), (snapshot) => {
+    //     setWestHand(sortHand(snapshot.val()));
+    //   }
+    // );
+
+    // onValue(
+    //   ref(database, 'game/hands/NORTH' ), (snapshot) => {
+    //     setNorthHand(sortHand(snapshot.val()));
+    //   }
+    // );
+
+    // onValue(
+    //   ref(database, 'game/hands/EAST' ), (snapshot) => {
+    //     setEastHand(sortHand(snapshot.val()));
+    //   }
+    // );
 
     onValue(
       ref(database, 'game/boardDomino/SPIDES' ), (snapshot) => {
@@ -1500,6 +1598,7 @@ const BoardGame = () => {
       }
     );
 
+    // TODO : No dur
     onValue(
       ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2/score' ), (snapshot) => {
         setSouthGlobalScore(snapshot.val());
@@ -1526,25 +1625,34 @@ const BoardGame = () => {
 
     onValue(
       ref(database, 'game/current/contract' ), (snapshot) => {
-          setContract(snapshot.val());
+        setContract(snapshot.val());
       }
     );
 
     onValue(
       ref(database, 'game/current/nbClic' ), (snapshot) => {
-          setNbClic(snapshot.val());
+        setNbClic(snapshot.val());
       }
     );
 
     onValue(
       ref(database, 'game/current/endOfContract' ), (snapshot) => {
-          setEndOfContract(snapshot.val());
+        setEndOfContract(snapshot.val());
       }
     );
 
   }, [hasToPlay, colorAsked]);
 
+
+  if(props.ami) initHands();
+
+
   console.log("BOARDGAME _--------------------_");
+  console.log("BOARDGAME // PROPS playaz = ", props.playaz);
+  console.log("BOARDGAME // PROPS persoRank = ", props.persoRank);
+  console.log("BOARDGAME // PROPS ami = ", props.ami);
+  console.log("BOARDGAME _--------------------_");
+  console.log("BOARDGAME // players = ", players);
   console.log("BOARDGAME // myRank = ", myRank);
   console.log("BOARDGAME // amIContractor = ", amIContractor);
   console.log("BOARDGAME // board = ", board.length);
@@ -1553,10 +1661,11 @@ const BoardGame = () => {
   console.log("BOARDGAME // contract = ", contract);
   console.log("BOARDGAME // hasToPlay = ", hasToPlay);
   console.log("BOARDGAME // colorAsked = ", colorAsked);
-  console.log("BOARDGAME // contractor = ", getPlaceByUid(contractor));
+  console.log("BOARDGAME // contractor = ", contractor);
+  console.log("BOARDGAME // contractor place = ", getPlaceByUid(contractor));
   console.log("BOARDGAME // endOfContract = ", endOfContract);
   console.log("BOARDGAME // ContractsDone = ", contractsDone);
-  console.log("BOARDGAME // nb ContractsDone = ", contractsDone.length);
+  console.log("BOARDGAME // NB ContractsDone = ", contractsDone.length);
   console.log("BOARDGAME // playersDone = ", playersDone);
   console.log("BOARDGAME // endOfSeven = ", endOfSeven);
   console.log("BOARDGAME -____________________-");
@@ -1584,11 +1693,10 @@ const BoardGame = () => {
         id="EAST"
         board={board}
         player={players[getPlaceByMyRank("EAST")]}
-        myCards={eastHand}
+        myCards={getHandByRank("EAST")}
         hasToPlay={hasToPlay}
         contractor={contractor}
         getBoxClass={(e) => getBoxClass(e)}
-        clickBoard={(key) => onClickBoard(key)}
         nameOfClass={`${positions[3]}`}
       />
 
@@ -1596,11 +1704,10 @@ const BoardGame = () => {
         id="NORTH"
         board={board}
         player={players[getPlaceByMyRank("NORTH")]}
-        myCards={northHand}
+        myCards={getHandByRank("NORTH")}
         hasToPlay={hasToPlay}
         contractor={contractor}
         getBoxClass={(e) => getBoxClass(e)}
-        clickBoard={(key) => onClickBoard(key)}
         nameOfClass={`${positions[2]}`}
       />
 
@@ -1608,19 +1715,18 @@ const BoardGame = () => {
         id="WEST"
         board={board}
         player={players[getPlaceByMyRank("WEST")]}
-        myCards={westHand}
+        myCards={getHandByRank("WEST")}
         hasToPlay={hasToPlay}
         contractor={contractor}
         getBoxClass={(e) => getBoxClass(e)}
-        clickBoard={(key) => onClickBoard(key)}
         nameOfClass={`${positions[1]}`}
       />
-        
+
       <PlayerBox
         id="SOUTH"
         board={board}
         player={players[getPlaceByMyRank("SOUTH")]}
-        myCards={southHand}
+        myCards={getHandByRank("SOUTH")}
         hasToPlay={hasToPlay}
         contractor={contractor}
         getBoxClass={(e) => getBoxClass(e)}
@@ -1633,7 +1739,7 @@ const BoardGame = () => {
               ?
           <ContractName value={contract} />
               :
-            amIContractor
+              props.ami
                 ?
             <Panel 
               whoCanPlayDom={(p) => whoCanPlay(p)}

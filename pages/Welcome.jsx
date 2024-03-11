@@ -33,6 +33,7 @@ const Welcome = () => {
   const [isPartyFull, setIsPartyFull] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   let [amIinCharge, setAmIinCharge] = useState(false);
+  let [monRank, setMonRank] = useState(0);
   // const [players, setPlayers] = useState([]);
   // const [users, setUsers] = useState([]);
 
@@ -41,7 +42,8 @@ const Welcome = () => {
   // Map players from database.
 
   const getRank = (cardsPicked) => {
-    console.log("WELCOME // getRank()");
+    console.log("WELCOME // getRank() picks = ", cardsPicked);
+    // setPicked(sortPlayz(cardsPicked));
     setPicked(cardsPicked);
 
     let numb=1;
@@ -73,8 +75,15 @@ const Welcome = () => {
       rank: numb,
     });
 
+    monRank = numb;
+    //setMonRank(numb);
+    setIsPartyFull(true);
+    setIsOrderSet(true);
+    console.log("WELCOME // monRank = ", monRank);
+
     if(numb === 1) {
-      amIinCharge = true;
+      //amIinCharge = true;
+      setAmIinCharge(true);
 
       set(ref(database, '/game/contractor'), {
         name: user.displayName,
@@ -94,10 +103,13 @@ const Welcome = () => {
     //       name: "[J@rvis]",
     //       uid: "basic101",
     //   });
-    console.log(user.displayName+" is contractor N°"+numb);
+
+    //setTimeout(() => {
+      console.log("WELCOME // getRank() TO // "+user.displayName+" is contractor N°"+numb);
+    //}, 2000);
     
-    setIsPartyFull(true);
-    setIsOrderSet(true);
+    // setIsPartyFull(true);
+    // setIsOrderSet(true);
     // return numb;
   }
   
@@ -105,8 +117,8 @@ const Welcome = () => {
     setGameStarted(true);
   }
 
-  console.log("WELCOME // isOrderSet = ", isOrderSet);
-  console.log("WELCOME // isPartyFull = ", isPartyFull);
+  // console.log("WELCOME // isOrderSet = ", isOrderSet);
+  // console.log("WELCOME // isPartyFull = ", isPartyFull);
 
   return (
 
@@ -156,8 +168,10 @@ const Welcome = () => {
         
         :
 
-    <BoardGaming
-    
+    <BoardGame
+      ami={amIinCharge}
+      persoRank={monRank}
+      playaz={picked}
     />
 
   )

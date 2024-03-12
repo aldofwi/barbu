@@ -41,6 +41,8 @@ const Welcome = () => {
   // pass positions to PlayerBox props.
   // Map players from database.
 
+
+
   const getRank = (cardsPicked) => {
     console.log("WELCOME // getRank() picks = ", cardsPicked);
     // setPicked(sortPlayz(cardsPicked));
@@ -82,8 +84,8 @@ const Welcome = () => {
     console.log("WELCOME // monRank = ", monRank);
 
     if(numb === 1) {
-      //amIinCharge = true;
-      setAmIinCharge(true);
+      amIinCharge = true;
+      //setAmIinCharge(true);
 
       set(ref(database, '/game/contractor'), {
         name: user.displayName,

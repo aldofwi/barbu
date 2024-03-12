@@ -130,10 +130,15 @@ const BoardGame = (props) => {
   //   EAST:   eastHand,   
   // });
 
+
+
   const initHands = () => {
     console.log("BOARDGAME //", user.displayName," déclenche initHands();");
 
-    setPlayers(props.playaz);
+    // ORDER WHY NOT IN WELCOME ?
+    // setPlayers(orderPlayers(props.playaz));
+
+    console.log("BOARDGAME // Players = ", players);
 
     // NEW PLIS
     setSouthPlis([]);
@@ -170,7 +175,7 @@ const BoardGame = (props) => {
 
     // TODO : Switch to UIDs
     // 'game/players/'+players[1].uid+'/hand'
-    // SEND Hands
+    // SEND Hands (cannot read uid undefined)
     update(ref(database, 'game/players/'+players[0].uid), {
       hand:  newDeck.slice(0, 8),
     });
@@ -192,6 +197,24 @@ const BoardGame = (props) => {
     // });
 
     if(endOfSeven) setEndOfSeven(false);
+  }
+
+  const orderPlayers = (playz) => {
+    console.log("BOARDGAME // orderPlayers()");
+
+    let goodPlayz = [];
+
+    for (let i=1; i<5; i++) {
+      for (let j=0; j<playz.length; j++) {
+
+        if(playz[j].rank === i) {
+          goodPlayz.push(playz[j]);
+          break;
+        }
+      }
+    }
+
+    return goodPlayz;
   }
 
   const sortPlayz = (playerz) => {
@@ -1462,7 +1485,7 @@ const BoardGame = (props) => {
     onValue(
       ref(database, 'game/contractor/uid' ), (snapshot) => {
         setContractor(snapshot.val());
-        setAmIContractor(snapshot.val() === user.uid);
+        //setAmIContractor(snapshot.val() === user.uid);
         setHasToPlay(getPlaceByUid(snapshot.val()));
       }
     );
@@ -1479,20 +1502,20 @@ const BoardGame = (props) => {
       }
     );
 
-    onValue(
-      ref(database, 'game/players/' ), (snapshot) => {
-        let playz = [];
-          snapshot.forEach((doc) => {
-            playz.push({...doc.val()});
-          });
-          setPlayers(playz);
-          // setPlayers(sortPlayz(playz));
+    // onValue(
+    //   ref(database, 'game/players/' ), (snapshot) => {
+    //     let playz = [];
+    //       snapshot.forEach((doc) => {
+    //         playz.push({...doc.val()});
+    //       });
+    //       setPlayers(playz);
+    //       // setPlayers(sortPlayz(playz));
 
-          for (let i = 0; i < playz.length; i++) {
-            if(playz[i].uid === user.uid) setMyRank(playz[i].rank);
-          }
-      }
-    );
+    //       for (let i = 0; i < playz.length; i++) {
+    //         if(playz[i].uid === user.uid) setMyRank(playz[i].rank);
+    //       }
+    //   }
+    // );
 
     onValue(
       ref(database, 'game/board' ), (snapshot) => {
@@ -1643,14 +1666,16 @@ const BoardGame = (props) => {
 
   }, [hasToPlay, colorAsked]);
 
+  if(myRank !== 0) {
+    setPlayers(orderPlayers(props.playaz));
 
-  if(props.ami) initHands();
+    if(amIContractor) initHands();
+  }
 
-
-  console.log("BOARDGAME _--------------------_");
-  console.log("BOARDGAME // PROPS playaz = ", props.playaz);
-  console.log("BOARDGAME // PROPS persoRank = ", props.persoRank);
-  console.log("BOARDGAME // PROPS ami = ", props.ami);
+  // console.log("BOARDGAME _--------------------_");
+  // console.log("BOARDGAME // PROPS playaz = ", props.playaz);
+  // console.log("BOARDGAME // PROPS persoRank = ", props.persoRank);
+  // console.log("BOARDGAME // PROPS ami = ", props.ami);
   console.log("BOARDGAME _--------------------_");
   console.log("BOARDGAME // players = ", players);
   console.log("BOARDGAME // myRank = ", myRank);

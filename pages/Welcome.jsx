@@ -8,8 +8,6 @@ import { Button } from '@chakra-ui/react';
 import LoadCard from '/public/images/loadCard.png';
 import BoardGame from './BoardGame';
 import Image from 'next/image';
-import DeckChoice from './DeckChoice';
-import BoardGaming from './BoardGaming';
 
 const values = {
   7: 0,
@@ -24,103 +22,154 @@ const values = {
 
 const cardValues = ["7", "8", "9", "t", "j", "q", "k", "a"];
 
+const shuffle = (tab) => {
+
+  const theTab = [...tab];
+  const newTab = [];
+  let i;  let n = tab.length;
+  
+  // While it remains elements to suffle.
+  while(n) {
+      // Pick a remaining element.
+      i = Math.floor(Math.random() * theTab.length);
+      
+      // If not already shuffle, move it to the new array.
+      newTab.push(theTab[i]);
+      theTab.splice(i, 1);
+      n--;
+  }
+
+  return newTab;
+}
+
 const Welcome = () => {
 
   const { user } = useAuthContext();
 
-  const [picked, setPicked] = useState([]);
-  const [isOrderSet, setIsOrderSet]   = useState(false);
+  const [myRank, setMyRank] = useState(0);
+  const [number, setNumber] = useState(0);
+  const [players, setPlayers] = useState([]);
+
+  const [clickPlay, setClickPlay] = useState(false);
   const [isPartyFull, setIsPartyFull] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
-  let [amIinCharge, setAmIinCharge] = useState(false);
-  let [monRank, setMonRank] = useState(0);
-  // const [players, setPlayers] = useState([]);
-  // const [users, setUsers] = useState([]);
 
-  // getPositionByID when Order is setted.
-  // pass positions to PlayerBox props.
-  // Map players from database.
+  const createPlayer = (r) => {
+    console.log("WELCOME // createPlayer() with rank : ", r);
 
+    // On ajoute le player qui a clické.
+    set(ref(database, '/game/players/' + user.uid), {
+      picture: user.photoURL,
+      rank: r,
+      score: 0,
+      uid: user.uid,
+      username: user.displayName,
+    });
+  }
 
+  const handlePlay = () => {
+    console.log("WELCOME // handlePlay() // players.length : ", players.length);
+    console.log("WELCOME // handlePlay() // players : ", players);
 
-  const getRank = (cardsPicked) => {
-    console.log("WELCOME // getRank() picks = ", cardsPicked);
-    // setPicked(sortPlayz(cardsPicked));
-    setPicked(cardsPicked);
+    let oldTab = [1, 2, 3, 4];
+    let newTab = [];
 
-    let numb=1;
-    let myCard;
-    let myValue;
-    let otherCards = [];
-    let players = cardsPicked;
+    if(players.length === 1) {
 
-    // Récupère la valeur de ma carte.
-    for(let i=0; i<players.length; i++) {
-      if(players[i].username === user.displayName) {
-        myCard = players[i].pick.charAt(0);
-        for(let j=0; j<cardValues.length; j++) {
-          if(myCard === cardValues[j]) myValue = j;
-        }
-      } 
+      oldTab.splice(oldTab.indexOf(players[0].rank), 1);
+
+    } else if(players.length === 2) {
+
+      oldTab.splice(oldTab.indexOf(players[0].rank), 1);
+      oldTab.splice(oldTab.indexOf(players[1].rank), 1);
+      
+    } else if(players.length === 3) {
+
+      oldTab.splice(oldTab.indexOf(players[0].rank), 1);
+      oldTab.splice(oldTab.indexOf(players[1].rank), 1);
+      oldTab.splice(oldTab.indexOf(players[2].rank), 1);
     }
 
-    // Compare la valeur de ma carte avec les autres.
-    for(let k=0; k<players.length; k++) {
-      if(players[k].username !== user.displayName) {
-        if(myValue < values[players[k].pick.charAt(0)]) {
-          numb++;
+    newTab = shuffle(oldTab);
+    createPlayer(newTab[0]);
+    setClickPlay(true);
+  }
+ 
+  const orderPlayers = (playaz) => {
+    console.log("WELCOME // orderPlayers()");
+
+    let goodPlayz = [];
+
+    for (let i=1; i<5; i++) {
+      for (let j=0; j<playaz.length; j++) {
+
+        if(playaz[j].rank === i) {
+          goodPlayz.push(playaz[j]);
         }
       }
     }
 
-    update(ref(database, '/game/players/' + user.uid), {
-      rank: numb,
+    goodPlayz.forEach(element => {
+      if(element.uid === user.uid) setMyRank(element.rank);
     });
 
-    monRank = numb;
-    //setMonRank(numb);
-    setIsPartyFull(true);
-    setIsOrderSet(true);
-    console.log("WELCOME // monRank = ", monRank);
+    return goodPlayz;
+  }
 
-    if(numb === 1) {
-      amIinCharge = true;
-      //setAmIinCharge(true);
+  const shufflePlayers = (listPlay) => {
+    console.log("WELCOME // shufflePlayers()");
 
-      set(ref(database, '/game/contractor'), {
-        name: user.displayName,
-        uid: user.uid,
-      });
+    let newList = listPlay;
+    let shuffleList = shuffle([1, 2, 3, 4]);
 
-      console.log("WELCOME // getRank() // amIinCharge = ", amIinCharge);
+    for (let i=0; i<listPlay.length; i++) {
+      newList[i].rank = shuffleList[i];
     }
-    
-    // const msgRef = ref(database, 'messages/');
-    // const newItem = push(msgRef);
 
-    // set(newItem, 
-    //   {
-    //       createdAt: serverTimestamp(),
-    //       msg: user.displayName+" is contractor N°"+numb,
-    //       name: "[J@rvis]",
-    //       uid: "basic101",
-    //   });
-
-    //setTimeout(() => {
-      console.log("WELCOME // getRank() TO // "+user.displayName+" is contractor N°"+numb);
-    //}, 2000);
-    
-    // setIsPartyFull(true);
-    // setIsOrderSet(true);
-    // return numb;
+    return orderPlayers(newList);
   }
-  
-  const handlePlay = () => {
-    setGameStarted(true);
+ 
+  const updatePlayers = () => {
+    console.log("WELCOME // updatePlayers()");
+
+    update(ref(database, 'game/players/'+players[0].uid), {
+      rank: players[0].rank,
+    });
+
+    update(ref(database, 'game/players/'+players[1].uid), {
+      rank: players[1].rank,
+    });
+    
+    update(ref(database, 'game/players/'+players[2].uid), {
+      rank: players[2].rank,
+    });
+    
+    update(ref(database, 'game/players/'+players[3].uid), {
+      rank: players[3].rank,
+    });
+    
   }
 
-  // console.log("WELCOME // isOrderSet = ", isOrderSet);
-  // console.log("WELCOME // isPartyFull = ", isPartyFull);
+  useEffect(() => {
+
+    onValue(
+      ref(database, 'game/players/' ), (snapshot) => {
+        let playz = [];
+          snapshot.forEach((doc) => {
+            playz.push({...doc.val()});
+          });
+          setNumber(playz.length);
+          setPlayers(orderPlayers(playz));
+
+          if(playz.length === 4) {
+            //setPlayers(orderPlayers(playz));
+            setGameStarted(true);
+          }
+        }
+    );
+
+  }, []);
+
 
   return (
 
@@ -129,7 +178,7 @@ const Welcome = () => {
         ?
 
     <div className="absolute top-40  justify-center">
-        <div className="home-title text-white font-mono font-bold">Hello World!</div>
+        <div className="home-title text-white font-mono font-bold">Hello World! {number}/4</div>
         <div className="flex w-1/5 pt-10 flex-col right-10">
             <Image 
                 className='home-logo top-30'
@@ -141,7 +190,7 @@ const Welcome = () => {
         </div>
 
       {
-        picked.length < 4 
+        !clickPlay && number < 4 
             ?
         <Button
           leftIcon={<IoPlayCircle />}
@@ -161,66 +210,12 @@ const Welcome = () => {
 
         :
 
-    !isOrderSet
-        ?
-
-    <DeckChoice 
-      getRanking={(p) => getRank(p)}
-    />
-        
-        :
-
     <BoardGame
-      ami={amIinCharge}
-      persoRank={monRank}
-      playaz={picked}
+      rank={myRank}
+      playerz={players}
     />
 
   )
 }
 
 export default Welcome;
-
-
-  // useEffect(() => { 
-
-  //   onValue(
-  //     ref(database, 'game/players' ), (snapshot) => {
-  //       let thePicked = [];
-  //       snapshot.forEach((doc) => {
-  //         thePicked.push(doc.val());
-  //       });
-  //       setPicked(thePicked);
-  //       console.log("WELCOME // the Picked = ", thePicked.length);
-
-  //       if(thePicked.length === 4) {
-  //         getRank();
-  //         setIsPartyFull(true);
-  //         setIsOrderSet(true);
-  //       }
-  //     }
-  //   );
-
-  // }, []);
-
-  // useEffect(() => { 
-
-  //   onValue(
-  //     ref(database, 'users/' ), (snapshot) => {
-  //       let userz = [];
-  //         snapshot.forEach((doc) => {
-  //           userz.push({...doc.val() });
-  //         });
-  //         setUsers(userz);
-  //     }
-  //   );
-
-  // }, []);
-
-  // console.log("WELCOME // users : ", users);
-  // console.log("WELCOME // picked : ", picked);
-    
-  // console.log("myValue = ", myValue);
-  // console.log("k = ", k, "| players[k].pick.charAt(0) = ", players[k].pick.charAt(0));
-  // console.log("values[players[k].pick.charAt(0)] = ", values[players[k].pick.charAt(0)]);
-  // console.log("myValue < other --> ", myValue  < values[players[k].pick.charAt(0)]);

@@ -64,7 +64,14 @@ const BoardGame = (props) => {
 
   const { user } = useAuthContext();
 
-  const [myRank, setMyRank] = useState(props.persoRank);
+  // props.persoRank
+  // props.playaz
+  // props.ami
+
+  const [myRank, setMyRank] = useState(props.rank);
+  const [players, setPlayers] = useState(props.playerz);
+  const [amIContractor, setAmIContractor] = useState(props.rank === 1);
+
   const [newDeck, setNewDeck] = useState([]);
   // const [newDeck, setNewDeck] = useState(shuffle(cards));
 
@@ -100,12 +107,10 @@ const BoardGame = (props) => {
 
   const [board, setBoard] = useState([]);
 
-  const [players, setPlayers] = useState(props.playaz);
   const [contract, setContract] = useState("");
   const [contractor, setContractor] = useState("");
 
   const [dominoDone, setDominoDone] = useState([]);
-  const [amIContractor, setAmIContractor] = useState(props.ami);
   const [displayLoading, setDisplayLoading] = useState(false);
 
   const [hasToPlay, setHasToPlay] = useState("");
@@ -138,8 +143,6 @@ const BoardGame = (props) => {
     // ORDER WHY NOT IN WELCOME ?
     // setPlayers(orderPlayers(props.playaz));
 
-    console.log("BOARDGAME // Players = ", players);
-
     // NEW PLIS
     setSouthPlis([]);
     setWestPlis([]);
@@ -170,6 +173,7 @@ const BoardGame = (props) => {
       colorAsk: "",
       contract: "",
       endOfContract: true,
+      hasToPlay: user.uid,
       nbClic: 0,
     });
 
@@ -208,13 +212,12 @@ const BoardGame = (props) => {
       for (let j=0; j<playz.length; j++) {
 
         if(playz[j].rank === i) {
-          goodPlayz.push(playz[j]);
-          break;
+          players.push(playz[j]);
         }
       }
     }
 
-    return goodPlayz;
+    //return goodPlayz;
   }
 
   const sortPlayz = (playerz) => {
@@ -1486,7 +1489,7 @@ const BoardGame = (props) => {
       ref(database, 'game/contractor/uid' ), (snapshot) => {
         setContractor(snapshot.val());
         //setAmIContractor(snapshot.val() === user.uid);
-        setHasToPlay(getPlaceByUid(snapshot.val()));
+        //setHasToPlay(getPlaceByUid(snapshot.val()));
       }
     );
 
@@ -1509,11 +1512,6 @@ const BoardGame = (props) => {
     //         playz.push({...doc.val()});
     //       });
     //       setPlayers(playz);
-    //       // setPlayers(sortPlayz(playz));
-
-    //       for (let i = 0; i < playz.length; i++) {
-    //         if(playz[i].uid === user.uid) setMyRank(playz[i].rank);
-    //       }
     //   }
     // );
 
@@ -1664,19 +1662,30 @@ const BoardGame = (props) => {
       }
     );
 
-  }, [hasToPlay, colorAsked]);
+  }, []);
+  //}, [hasToPlay, colorAsked]);
 
-  if(myRank !== 0) {
-    setPlayers(orderPlayers(props.playaz));
+  console.log("BOARDGAME _--------------------_");
+  console.log("BOARDGAME // PROPS playerz = ", props.playerz);
+  console.log("BOARDGAME // PROPS rank = ", props.rank);
+  console.log("BOARDGAME // PROPS amiii = ", props.rank === 1);
+  console.log("BOARDGAME _--------------------_");
 
-    if(amIContractor) initHands();
+  if(props.rank !== 0) {
+
+    setPlayers(props.playerz);
+    console.log("BOARDGAME // Players = ", players);
+
+    setContractor(players[0].uid);
+    if(props.rank === 1 && props.playerz.length === 4) initHands();
+
   }
 
   // console.log("BOARDGAME _--------------------_");
   // console.log("BOARDGAME // PROPS playaz = ", props.playaz);
   // console.log("BOARDGAME // PROPS persoRank = ", props.persoRank);
   // console.log("BOARDGAME // PROPS ami = ", props.ami);
-  console.log("BOARDGAME _--------------------_");
+  //console.log("BOARDGAME _--------------------_");
   console.log("BOARDGAME // players = ", players);
   console.log("BOARDGAME // myRank = ", myRank);
   console.log("BOARDGAME // amIContractor = ", amIContractor);

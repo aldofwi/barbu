@@ -2,7 +2,7 @@ import { useAuthContext } from '@/context/AuthContext';
 import { database } from '@/firebase/config';
 import { get, onValue, ref, set, update } from 'firebase/database';
 import { useEffect, useState } from 'react';
-import BoardGame from './BoardGame';
+import BoardGame from './BoardGame_';
 import DeckChoice from './DeckChoice';
 
 const cardValues = ["7", "8", "9", "t", "j", "q", "k", "a"];

@@ -65,6 +65,14 @@ const Welcome = () => {
       uid: user.uid,
       username: user.displayName,
     });
+
+    if(r === 1) {
+      // On met à jour le contractor en base.
+      set(ref(database, '/game/contractor'), {
+        name: user.displayName,
+        uid: user.uid,
+      });
+    }
   }
 
   const handlePlay = () => {
@@ -159,10 +167,10 @@ const Welcome = () => {
             playz.push({...doc.val()});
           });
           setNumber(playz.length);
-          setPlayers(orderPlayers(playz));
+          //if(playz.length > 0) setPlayers(orderPlayers(playz));
 
-          if(playz.length === 4) {
-            //setPlayers(orderPlayers(playz));
+          if(playz.length === 4 && !gameStarted) {
+            setPlayers(orderPlayers(playz));
             setGameStarted(true);
           }
         }

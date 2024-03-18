@@ -46,11 +46,11 @@ const Welcome = () => {
 
   const { user } = useAuthContext();
 
-  const [myRank, setMyRank] = useState(0);
-  const [number, setNumber] = useState(0);
+  const [myRank,  setMyRank] = useState(0);
+  const [number,  setNumber] = useState(0);
   const [players, setPlayers] = useState([]);
 
-  const [clickPlay, setClickPlay] = useState(false);
+  const [clickPlay,   setClickPlay] = useState(false);
   const [isPartyFull, setIsPartyFull] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
 
@@ -77,7 +77,6 @@ const Welcome = () => {
 
   const handlePlay = () => {
     console.log("WELCOME // handlePlay() // players.length : ", players.length);
-    console.log("WELCOME // handlePlay() // players : ", players);
 
     let oldTab = [1, 2, 3, 4];
     let newTab = [];
@@ -104,7 +103,7 @@ const Welcome = () => {
   }
  
   const orderPlayers = (playaz) => {
-    console.log("WELCOME // orderPlayers()");
+    console.log("WELCOME // orderPlayers(", playaz.length,") // GameStarted ? ", gameStarted);
 
     let goodPlayz = [];
 
@@ -124,40 +123,6 @@ const Welcome = () => {
     return goodPlayz;
   }
 
-  const shufflePlayers = (listPlay) => {
-    console.log("WELCOME // shufflePlayers()");
-
-    let newList = listPlay;
-    let shuffleList = shuffle([1, 2, 3, 4]);
-
-    for (let i=0; i<listPlay.length; i++) {
-      newList[i].rank = shuffleList[i];
-    }
-
-    return orderPlayers(newList);
-  }
- 
-  const updatePlayers = () => {
-    console.log("WELCOME // updatePlayers()");
-
-    update(ref(database, 'game/players/'+players[0].uid), {
-      rank: players[0].rank,
-    });
-
-    update(ref(database, 'game/players/'+players[1].uid), {
-      rank: players[1].rank,
-    });
-    
-    update(ref(database, 'game/players/'+players[2].uid), {
-      rank: players[2].rank,
-    });
-    
-    update(ref(database, 'game/players/'+players[3].uid), {
-      rank: players[3].rank,
-    });
-    
-  }
-
   useEffect(() => {
 
     onValue(
@@ -167,7 +132,7 @@ const Welcome = () => {
             playz.push({...doc.val()});
           });
           setNumber(playz.length);
-          //if(playz.length > 0) setPlayers(orderPlayers(playz));
+          setPlayers(playz);
 
           if(playz.length === 4 && !gameStarted) {
             setPlayers(orderPlayers(playz));

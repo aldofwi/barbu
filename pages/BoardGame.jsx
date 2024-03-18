@@ -64,15 +64,14 @@ const BoardGame = (props) => {
 
   const { user } = useAuthContext();
 
-  // props.persoRank
-  // props.playaz
-  // props.ami
-
   const [myRank, setMyRank] = useState(props.rank);
   const [players, setPlayers] = useState(props.playerz);
   const [amIContractor, setAmIContractor] = useState(props.rank === 1);
+  const [contractor, setContractor] = useState(props.playerz[0].uid);
+  const [hasToPlay, setHasToPlay] = useState(props.playerz[0].uid);
 
   const [newDeck, setNewDeck] = useState([]);
+  const [initFirst, setInitFirst] = useState(false);
   // const [newDeck, setNewDeck] = useState(shuffle(cards));
 
   // const [eastHand,  setEastHand]  = useState(newDeck.slice(24, 32));
@@ -106,15 +105,11 @@ const BoardGame = (props) => {
   let [eastGlobalScore,  setEastGlobalScore]  = useState(0);
 
   const [board, setBoard] = useState([]);
-
   const [contract, setContract] = useState("");
-  const [contractor, setContractor] = useState("");
+  const [colorAsked, setColorAsked] = useState("");
 
   const [dominoDone, setDominoDone] = useState([]);
   const [displayLoading, setDisplayLoading] = useState(false);
-
-  const [hasToPlay, setHasToPlay] = useState("");
-  const [colorAsked, setColorAsked] = useState("");
 
   const [master, setMaster] = useState("");
   let [nbClic, setNbClic] = useState(0);
@@ -144,22 +139,22 @@ const BoardGame = (props) => {
     // setPlayers(orderPlayers(props.playaz));
 
     // NEW PLIS
-    setSouthPlis([]);
-    setWestPlis([]);
-    setNorthPlis([]);
-    setEastPlis([]);
+    // setSouthPlis([]);
+    // setWestPlis([]);
+    // setNorthPlis([]);
+    // setEastPlis([]);
 
-    // NEW DOM HANDS
-    setHandSpides([]);
-    setHandHearts([]);
-    setHandCloves([]);
-    setHandDiamonds([]);
+    // // NEW DOM HANDS
+    // setHandSpides([]);
+    // setHandHearts([]);
+    // setHandCloves([]);
+    // setHandDiamonds([]);
 
-    // NEW SCORE
-    setSouthScore(0);
-    setWestScore(0);
-    setNorthScore(0);
-    setEastScore(0);
+    // // NEW SCORE
+    // setSouthScore(0);
+    // setWestScore(0);
+    // setNorthScore(0);
+    // setEastScore(0);
 
     // NEW DECK
     setNewDeck(shuffle(cards));
@@ -175,23 +170,30 @@ const BoardGame = (props) => {
       endOfContract: true,
       hasToPlay: user.uid,
       nbClic: 0,
+      hand1:  newDeck.slice(0, 8),
+      hand2:  newDeck.slice(8, 16),
+      hand3:  newDeck.slice(16, 24),
+      hand4:  newDeck.slice(24, 32),
     });
+
+    if(newDeck.length !== 0) setInitFirst(true);
 
     // TODO : Switch to UIDs
     // 'game/players/'+players[1].uid+'/hand'
     // SEND Hands (cannot read uid undefined)
-    update(ref(database, 'game/players/'+players[0].uid), {
-      hand:  newDeck.slice(0, 8),
-    });
-    update(ref(database, 'game/players/'+players[1].uid), {
-      hand:  newDeck.slice(8, 16),
-    });
-    update(ref(database, 'game/players/'+players[2].uid), {
-      hand:  newDeck.slice(16, 24),
-    });
-    update(ref(database, 'game/players/'+players[3].uid), {
-      hand:  newDeck.slice(24, 32),
-    });
+
+    // update(ref(database, 'game/players/'+players[0].uid), {
+    //   hand:  newDeck.slice(0, 8),
+    // });
+    // update(ref(database, 'game/players/'+players[1].uid), {
+    //   hand:  newDeck.slice(8, 16),
+    // });
+    // update(ref(database, 'game/players/'+players[2].uid), {
+    //   hand:  newDeck.slice(16, 24),
+    // });
+    // update(ref(database, 'game/players/'+players[3].uid), {
+    //   hand:  newDeck.slice(24, 32),
+    // });
 
     // set(ref(database, 'game/hands/'), {
     //   SOUTH:  newDeck.slice(0, 8),
@@ -321,8 +323,7 @@ const BoardGame = (props) => {
 
   }
 
-  // TODO : sortPlayerz with UID 
-  const getPlaceByMyRank = (cardinal) => {
+  const getPositionByPlace = (cardinal) => {
 
     switch(myRank) {
 
@@ -406,24 +407,67 @@ const BoardGame = (props) => {
     }
   }
 
+  const getNameByUID = (id) => {
+
+    switch(id) {
+      case players[0].uid : return players[0].username;
+      case players[1].uid : return players[1].username;
+      case players[2].uid : return players[2].username;
+      case players[3].uid : return players[3].username;
+      default: break;
+    }
+  }
+
+  const getUIDByPlace = (place) => {
+
+    switch(place) {
+      case "SOUTH": return user.uid;
+      case "WEST" :
+        switch(myRank) {
+          case 1 : return players[1].uid;
+          case 2 : return players[2].uid;
+          case 3 : return players[3].uid;
+          case 4 : return players[0].uid;
+          default: break;
+        }
+      case "NORTH":
+        switch(myRank) {
+          case 1 : return players[2].uid;
+          case 2 : return players[3].uid;
+          case 3 : return players[0].uid;
+          case 4 : return players[1].uid;
+          default: break;
+        }
+      case "EAST" :
+        switch(myRank) {
+          case 1 : return players[3].uid;
+          case 2 : return players[0].uid;
+          case 3 : return players[1].uid;
+          case 4 : return players[2].uid;
+          default: break;
+        }
+      default: break;
+    }
+
+  }
+
   const getBoxClass = (oneID) => {
-    // console.log("BOARDGAME // getClass ", hasToPlay);
-    // HAS TO PLAY :  border border-2 rounded-full border-[red]
+    
     switch(oneID) {
       case "SOUTH":
-        if(hasToPlay === oneID) return "image_S border border-2 rounded-full border-[red]"
+        if(hasToPlay === getUIDByPlace(oneID)) return "image_S border border-2 rounded-full border-[red]"
         else return "image_S";
 
       case "NORTH": 
-      if(hasToPlay === oneID) return "image_N border border-2 rounded-full border-[red]"
+      if(hasToPlay === getUIDByPlace(oneID)) return "image_N border border-2 rounded-full border-[red]"
         else return "image_N";
 
       case "EAST" : 
-      if(hasToPlay === oneID) return "image_E border border-2 rounded-full border-[red]"
+      if(hasToPlay === getUIDByPlace(oneID)) return "image_E border border-2 rounded-full border-[red]"
         else return "image_E";
 
       case "WEST" : 
-      if(hasToPlay === oneID) return "image_W border border-2 rounded-full border-[red]"
+      if(hasToPlay === getUIDByPlace(oneID)) return "image_W border border-2 rounded-full border-[red]"
         else return "image_W";
 
       default: break;
@@ -488,7 +532,7 @@ const BoardGame = (props) => {
     }
   }
 
-  // TO DO : Replace by real IDs
+  // TODO : Replace by real IDs
   const getNextPlayer = (place) => {
 
     switch(place) {
@@ -529,6 +573,7 @@ const BoardGame = (props) => {
     setEndOfSeven(false);
   }
 
+  // PLACE became an ID
   const hasColorAsked = (place) => {
 
     let list = [];
@@ -987,7 +1032,7 @@ const BoardGame = (props) => {
     }
 
     // TODO : Switch to real UIDs
-    // UPDATE PLAYER1 SCORE
+    // UPDATE PLAYER1 --> SCORE1
     update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2'), {
       score: southGlobalScore,
     });
@@ -1379,8 +1424,8 @@ const BoardGame = (props) => {
       console.log("1. BOARDGAME // onClickBoard(", click,") // board : ", board, " // colorAsked = ", colorAsked);
 
       // CHECK IF PLAYER HAS TO PLAY.
-      if(click[0] !== hasToPlay) { 
-        alert(hasToPlay+" has to play !"); 
+      if(click[0] !== hasToPlay) { // PUT ID in ID
+        alert(getNameByUID(hasToPlay)+" has to play !"); 
         return; 
       }
 
@@ -1487,7 +1532,7 @@ const BoardGame = (props) => {
     // TODO Prod change place to UID.
     onValue(
       ref(database, 'game/contractor/uid' ), (snapshot) => {
-        setContractor(snapshot.val());
+        setContractor(state => snapshot.val());
         //setAmIContractor(snapshot.val() === user.uid);
         //setHasToPlay(getPlaceByUid(snapshot.val()));
       }
@@ -1495,13 +1540,13 @@ const BoardGame = (props) => {
 
     onValue(
       ref(database, 'game/current/colorAsk' ), (snapshot) => {
-          setColorAsked(snapshot.val());
+          setColorAsked(state => snapshot.val());
       }
     );
 
     onValue(
       ref(database, 'game/current/hasToPlay' ), (snapshot) => {
-          setHasToPlay(snapshot.val());
+          setHasToPlay(state => snapshot.val());
       }
     );
 
@@ -1532,28 +1577,52 @@ const BoardGame = (props) => {
     );
 
     onValue(
-      ref(database, 'game/players/'+players[0].uid+'/hand' ), (snapshot) => {
-        setHand1(sortHand(snapshot.val()));
+      ref(database, 'game/current/hand1' ), (snapshot) => {
+        setHand1(state => sortHand(snapshot.val()));
       }
     );
 
     onValue(
-      ref(database, 'game/players/'+players[1].uid+'/hand' ), (snapshot) => {
-        setHand2(sortHand(snapshot.val()));
+      ref(database, 'game/current/hand2' ), (snapshot) => {
+        setHand2(state => sortHand(snapshot.val()));
       }
     );
 
     onValue(
-      ref(database, 'game/players/'+players[2].uid+'/hand' ), (snapshot) => {
-        setHand3(sortHand(snapshot.val()));
+      ref(database, 'game/current/hand3' ), (snapshot) => {
+        setHand3(state => sortHand(snapshot.val()));
       }
     );
 
     onValue(
-      ref(database, 'game/players/'+players[3].uid+'/hand' ), (snapshot) => {
-        setHand4(sortHand(snapshot.val()));
+      ref(database, 'game/current/hand4' ), (snapshot) => {
+        setHand4(state => sortHand(snapshot.val()));
       }
     );
+
+    // onValue(
+    //   ref(database, 'game/players/'+players[0].uid+'/hand' ), (snapshot) => {
+    //     setHand1(sortHand(snapshot.val()));
+    //   }
+    // );
+
+    // onValue(
+    //   ref(database, 'game/players/'+players[1].uid+'/hand' ), (snapshot) => {
+    //     setHand2(sortHand(snapshot.val()));
+    //   }
+    // );
+
+    // onValue(
+    //   ref(database, 'game/players/'+players[2].uid+'/hand' ), (snapshot) => {
+    //     setHand3(sortHand(snapshot.val()));
+    //   }
+    // );
+
+    // onValue(
+    //   ref(database, 'game/players/'+players[3].uid+'/hand' ), (snapshot) => {
+    //     setHand4(sortHand(snapshot.val()));
+    //   }
+    // );
 
     // onValue(
     //   ref(database, 'game/hands/SOUTH' ), (snapshot) => {
@@ -1646,46 +1715,40 @@ const BoardGame = (props) => {
 
     onValue(
       ref(database, 'game/current/contract' ), (snapshot) => {
-        setContract(snapshot.val());
+        setContract(state => snapshot.val());
       }
     );
 
     onValue(
       ref(database, 'game/current/nbClic' ), (snapshot) => {
-        setNbClic(snapshot.val());
+        setNbClic(state => snapshot.val());
       }
     );
 
     onValue(
       ref(database, 'game/current/endOfContract' ), (snapshot) => {
-        setEndOfContract(snapshot.val());
+        setEndOfContract(state => snapshot.val());
       }
     );
 
-  }, []);
-  //}, [hasToPlay, colorAsked]);
+  //}, []);
+  }, [hasToPlay, colorAsked]);
 
   console.log("BOARDGAME _--------------------_");
   console.log("BOARDGAME // PROPS playerz = ", props.playerz);
   console.log("BOARDGAME // PROPS rank = ", props.rank);
-  console.log("BOARDGAME // PROPS amiii = ", props.rank === 1);
+  console.log("BOARDGAME // PROPS Am I ? ", props.rank === 1);
   console.log("BOARDGAME _--------------------_");
 
-  if(props.rank !== 0) {
+  if(props.rank !== 0 && playersDone.length === 0 && contractsDone.length === 0) {
 
-    setPlayers(props.playerz);
+    //setPlayers(props.playerz);
     console.log("BOARDGAME // Players = ", players);
 
-    setContractor(players[0].uid);
-    if(props.rank === 1 && props.playerz.length === 4) initHands();
-
+    //setContractor(players[0].uid);
+    if(props.rank === 1 && !initFirst) initHands();
   }
 
-  // console.log("BOARDGAME _--------------------_");
-  // console.log("BOARDGAME // PROPS playaz = ", props.playaz);
-  // console.log("BOARDGAME // PROPS persoRank = ", props.persoRank);
-  // console.log("BOARDGAME // PROPS ami = ", props.ami);
-  //console.log("BOARDGAME _--------------------_");
   console.log("BOARDGAME // players = ", players);
   console.log("BOARDGAME // myRank = ", myRank);
   console.log("BOARDGAME // amIContractor = ", amIContractor);
@@ -1724,9 +1787,9 @@ const BoardGame = (props) => {
       }
 
       <PlayerBox
-        id="EAST"
+        id={getUIDByPlace("EAST")}
         board={board}
-        player={players[getPlaceByMyRank("EAST")]}
+        player={players[getPositionByPlace("EAST")]}
         myCards={getHandByRank("EAST")}
         hasToPlay={hasToPlay}
         contractor={contractor}
@@ -1735,9 +1798,9 @@ const BoardGame = (props) => {
       />
 
       <PlayerBox
-        id="NORTH"
+        id={getUIDByPlace("NORTH")}
         board={board}
-        player={players[getPlaceByMyRank("NORTH")]}
+        player={players[getPositionByPlace("NORTH")]}
         myCards={getHandByRank("NORTH")}
         hasToPlay={hasToPlay}
         contractor={contractor}
@@ -1746,9 +1809,9 @@ const BoardGame = (props) => {
       />
 
       <PlayerBox
-        id="WEST"
+        id={getUIDByPlace("WEST")}
         board={board}
-        player={players[getPlaceByMyRank("WEST")]}
+        player={players[getPositionByPlace("WEST")]}
         myCards={getHandByRank("WEST")}
         hasToPlay={hasToPlay}
         contractor={contractor}
@@ -1757,9 +1820,9 @@ const BoardGame = (props) => {
       />
 
       <PlayerBox
-        id="SOUTH"
+        id={getUIDByPlace("SOUTH")}
         board={board}
-        player={players[getPlaceByMyRank("SOUTH")]}
+        player={players[getPositionByPlace("SOUTH")]}
         myCards={getHandByRank("SOUTH")}
         hasToPlay={hasToPlay}
         contractor={contractor}
@@ -1773,7 +1836,7 @@ const BoardGame = (props) => {
               ?
           <ContractName value={contract} />
               :
-              props.ami
+              contractor === user.uid
                 ?
             <Panel 
               whoCanPlayDom={(p) => whoCanPlay(p)}

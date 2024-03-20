@@ -135,9 +135,6 @@ const BoardGame = (props) => {
   const initHands = () => {
     console.log("BOARDGAME //", user.displayName," déclenche initHands();");
 
-    // ORDER WHY NOT IN WELCOME ?
-    // setPlayers(orderPlayers(props.playaz));
-
     // NEW PLIS
     // setSouthPlis([]);
     // setWestPlis([]);
@@ -532,14 +529,13 @@ const BoardGame = (props) => {
     }
   }
 
-  // TODO : Replace by real IDs
   const getNextPlayer = (place) => {
 
     switch(place) {
-      case "SOUTH" : return "WEST";
-      case "WEST"  : return "NORTH";
-      case "NORTH" : return "EAST";
-      case "EAST"  : return "SOUTH";
+      case "SOUTH" : return getUIDByPlace("WEST");
+      case "WEST"  : return getUIDByPlace("NORTH");
+      case "NORTH" : return getUIDByPlace("EAST");
+      case "EAST"  : return getUIDByPlace("SOUTH");
         default : break;
     }
   }
@@ -573,20 +569,19 @@ const BoardGame = (props) => {
     setEndOfSeven(false);
   }
 
-  // PLACE became an ID
-  const hasColorAsked = (place) => {
+  const hasColorAsked = (id) => {
 
     let list = [];
 
-    switch(place) {
-      case "SOUTH":
-        list = southHand; break;
-      case "WEST": 
-        list = westHand; break;
-      case "NORTH": 
-        list = northHand; break;
-      case "EAST": 
-        list = eastHand; break;
+    switch(id) {
+      case players[0].uid :
+        list = hand1; break;
+      case players[1].uid : 
+        list = hand2; break;
+      case players[2].uid : 
+        list = hand3; break;
+      case players[3].uid : 
+        list = hand4; break;
       default: break;
     }
 
@@ -746,7 +741,7 @@ const BoardGame = (props) => {
       });
 
       update(ref(database, 'game/current/'), { 
-        hasToPlay: getPlaceByUid(contractor), 
+        hasToPlay: contractor, 
       });
     }
   }
@@ -1052,12 +1047,13 @@ const BoardGame = (props) => {
     console.log(" ----------------------------------------------> RECORD CONTRACT & SCORES OUT");
   }
 
+  // TODO : PLACE became now an ID.
   const recordBoard = (place, board) => {
 
     if(place === "") return;
 
     console.log("recordBoard _--------------------------------------------_");
-    console.log("2.2 BOARDGAME // RecordBoard = ", board, " - place = ", place);
+    console.log("2.2 BOARDGAME // RecordBoard = ", board, " - place = ", getPlaceByUid(place));
 
     let tempoPli = [];
 
@@ -1098,6 +1094,7 @@ const BoardGame = (props) => {
 
   }
 
+  // PLACE became now an ID.
   const whoIsTheMaster = (daBoard) => {
 
     let color = verifyColor(daBoard);
@@ -1448,32 +1445,32 @@ const BoardGame = (props) => {
         }
       }
   
-      // Save clicked card in Database table "Board".
-      console.log("2. BOARDGAME // onClickBoard // ", click[0]," ADDED ", click[1]," TO BOARD.");
+      // Save clicked card in Database table "Board". ID replace PLACE (click[0])
+      console.log("2. BOARDGAME // onClickBoard // ", getNameByUID(click[0])," ADDED ", click[1]," TO BOARD.");
       await set(ref(database, 'game/board/'+click[0]), {
         value: click[1],
         place: click[0],
         rank: board.length,
       });
           
-      console.log("3. BOARDGAME // onClickBoard // BOARD (", board.length ,") // switch() from ", hasToPlay);
+      console.log("3. BOARDGAME // onClickBoard // BOARD (", board.length ,") // switch() from ", getNameByUID(hasToPlay));
       if(board.length < 3) {
         switch(hasToPlay) {
           case "SOUTH": 
           update(ref(database, 'game/current/'), { 
-            hasToPlay: "WEST" 
+            hasToPlay: getUIDByPlace("WEST")
           }); break;
         case "WEST":  
           update(ref(database, 'game/current/'), { 
-            hasToPlay: "NORTH" 
+            hasToPlay: getUIDByPlace("NORTH") 
           }); break;
         case "NORTH":  
           update(ref(database, 'game/current/'), { 
-            hasToPlay: "EAST" 
+            hasToPlay: getUIDByPlace("EAST") 
           }); break;
         case "EAST":
           update(ref(database, 'game/current/'), { 
-            hasToPlay: "SOUTH" 
+            hasToPlay: getUIDByPlace("SOUTH") 
           }); break;
         default: break;
         }
@@ -1483,30 +1480,30 @@ const BoardGame = (props) => {
       // TODO PROD : ONLY "SOUTH" updating with uid.
       console.log("4. BOARDGAME // onClickBoard // SPLICE // UPDATE HANDS");
       switch(click[0]) {
-        case "SOUTH":
-          setSouthHand(southHand.splice(southHand.indexOf(click[1]), 1));
-          update(ref(database, 'game/hands/'), {
-            SOUTH: southHand,
+        case players[0].uid :
+          setHand1(hand1.splice(hand1.indexOf(click[1]), 1));
+          update(ref(database, 'game/current/'), {
+            hand1: hand1,
             }); break;
-        case "WEST":
-          setWestHand(westHand.splice(westHand.indexOf(click[1]), 1));  
-          update(ref(database, 'game/hands/'), {
-            WEST: westHand,
+        case players[1].uid :
+          setHand2(hand2.splice(hand2.indexOf(click[1]), 1));  
+          update(ref(database, 'game/current/'), {
+            hand2: hand2,
             }); break;
-        case "NORTH":
-          setNorthHand(northHand.splice(northHand.indexOf(click[1]), 1)); 
-          update(ref(database, 'game/hands/'), {
-            NORTH: northHand,
+        case players[2].uid :
+          setHand3(hand3.splice(hand3.indexOf(click[1]), 1)); 
+          update(ref(database, 'game/current/'), {
+            hand3: hand3,
             }); break;
-        case "EAST":
-          setEastHand(eastHand.splice(eastHand.indexOf(click[1]), 1));
-          update(ref(database, 'game/hands/'), {
-            EAST: eastHand,
+        case players[4].uid :
+          setHand4(hand4.splice(hand4.indexOf(click[1]), 1));
+          update(ref(database, 'game/current/'), {
+            hand4: hand4,
             }); break;
   
         default: break;
       }
-  
+ 
       // HANDLE CHOOSEN CONTRACT.
       console.log("5. BOARDGAME // CONTRACT // HANDLE CHOOSEN");
   

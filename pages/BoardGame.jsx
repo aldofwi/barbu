@@ -89,20 +89,20 @@ const BoardGame = (props) => {
   const [handCloves,   setHandCloves]   = useState([]);
   const [handDiamonds, setHandDiamonds] = useState([]);
 
-  const [southPlis, setSouthPlis] = useState([]);
-  const [westPlis,  setWestPlis]  = useState([]);
-  const [northPlis, setNorthPlis] = useState([]);
-  const [eastPlis,  setEastPlis]  = useState([]);
+  const [plis1, setPlis1] = useState([]);
+  const [plis2, setPlis2] = useState([]);
+  const [plis3, setPlis3] = useState([]);
+  const [plis4, setPlis4] = useState([]);
 
-  let [southScore, setSouthScore] = useState(0);
-  let [westScore,  setWestScore]  = useState(0);
-  let [northScore, setNorthScore] = useState(0);
-  let [eastScore,  setEastScore]  = useState(0);
+  let [score1, setScore1] = useState(0);
+  let [score2, setScore2] = useState(0);
+  let [score3, setScore3] = useState(0);
+  let [score4, setScore4] = useState(0);
 
-  let [southGlobalScore, setSouthGlobalScore] = useState(0);
-  let [westGlobalScore,  setWestGlobalScore]  = useState(0);
-  let [northGlobalScore, setNorthGlobalScore] = useState(0);
-  let [eastGlobalScore,  setEastGlobalScore]  = useState(0);
+  let [globalScore1, setGlobalScore1] = useState(0);
+  let [globalScore2, setGlobalScore2] = useState(0);
+  let [globalScore3, setGlobalScore3] = useState(0);
+  let [globalScore4, setGlobalScore4] = useState(0);
 
   const [board, setBoard] = useState([]);
   const [contract, setContract] = useState("");
@@ -122,16 +122,30 @@ const BoardGame = (props) => {
   const [endOfSeven,    setEndOfSeven] = useState(false);
   const [endOfGame,     setEndOfGame] = useState(false);
 
+  // INIT Game
+  const initGame = () => {
+    console.log("BOARDGAME //", user.displayName," déclenche le Game.");
+
+    // TODO : Switch Update to Set
+    update(ref(database, 'game/current/'), {
+      colorAsk: "",
+      contract: "",
+      endOfContract: true,
+      hasToPlay: user.uid, // contractor
+      nbClic: 0,
+      hand1:  [],
+      hand2:  [],
+      hand3:  [],
+      hand4:  [],
+      score1: 0,
+      score2: 0,
+      score3: 0,
+      score4: 0,
+    });
+
+  }
+
   // INIT Hands
-  // set(ref(database, 'game/hands/'), {
-  //   SOUTH:  southHand,
-  //   WEST:   westHand,
-  //   NORTH:  northHand,
-  //   EAST:   eastHand,   
-  // });
-
-
-
   const initHands = () => {
     console.log("BOARDGAME //", user.displayName," déclenche initHands();");
 
@@ -165,7 +179,7 @@ const BoardGame = (props) => {
       colorAsk: "",
       contract: "",
       endOfContract: true,
-      hasToPlay: user.uid,
+      hasToPlay: user.uid, // contractor
       nbClic: 0,
       hand1:  newDeck.slice(0, 8),
       hand2:  newDeck.slice(8, 16),
@@ -529,13 +543,13 @@ const BoardGame = (props) => {
     }
   }
 
-  const getNextPlayer = (place) => {
+  const getNextPlayer = (placeID) => {
 
-    switch(place) {
-      case "SOUTH" : return getUIDByPlace("WEST");
-      case "WEST"  : return getUIDByPlace("NORTH");
-      case "NORTH" : return getUIDByPlace("EAST");
-      case "EAST"  : return getUIDByPlace("SOUTH");
+    switch(placeID) {
+      case players[0].uid : return players[1].uid;
+      case players[1].uid : return players[2].uid;
+      case players[2].uid : return players[3].uid;
+      case players[3].uid : return players[0].uid;
         default : break;
     }
   }
@@ -658,26 +672,26 @@ const BoardGame = (props) => {
     if(!contractsDone.includes("Barbu")) {
       console.log("2.2 BOARDGAME // handleBarbu()");
 
-      southScore = getBarbu(southPlis);
-      westScore  = getBarbu(westPlis);
-      northScore = getBarbu(northPlis);
-      eastScore  = getBarbu(eastPlis);
+      score1 = getBarbu(plis1);
+      score2 = getBarbu(plis2);
+      score3 = getBarbu(plis3);
+      score4 = getBarbu(plis4);
 
-      console.log("2.2 BOARDGAME // handleBarbu() - southScore : ", southScore);
-      console.log("2.2 BOARDGAME // handleBarbu() - westScore : ", westScore);
-      console.log("2.2 BOARDGAME // handleBarbu() - northScore : ", northScore);
-      console.log("2.2 BOARDGAME // handleBarbu() - eastScore : ", eastScore);
+      console.log("2.2 BOARDGAME // handleBarbu() - score1 : ", score1);
+      console.log("2.2 BOARDGAME // handleBarbu() - score2 : ", score2);
+      console.log("2.2 BOARDGAME // handleBarbu() - score3 : ", score3);
+      console.log("2.2 BOARDGAME // handleBarbu() - score4 : ", score4);
   
       // UPDATE GLOBAL
-      southGlobalScore += southScore; setSouthGlobalScore(southGlobalScore);
-      westGlobalScore += westScore;   setWestGlobalScore(westGlobalScore);
-      northGlobalScore += northScore; setNorthGlobalScore(northGlobalScore);
-      eastGlobalScore += eastScore;   setEastGlobalScore(eastGlobalScore);
+      globalScore1 += score1;     setGlobalScore1(globalScore1);
+      globalScore2 += score2;     setGlobalScore2(globalScore2);
+      globalScore3 += score3;     setGlobalScore3(globalScore3);
+      globalScore4 += score4;     setGlobalScore4(globalScore4);
 
-      console.log("2.2 BOARDGAME // handleBarbu() - southGlobalScore : ", southGlobalScore);
-      console.log("2.2 BOARDGAME // handleBarbu() - westGlobalScore : ", westGlobalScore);
-      console.log("2.2 BOARDGAME // handleBarbu() - northGlobalScore : ", northGlobalScore);
-      console.log("2.2 BOARDGAME // handleBarbu() - eastGlobalScore : ", eastGlobalScore);
+      console.log("2.2 BOARDGAME // handleBarbu() - globalScore1 : ", globalScore1);
+      console.log("2.2 BOARDGAME // handleBarbu() - globalScore2 : ", globalScore2);
+      console.log("2.2 BOARDGAME // handleBarbu() - globalScore3 : ", globalScore3);
+      console.log("2.2 BOARDGAME // handleBarbu() - globalScore4 : ", globalScore4);
 
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[1]);
@@ -943,14 +957,17 @@ const BoardGame = (props) => {
         setEndOfGame(true);
         alert("End of whole GAME !");
       } else {
-        nextPlayer = getNextPlayer(getPlaceByUid(contractor));
+        nextPlayer = getNextPlayer(contractor);
         //setContractor(nextPlayerUID);
 
         update(ref(database, 'game/current/'), { 
           hasToPlay: nextPlayer,
         });
 
-        // TODO : update contractor in base
+        update(ref(database, 'game/contractor/'), { 
+          name: getNameByUID(nextPlayer),
+          uid: nextPlayer,
+        });
       }
     } 
 
@@ -958,27 +975,27 @@ const BoardGame = (props) => {
 
   const presenceIn = (temp) => {
 
-    for (let i = 0; i < southPlis.length; i++) {
-      if(southPlis[i].includes(temp)) {
-        console.log("2.2 BOARDGAME // presenceIn() - ", temp," IS IN SOUTH");
+    for (let i = 0; i < plis1.length; i++) {
+      if(plis1[i].includes(temp)) {
+        console.log("2.2 BOARDGAME // presenceIn() - ", temp," IS IN P1");
         return true;
       }
     }
-    for (let i = 0; i < westPlis.length; i++) {
-      if(westPlis[i].includes(temp)) {
-        console.log("2.2 BOARDGAME // presenceIn() - ", temp," IS IN WEST");
+    for (let i = 0; i < plis2.length; i++) {
+      if(plis2[i].includes(temp)) {
+        console.log("2.2 BOARDGAME // presenceIn() - ", temp," IS IN P2");
         return true;
       }
     }
-    for (let i = 0; i < northPlis.length; i++) {
-      if(northPlis[i].includes(temp)) {
-        console.log("2.2 BOARDGAME // presenceIn() - ", temp," IS IN NORTH");
+    for (let i = 0; i < plis3.length; i++) {
+      if(plis3[i].includes(temp)) {
+        console.log("2.2 BOARDGAME // presenceIn() - ", temp," IS IN P3");
         return true;
       }
     }
-    for (let i = 0; i < eastPlis.length; i++) {
-      if(eastPlis[i].includes(temp)) {
-        console.log("2.2 BOARDGAME // presenceIn() - ", temp," IS IN EAST");
+    for (let i = 0; i < plis4.length; i++) {
+      if(plis4[i].includes(temp)) {
+        console.log("2.2 BOARDGAME // presenceIn() - ", temp," IS IN P4");
         return true;
       }
     }
@@ -1028,20 +1045,20 @@ const BoardGame = (props) => {
 
     // TODO : Switch to real UIDs
     // UPDATE PLAYER1 --> SCORE1
-    update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2'), {
-      score: southGlobalScore,
+    update(ref(database, 'game/current/'), {
+      score1: globalScore1,
     });
     // UPDATE PLAYER2 SCORE
-    update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb3'), {
-      score: westGlobalScore,
+    update(ref(database, 'game/current/'), {
+      score2: globalScore2,
     });
     // UPDATE PLAYER3 SCORE
-    update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb4'), {
-      score: northGlobalScore,
+    update(ref(database, 'game/current/'), {
+      score3: globalScore3,
     });
     // UPDATE PLAYER4 SCORE
-    update(ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb5'), {
-      score: eastGlobalScore,
+    update(ref(database, 'game/current/'), {
+      score4: globalScore4,
     });
 
     console.log(" ----------------------------------------------> RECORD CONTRACT & SCORES OUT");
@@ -1064,20 +1081,20 @@ const BoardGame = (props) => {
     if(!presenceIn(tempoPli[0])) {
 
       switch(place) {
-        case "SOUTH" : 
-          southPlis.push(tempoPli);
+        case players[0].uid : 
+          plis1.push(tempoPli);
           break;
 
-        case "WEST" : 
-          westPlis.push(tempoPli);
+        case players[1].uid : 
+          plis2.push(tempoPli);
           break;
 
-        case "NORTH" : 
-          northPlis.push(tempoPli);
+        case players[2].uid : 
+          plis3.push(tempoPli);
           break;
 
-        case "EAST" : 
-          eastPlis.push(tempoPli);
+        case players[3].uid : 
+          plis4.push(tempoPli);
           break;
         
         default : break;
@@ -1094,8 +1111,8 @@ const BoardGame = (props) => {
 
   }
 
-  // PLACE became now an ID.
   const whoIsTheMaster = (daBoard) => {
+  // PLACE became now an ID.
 
     let color = verifyColor(daBoard);
     console.log("2.1 BOARDGAME // whoIsTheMaster() // daBoard = ", daBoard, " // color = ", color);
@@ -1136,10 +1153,10 @@ const BoardGame = (props) => {
         // CHECK EVOLUTION OF CONTRACT.
         masterPlace = handleContract(masterPlace, contract);
 
-        console.log("2.2 BOARDGAME // handleContract() - southPlis : ", southPlis);
-        console.log("2.2 BOARDGAME // handleContract() - westPlis : ", westPlis);
-        console.log("2.2 BOARDGAME // handleContract() - northPlis : ", northPlis);
-        console.log("2.2 BOARDGAME // handleContract() - eastPlis : ", eastPlis);
+        console.log("2.2 BOARDGAME // handleContract() - plis1 : ", plis1);
+        console.log("2.2 BOARDGAME // handleContract() - plis2 : ", plis2);
+        console.log("2.2 BOARDGAME // handleContract() - plis3 : ", plis3);
+        console.log("2.2 BOARDGAME // handleContract() - plis4 : ", plis4);
 
         console.log("2.1 BOARDGAME // whoIsTheMaster() = ", masterPlace, " // END");
       }
@@ -1223,83 +1240,83 @@ const BoardGame = (props) => {
 
     switch(player) {
       
-      case "SOUTH" : 
-        if(westHand) {
-          for (let i = 0; i < westHand.length; i++) {
-            if(isPlayableDominoCard(westHand[i], getDomHand(westHand[i].charAt(1)))) return "WEST";
+      case players[0].uid : 
+        if(hand2) {
+          for (let i = 0; i < hand2.length; i++) {
+            if(isPlayableDominoCard(hand2[i], getDomHand(hand2[i].charAt(1)))) return players[1].uid;
           }
         }
-        if(northHand) {
-          for (let i = 0; i < northHand.length; i++) {
-            if(isPlayableDominoCard(northHand[i], getDomHand(northHand[i].charAt(1)))) return "NORTH";
+        if(hand3) {
+          for (let i = 0; i < hand3.length; i++) {
+            if(isPlayableDominoCard(hand3[i], getDomHand(hand3[i].charAt(1)))) return players[2].uid;
           }
         }
-        if(eastHand) {
-          for (let i = 0; i < eastHand.length; i++) {
-            if(isPlayableDominoCard(eastHand[i], getDomHand(eastHand[i].charAt(1)))) return "EAST";
+        if(hand4) {
+          for (let i = 0; i < hand4.length; i++) {
+            if(isPlayableDominoCard(hand4[i], getDomHand(hand4[i].charAt(1)))) return players[3].uid;
           }
         }
-      return "SOUTH";
+      return players[0].uid;
       
-      case "WEST" :
-        if(northHand) { 
-          for (let i = 0; i < northHand.length; i++) {
-            if(isPlayableDominoCard(northHand[i], getDomHand(northHand[i].charAt(1)))) return "NORTH";
+      case players[1].uid :
+        if(hand3) { 
+          for (let i = 0; i < hand3.length; i++) {
+            if(isPlayableDominoCard(hand3[i], getDomHand(hand3[i].charAt(1)))) return players[2].uid;
           }
         }
-        if(eastHand) {
-          for (let i = 0; i < eastHand.length; i++) {
-            if(isPlayableDominoCard(eastHand[i], getDomHand(eastHand[i].charAt(1)))) return "EAST";
+        if(hand4) {
+          for (let i = 0; i < hand4.length; i++) {
+            if(isPlayableDominoCard(hand4[i], getDomHand(hand4[i].charAt(1)))) return players[3].uid;
           }
         }
-        if(southHand) {
-          for (let i = 0; i < southHand.length; i++) {
-            if(isPlayableDominoCard(southHand[i], getDomHand(southHand[i].charAt(1)))) return "SOUTH";
+        if(hand1) {
+          for (let i = 0; i < hand1.length; i++) {
+            if(isPlayableDominoCard(hand1[i], getDomHand(hand1[i].charAt(1)))) return players[0].uid;
           }
         }
-        return "WEST";
+        return players[1].uid;
        
-      case "NORTH" : 
-        if(eastHand) {
-          for (let i = 0; i < eastHand.length; i++) {
-            if(isPlayableDominoCard(eastHand[i], getDomHand(eastHand[i].charAt(1)))) return "EAST";
+      case players[2].uid : 
+        if(hand4) {
+          for (let i = 0; i < hand4.length; i++) {
+            if(isPlayableDominoCard(hand4[i], getDomHand(hand4[i].charAt(1)))) return players[3].uid;
           }
         }
-        if(southHand) {
-          for (let i = 0; i < southHand.length; i++) {
-            if(isPlayableDominoCard(southHand[i], getDomHand(southHand[i].charAt(1)))) return "SOUTH";
+        if(hand1) {
+          for (let i = 0; i < hand1.length; i++) {
+            if(isPlayableDominoCard(hand1[i], getDomHand(hand1[i].charAt(1)))) return players[0].uid;
           }
         }
-        if(westHand) {
-          for (let i = 0; i < westHand.length; i++) {
-            if(isPlayableDominoCard(westHand[i], getDomHand(westHand[i].charAt(1)))) return "WEST";
+        if(hand2) {
+          for (let i = 0; i < hand2.length; i++) {
+            if(isPlayableDominoCard(hand2[i], getDomHand(hand2[i].charAt(1)))) return players[1].uid;
           }
         }
-        return "NORTH";
+        return players[2].uid;
        
-      case "EAST" : 
+      case players[3].uid : 
         
       console.log("1. BOARDGAME // handSpides = ", handSpides);
       console.log("1. BOARDGAME // handHearts = ", handHearts);
       console.log("1. BOARDGAME // handCloves = ", handCloves);
       console.log("1. BOARDGAME // handDiamonds = ", handDiamonds);
 
-        if(southHand) {
-          for (let i = 0; i < southHand.length; i++) {
-            if(isPlayableDominoCard(southHand[i], getDomHand(southHand[i].charAt(1)))) return "SOUTH";
+        if(hand1) {
+          for (let i = 0; i < hand1.length; i++) {
+            if(isPlayableDominoCard(hand1[i], getDomHand(hand1[i].charAt(1)))) return players[0].uid;
           }
         }
-        if(westHand) {
-          for (let i = 0; i < westHand.length; i++) {
-            if(isPlayableDominoCard(westHand[i], getDomHand(westHand[i].charAt(1)))) return "WEST";
+        if(hand2) {
+          for (let i = 0; i < hand2.length; i++) {
+            if(isPlayableDominoCard(hand2[i], getDomHand(hand2[i].charAt(1)))) return players[1].uid;
           }
         }
-        if(northHand) { 
-          for (let i = 0; i < northHand.length; i++) {
-            if(isPlayableDominoCard(northHand[i], getDomHand(northHand[i].charAt(1)))) return "NORTH";
+        if(hand3) { 
+          for (let i = 0; i < hand3.length; i++) {
+            if(isPlayableDominoCard(hand3[i], getDomHand(hand3[i].charAt(1)))) return players[2].uid;
           }
         }
-        return "EAST";
+        return players[3].uid;
            
       default : break;
     }
@@ -1359,7 +1376,7 @@ const BoardGame = (props) => {
       }
       
       // WHO CAN PLAY NEXT.
-      console.log("3. BOARDGAME // onClickBoard // BOARD DOMINO // switch() from ", hasToPlay);
+      console.log("3. BOARDGAME // onClickBoard // BOARD DOMINO // switch() from ", getNameByUID(hasToPlay));
 
       await update(ref(database, 'game/current/'), { 
         hasToPlay: whoCanPlay(hasToPlay),
@@ -1369,25 +1386,25 @@ const BoardGame = (props) => {
       // TODO PROD : ONLY "SOUTH" updating with uid.
       console.log("4. BOARDGAME // onClickBoard // SPLICE // UPDATE HANDS on DOMINO");
       switch(click[0]) {
-        case "SOUTH":
-          setSouthHand(southHand.splice(southHand.indexOf(click[1]), 1));
-          update(ref(database, 'game/hands/'), {
-            SOUTH: southHand,
+        case players[0].uid :
+          setHand1(hand1.splice(hand1.indexOf(click[1]), 1));
+          update(ref(database, 'game/current/'), {
+            hand1: hand1,
             }); break;
-        case "WEST":
-          setWestHand(westHand.splice(westHand.indexOf(click[1]), 1));  
-          update(ref(database, 'game/hands/'), {
-            WEST: westHand,
+        case players[1].uid :
+          setHand2(hand2.splice(hand2.indexOf(click[1]), 1));  
+          update(ref(database, 'game/current/'), {
+            hand2: hand2,
             }); break;
-        case "NORTH":
-          setNorthHand(northHand.splice(northHand.indexOf(click[1]), 1)); 
-          update(ref(database, 'game/hands/'), {
-            NORTH: northHand,
+        case players[2].uid :
+          setHand3(hand3.splice(hand3.indexOf(click[1]), 1)); 
+          update(ref(database, 'game/current/'), {
+            hand3: hand3,
             }); break;
-        case "EAST":
-          setEastHand(eastHand.splice(eastHand.indexOf(click[1]), 1));
-          update(ref(database, 'game/hands/'), {
-            EAST: eastHand,
+        case players[3].uid :
+          setHand4(hand4.splice(hand4.indexOf(click[1]), 1));
+          update(ref(database, 'game/current/'), {
+            hand4: hand4,
             }); break;
   
         default: break;
@@ -1398,10 +1415,10 @@ const BoardGame = (props) => {
         nbClic: nbClic+1 
       });
 
-      if(southHand.length === 0 && !dominoDone.includes("SOUTH")) dominoDone.push("SOUTH");
-      if(westHand.length  === 0 && !dominoDone.includes("WEST"))  dominoDone.push("WEST");
-      if(northHand.length === 0 && !dominoDone.includes("NORTH")) dominoDone.push("NORTH");
-      if(eastHand.length  === 0 && !dominoDone.includes("EAST"))  dominoDone.push("EAST");
+      if(hand1.length === 0 && !dominoDone.includes(players[0].uid)) dominoDone.push(players[0].uid);
+      if(hand2.length === 0 && !dominoDone.includes(players[1].uid)) dominoDone.push(players[1].uid);
+      if(hand3.length === 0 && !dominoDone.includes(players[2].uid)) dominoDone.push(players[2].uid);
+      if(hand4.length === 0 && !dominoDone.includes(players[3].uid)) dominoDone.push(players[3].uid);
     
       // HANDLE CHOOSEN CONTRACT.
       console.log("5. BOARDGAME // CONTRACT // HANDLE CHOOSEN || Done : ", dominoDone);
@@ -1456,21 +1473,21 @@ const BoardGame = (props) => {
       console.log("3. BOARDGAME // onClickBoard // BOARD (", board.length ,") // switch() from ", getNameByUID(hasToPlay));
       if(board.length < 3) {
         switch(hasToPlay) {
-          case "SOUTH": 
+          case players[0].uid : 
           update(ref(database, 'game/current/'), { 
-            hasToPlay: getUIDByPlace("WEST")
+            hasToPlay: players[1].uid
           }); break;
-        case "WEST":  
+        case players[1].uid :  
           update(ref(database, 'game/current/'), { 
-            hasToPlay: getUIDByPlace("NORTH") 
+            hasToPlay: players[2].uid 
           }); break;
-        case "NORTH":  
+        case players[2].uid :  
           update(ref(database, 'game/current/'), { 
-            hasToPlay: getUIDByPlace("EAST") 
+            hasToPlay: players[3].uid 
           }); break;
-        case "EAST":
+        case players[3].uid :
           update(ref(database, 'game/current/'), { 
-            hasToPlay: getUIDByPlace("SOUTH") 
+            hasToPlay: players[0].uid
           }); break;
         default: break;
         }
@@ -1597,54 +1614,6 @@ const BoardGame = (props) => {
       }
     );
 
-    // onValue(
-    //   ref(database, 'game/players/'+players[0].uid+'/hand' ), (snapshot) => {
-    //     setHand1(sortHand(snapshot.val()));
-    //   }
-    // );
-
-    // onValue(
-    //   ref(database, 'game/players/'+players[1].uid+'/hand' ), (snapshot) => {
-    //     setHand2(sortHand(snapshot.val()));
-    //   }
-    // );
-
-    // onValue(
-    //   ref(database, 'game/players/'+players[2].uid+'/hand' ), (snapshot) => {
-    //     setHand3(sortHand(snapshot.val()));
-    //   }
-    // );
-
-    // onValue(
-    //   ref(database, 'game/players/'+players[3].uid+'/hand' ), (snapshot) => {
-    //     setHand4(sortHand(snapshot.val()));
-    //   }
-    // );
-
-    // onValue(
-    //   ref(database, 'game/hands/SOUTH' ), (snapshot) => {
-    //     setSouthHand(sortHand(snapshot.val()));
-    //   }
-    // );
-
-    // onValue(
-    //   ref(database, 'game/hands/WEST' ), (snapshot) => {
-    //     setWestHand(sortHand(snapshot.val()));
-    //   }
-    // );
-
-    // onValue(
-    //   ref(database, 'game/hands/NORTH' ), (snapshot) => {
-    //     setNorthHand(sortHand(snapshot.val()));
-    //   }
-    // );
-
-    // onValue(
-    //   ref(database, 'game/hands/EAST' ), (snapshot) => {
-    //     setEastHand(sortHand(snapshot.val()));
-    //   }
-    // );
-
     onValue(
       ref(database, 'game/boardDomino/SPIDES' ), (snapshot) => {
         let hand_s = [];
@@ -1687,26 +1656,26 @@ const BoardGame = (props) => {
 
     // TODO : No dur
     onValue(
-      ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb2/score' ), (snapshot) => {
-        setSouthGlobalScore(snapshot.val());
+      ref(database, 'game/current/score1' ), (snapshot) => {
+        setGlobalScore1(snapshot.val());
       }
     );
 
     onValue(
-      ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb3/score' ), (snapshot) => {
-        setWestGlobalScore(snapshot.val());
+      ref(database, 'game/current/score2' ), (snapshot) => {
+        setGlobalScore2(snapshot.val());
       }
     );
 
     onValue(
-      ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb4/score' ), (snapshot) => {
-        setNorthGlobalScore(snapshot.val());
+      ref(database, 'game/current/score3' ), (snapshot) => {
+        setGlobalScore3(snapshot.val());
       }
     );
 
     onValue(
-      ref(database, 'game/players/n3gYoJQyeHhCKzr3WGFybc8nIdb5/score' ), (snapshot) => {
-        setEastGlobalScore(snapshot.val());
+      ref(database, 'game/current/score4' ), (snapshot) => {
+        setGlobalScore4(snapshot.val());
       }
     );
 
@@ -1743,7 +1712,10 @@ const BoardGame = (props) => {
     console.log("BOARDGAME // Players = ", players);
 
     //setContractor(players[0].uid);
-    if(props.rank === 1 && !initFirst) initHands();
+    if(props.rank === 1 && !initFirst) {
+      initGame();
+      initHands();
+    } 
   }
 
   console.log("BOARDGAME // players = ", players);

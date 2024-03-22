@@ -6,6 +6,8 @@ import React from 'react';
 
 const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }) => {
 
+  const { user } = useAuthContext();
+
   const myLoader = ({ }) => { return player.picture };
 
   return (
@@ -26,11 +28,22 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
         </div>
 
         <div className={nameOfClass}>
-          <Hand
-            handStyle={id}
-            cards={myCards}
-            onClickHand={(playCard) => clickBoard(playCard)}
-          />
+
+        {
+          player.uid === user.uid 
+              ?
+            <Hand
+              handStyle={id}
+              cards={myCards}
+              onClickHand={(playCard) => clickBoard(playCard)}
+            />
+              :
+            <Hand
+              handStyle={id}
+              cards={myCards}
+            />
+        }
+          
         </div>
 
     </div>

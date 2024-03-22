@@ -1720,7 +1720,7 @@ const BoardGame = (props) => {
       }
 
       <PlayerBox
-        id={getUIDByPlace("EAST")}
+        id={"EAST"}
         board={board}
         player={players[getPositionByPlace("EAST")]}
         myCards={getHandByRank("EAST")}
@@ -1731,7 +1731,7 @@ const BoardGame = (props) => {
       />
 
       <PlayerBox
-        id={getUIDByPlace("NORTH")}
+        id={"NORTH"}
         board={board}
         player={players[getPositionByPlace("NORTH")]}
         myCards={getHandByRank("NORTH")}
@@ -1742,7 +1742,7 @@ const BoardGame = (props) => {
       />
 
       <PlayerBox
-        id={getUIDByPlace("WEST")}
+        id={"WEST"}
         board={board}
         player={players[getPositionByPlace("WEST")]}
         myCards={getHandByRank("WEST")}
@@ -1753,7 +1753,7 @@ const BoardGame = (props) => {
       />
 
       <PlayerBox
-        id={getUIDByPlace("SOUTH")}
+        id={"SOUTH"}
         board={board}
         player={players[getPositionByPlace("SOUTH")]}
         myCards={getHandByRank("SOUTH")}

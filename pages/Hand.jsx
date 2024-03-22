@@ -103,7 +103,7 @@ const Hand = ({ handStyle, cards, others, onClickHand }) => {
                     key={i}
                     picked={others}
                     cardStyle={handStyle === "board" ? getCardPos(i) : handStyle}
-                    onClickCard={(c) => onClickHand(c) }
+                    onClickCard={(c) => onClickHand(c)}
                 />
                 
             )}

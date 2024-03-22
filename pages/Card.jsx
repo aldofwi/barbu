@@ -74,7 +74,7 @@ const Card = ({ value, flip, picked, cardStyle, onClickCard }) => {
       return;
     } else {
       // If whoHasToPlay() === "SOUTH" 
-      onClickCard([cardStyle, c]);
+      onClickCard([user.uid, c]);
     }
     
   }
@@ -97,7 +97,15 @@ const Card = ({ value, flip, picked, cardStyle, onClickCard }) => {
 export default Card;
 
 /*
-
+        <Image 
+            className="rounded-lg"
+            src={flip ? back : front}
+            width={0}
+            height={0}
+            style={{width: "auto", height: "auto"}}
+            alt="card"
+            onClick={() => { handleClickCard(value) }}
+        />
 
         <Image 
             className="cardStyle bottom-10 left-44"

@@ -17,8 +17,26 @@ const Home = () => {
   const auth = getAuth();
   const toast = useToast();
 
-  const { user }                  = useAuthContext();
-  const [connected, setConnected] = useState([]);
+  const { user }                      = useAuthContext();
+  const [connected, setConnected]     = useState([]);
+  const [playersHome, setPlayersHome] = useState([]);
+
+  const orderHPlayers = (playaz) => {
+    console.log("HOME // orderPlayers(", playaz.length,")");
+
+    let goodPlayz = [];
+
+    for (let i=1; i<5; i++) {
+      for (let j=0; j<playaz.length; j++) {
+
+        if(playaz[j].rank === i) {
+          goodPlayz.push(playaz[j]);
+        }
+      }
+    }
+
+    return goodPlayz;
+  }
 
     useEffect(() => {
   
@@ -32,6 +50,19 @@ const Home = () => {
         }
       );
 
+      onValue(
+        ref(database, 'game/players/' ), (snapshot) => {
+          let playz = [];
+            snapshot.forEach((doc) => {
+              playz.push({...doc.val()});
+            });
+            // setPlayersHome(playz);
+            if(playz.length === 4) {
+              setPlayersHome(orderHPlayers(playz));
+            }
+          }
+      );
+
       if(user.displayName === null) {
         user.displayName = user.email.slice(0, user.email.indexOf('@'));;
         user.photoURL = "https://e7.pngegg.com/pngimages/416/62/png-clipart-anonymous-person-login-google-account-computer-icons-user-activity-miscellaneous-computer-thumbnail.png";
@@ -42,7 +73,7 @@ const Home = () => {
   return (
     <div className="utility__page">
 
-        <Navbar users={connected} />
+        <Navbar users={connected} playersNav={playersHome} />
         <Chat users={connected} />
 
         <div className="absolute bg-[#121212] text-white bottom-0 top-28 left-0 right-96">

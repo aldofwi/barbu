@@ -3,7 +3,7 @@ import { onValue, ref } from 'firebase/database';
 import React, { useEffect, useState } from 'react'
 import Card from './Card';
 
-const Board = ({ }) => {
+const Board = ({ getUIDPlace }) => {
 
   const [cardS, setCardS] = useState("");
   const [cardW, setCardW] = useState("");
@@ -23,41 +23,37 @@ const Board = ({ }) => {
   useEffect(() => {
     
     onValue(
-      ref(database, 'game/board/SOUTH' ), (snapshot) => {
+      ref(database, 'game/board/'+getUIDPlace("SOUTH")), (snapshot) => {
 
         snapshot.forEach((doc) => {
           setCardS(doc.val());
-          // console.log("BOARD // cardS =", cardS);
         });
       }
     );
 
     onValue(
-      ref(database, 'game/board/WEST' ), (snapshot) => {
+      ref(database, 'game/board/'+getUIDPlace("WEST")), (snapshot) => {
         
         snapshot.forEach((doc) => {
           setCardW(doc.val());
-          // console.log("BOARD // cardW =", cardW);
         });
       }
     );
 
     onValue(
-      ref(database, 'game/board/NORTH' ), (snapshot) => {
+      ref(database, 'game/board/'+getUIDPlace("NORTH")), (snapshot) => {
         
         snapshot.forEach((doc) => {
           setCardN(doc.val());
-          // console.log("BOARD // cardN =", cardN);
         });
       }
     );
 
     onValue(
-      ref(database, 'game/board/EAST' ), (snapshot) => {
+      ref(database, 'game/board/'+getUIDPlace("EAST")), (snapshot) => {
         
         snapshot.forEach((doc) => {
           setCardE(doc.val());
-          // console.log("BOARD // cardE =", cardE);
         });
       }
     );

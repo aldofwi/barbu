@@ -11,7 +11,7 @@ import Rules from './Modal/Rules';
 import Score from './Modal/Score';
 import Online from './Modal/Online';
 
-const Navbar = () => {
+const Navbar = ({ playersNav }) => {
 
     const { user } = useAuthContext();
     const { logout } = useLogout();
@@ -70,7 +70,7 @@ const Navbar = () => {
                                 <ModalCloseButton />
 
                                 <ModalBody>
-                                    <Score />
+                                    <Score players={playersNav} />
                                 </ModalBody>
 
                                 <ModalFooter>

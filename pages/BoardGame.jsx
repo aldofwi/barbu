@@ -892,6 +892,8 @@ const BoardGame = (props) => {
       ||  (c === "Coeurs" && presenceIn('ah') && presenceIn('kh') && presenceIn('qh') && presenceIn('jh') && presenceIn('th') && presenceIn('9h') && presenceIn('8h') && presenceIn('7h'))
       ||  (c === "Dames"  && presenceIn('qs') && presenceIn('qh') && presenceIn('qc') && presenceIn('qd')) ) {
       
+      setEndOfContract(true);
+
       switch(c) {
         case "RATA"        : handleRata(p);   break;
         case "Barbu"       : handleBarbu();  break;
@@ -1034,7 +1036,7 @@ const BoardGame = (props) => {
     });
 
     // UPDATE PLAYER X --> SCORE X
-    set(ref(database, 'game/scores/'), {
+    update(ref(database, 'game/scores/'), {
       [contractName]: [c, score1, score2, score3, score4],
     });
 
@@ -1507,7 +1509,7 @@ const BoardGame = (props) => {
   
       // MAYBE CHECK ON TEMPO PLI SIZE
       // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
-      if(amIContractor && nbClic === 32) {
+      if(amIContractor && endOfContract) {
         console.log("6. BOARDGAME // onClickBoard // END OF CONTRACT ||");
         checkEndOf7();
 

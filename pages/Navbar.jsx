@@ -63,7 +63,7 @@ const Navbar = ({ playersNav }) => {
 
                     <li className='px-6 py-4'>
                         <button onClick={() => handleScoreModal()} className="text-blue-500 hover:text-white font-bold">Score</button>
-                        <Modal onClose={onScoreClose} size={'xl'} isOpen={isScoreOpen}>
+                        <Modal onClose={onScoreClose} size={'4xl'} isOpen={isScoreOpen}>
                             <ModalOverlay />
                             <ModalContent>
                                 <ModalHeader align='center'>📊 Scores</ModalHeader>

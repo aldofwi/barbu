@@ -1034,7 +1034,7 @@ const BoardGame = (props) => {
     });
 
     // UPDATE PLAYER X --> SCORE X
-    update(ref(database, 'game/scores/'), {
+    set(ref(database, 'game/scores/'), {
       [contractName]: [c, score1, score2, score3, score4],
     });
 
@@ -1507,7 +1507,7 @@ const BoardGame = (props) => {
   
       // MAYBE CHECK ON TEMPO PLI SIZE
       // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
-      if(amIContractor && nbClic === 31) {
+      if(amIContractor && nbClic === 32) {
         console.log("6. BOARDGAME // onClickBoard // END OF CONTRACT ||");
         checkEndOf7();
 

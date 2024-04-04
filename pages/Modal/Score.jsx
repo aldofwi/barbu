@@ -27,6 +27,8 @@ const Score = ({ players }) => {
   let [globalScore3, setGlobalScore3] = useState(0);
   let [globalScore4, setGlobalScore4] = useState(0);
 
+  // TODO : function getHigherScore() & getLowerScore()
+
   useEffect(() => {
 
     onValue(
@@ -99,24 +101,24 @@ const Score = ({ players }) => {
   return (
 
     <TableContainer>
-      <Table variant='striped' colorScheme='teal' size='md'>
+      <Table variant='striped' colorScheme='teal' size='xl'>
         <Thead>
           <Tr>
-            <Th>Contracts</Th>
-            <Th>{name1}</Th>
-            <Th>{name2}</Th>
-            <Th>{name3}</Th>
-            <Th>{name4}</Th>
+            <Th textAlign='center'>Contracts</Th>
+            <Th textAlign='center'>{name1}</Th>
+            <Th textAlign='center'>{name2}</Th>
+            <Th textAlign='center'>{name3}</Th>
+            <Th textAlign='center'>{name4}</Th>
           </Tr>
         </Thead>
 
         <Tbody>
         <Tr>
-          <Td><b>Total</b></Td>
-          <Td>{globalScore1}</Td>
-          <Td>{globalScore2}</Td>
-          <Td>{globalScore3}</Td>
-          <Td>{globalScore4}</Td>
+          <Td textAlign='center'><b>Total</b></Td>
+          <Td textAlign='center'><b>{globalScore1}</b></Td>
+          <Td textAlign='center'><b>{globalScore2}</b></Td>
+          <Td textAlign='center'><b>{globalScore3}</b></Td>
+          <Td textAlign='center'><b>{globalScore4}</b></Td>
         </Tr>
         </Tbody>
 
@@ -124,40 +126,16 @@ const Score = ({ players }) => {
           scores?.map((score, i) => 
           <Tbody>
             <Tr key={i}>
-              <Td>{score[0]}</Td>
-              <Td>{score[1]}</Td>
-              <Td>{score[2]}</Td>
-              <Td>{score[3]}</Td>
-              <Td>{score[4]}</Td>
-            </Tr>
-            <Tr>
-              <Td>-------------</Td>
-              <Td>-------------</Td>
-              <Td>-------------</Td>
-              <Td>-------------</Td>
-              <Td>-------------</Td>
+              <Td textAlign='center'>{score[0]}</Td>
+              <Td textAlign='center'>{score[1]}</Td>
+              <Td textAlign='center'>{score[2]}</Td>
+              <Td textAlign='center'>{score[3]}</Td>
+              <Td textAlign='center'>{score[4]}</Td>
             </Tr>
           </Tbody>
-          
           )
         }
-
-        {
-          scores.length % 7 === 0
-                    ?
-            <Tbody>
-              <Tr>
-                <Td>-------------</Td>
-                <Td>-------------</Td>
-                <Td>-------------</Td>
-                <Td>-------------</Td>
-                <Td>-------------</Td>
-              </Tr>
-            </Tbody>
-                    :
-                  null
-        }
-
+        
       </Table>
     </TableContainer>
 
@@ -165,3 +143,30 @@ const Score = ({ players }) => {
 }
 
 export default Score;
+
+
+//         {
+//           scores.length % 7 === 0
+//                     ?
+//             <Tbody>
+//               <Tr>
+//                 <Td>-------------</Td>
+//                 <Td>-------------</Td>
+//                 <Td>-------------</Td>
+//                 <Td>-------------</Td>
+//                 <Td>-------------</Td>
+//               </Tr>
+//             </Tbody>
+//                     :
+//                   null
+//         }
+
+
+
+// <Tr>
+// <Td textAlign='center'>{i%7 === 0 ? "-------------" : null}</Td>
+// <Td textAlign='center'>{i%7 === 0 ? "-------------" : null}</Td>
+// <Td textAlign='center'>{i%7 === 0 ? "-------------" : null}</Td>
+// <Td textAlign='center'>{i%7 === 0 ? "-------------" : null}</Td>
+// <Td textAlign='center'>{i%7 === 0 ? "-------------" : null}</Td>
+// </Tr>

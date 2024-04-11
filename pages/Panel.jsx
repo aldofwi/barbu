@@ -1,3 +1,4 @@
+import { useAuthContext } from '@/context/AuthContext';
 import { database } from '@/firebase/config';
 import { Box, Card, CardBody, CardHeader, Heading, Stack, StackDivider } from '@chakra-ui/react';
 import { onValue, ref, set, update } from 'firebase/database';
@@ -19,6 +20,8 @@ const btnClassOFF = "text-white disabled cursor-not-allowed bg-[grey] focus:ring
 const spanClassOFF = 'block disabled cursor-not-allowed bg-[grey] rounded-full px-3 py-2 text-xl font-[courier]';
 
 const Panel = ({ whoCanPlayDom }) => {
+
+  const { user } = useAuthContext();
 
   const [rataDone, setRATADone]     = useState(false);
   const [barbuDone, setBarbuDone]   = useState(false);
@@ -50,7 +53,7 @@ const Panel = ({ whoCanPlayDom }) => {
        * TODO : Replace EAST by previous ID.
        */
       update(ref(database, 'game/current/'), { 
-        hasToPlay: whoCanPlayDom("EAST"),
+        hasToPlay: whoCanPlayDom(),
       });
       
     }

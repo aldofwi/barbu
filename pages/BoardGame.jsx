@@ -697,7 +697,7 @@ const BoardGame = (props) => {
           case players[0].uid : score1 += getDomScore(i); break;
           case players[1].uid : score2 += getDomScore(i); break;
           case players[2].uid : score3 += getDomScore(i); break;
-          //case players[3].uid : score4 += getDomScore(i); break;
+          case players[3].uid : score4 += getDomScore(i); break;
                default :  break;
         }
         
@@ -1216,8 +1216,13 @@ const BoardGame = (props) => {
   }
 
   const whoCanPlay = (player) => {
-    console.log("3. BOARDGAME // onClickBoard // whoCanPlay() DOMINO from ", player);
+    console.log("3. BOARDGAME // onClickBoard // whoCanPlay() DOMINO from ", getNameByUID(player));
     // Check les cartes du joueur suivant en fonction du joueur actuel.
+            
+    console.log("1. BOARDGAME // handSpides = ", handSpides);
+    console.log("1. BOARDGAME // handHearts = ", handHearts);
+    console.log("1. BOARDGAME // handCloves = ", handCloves);
+    console.log("1. BOARDGAME // handDiamonds = ", handDiamonds);
 
     switch(player) {
       
@@ -1276,11 +1281,6 @@ const BoardGame = (props) => {
         return players[2].uid;
        
       case players[3].uid : 
-        
-      console.log("1. BOARDGAME // handSpides = ", handSpides);
-      console.log("1. BOARDGAME // handHearts = ", handHearts);
-      console.log("1. BOARDGAME // handCloves = ", handCloves);
-      console.log("1. BOARDGAME // handDiamonds = ", handDiamonds);
 
         if(hand1) {
           for (let i = 0; i < hand1.length; i++) {
@@ -1369,22 +1369,22 @@ const BoardGame = (props) => {
       switch(click[0]) {
         case players[0].uid :
           setHand1(hand1.splice(hand1.indexOf(click[1]), 1));
-          update(ref(database, 'game/current/'), {
+          await update(ref(database, 'game/current/'), {
             hand1: hand1,
             }); break;
         case players[1].uid :
           setHand2(hand2.splice(hand2.indexOf(click[1]), 1));  
-          update(ref(database, 'game/current/'), {
+          await update(ref(database, 'game/current/'), {
             hand2: hand2,
             }); break;
         case players[2].uid :
           setHand3(hand3.splice(hand3.indexOf(click[1]), 1)); 
-          update(ref(database, 'game/current/'), {
+          await update(ref(database, 'game/current/'), {
             hand3: hand3,
             }); break;
         case players[3].uid :
           setHand4(hand4.splice(hand4.indexOf(click[1]), 1));
-          update(ref(database, 'game/current/'), {
+          await update(ref(database, 'game/current/'), {
             hand4: hand4,
             }); break;
   
@@ -1392,7 +1392,7 @@ const BoardGame = (props) => {
       }
 
       // UPDATE NB CLIC INCREMENT.
-      update(ref(database, 'game/current/'), { 
+      await update(ref(database, 'game/current/'), { 
         nbClic: nbClic+1 
       });
 
@@ -1400,7 +1400,7 @@ const BoardGame = (props) => {
       if(hand2.length === 0 && !dominoDone.includes(players[1].uid)) dominoDone.push(players[1].uid);
       if(hand3.length === 0 && !dominoDone.includes(players[2].uid)) dominoDone.push(players[2].uid);
       if(hand4.length === 0 && !dominoDone.includes(players[3].uid)) dominoDone.push(players[3].uid);
-    
+
       // HANDLE CHOOSEN CONTRACT.
       console.log("5. BOARDGAME // CONTRACT // HANDLE CHOOSEN || Done : ", dominoDone);
 
@@ -1789,7 +1789,7 @@ const BoardGame = (props) => {
               contractor === user.uid
                 ?
             <Panel 
-              whoCanPlayDom={(p) => whoCanPlay(p)}
+              whoCanPlayDom={() => whoCanPlay(getUIDByPlace("EAST"))}
             />
                 :
             <div className="flex w-1/5 pt-10 flex-col right-10">

@@ -101,6 +101,7 @@ const BoardGame = (props) => {
   const [board, setBoard] = useState([]);
   const [contract, setContract] = useState("");
   const [colorAsked, setColorAsked] = useState("");
+  const [alreadyClicked, setAlreadyClicked] = useState(false);
 
   const [dominoDone, setDominoDone] = useState([]);
   const [displayLoading, setDisplayLoading] = useState(false);
@@ -530,6 +531,8 @@ const BoardGame = (props) => {
   const cleanBoard = (diBoard) => {
 
     if(diBoard.length === 4) {
+
+      setAlreadyClicked(false);
 
       setTimeout(() => {
         // setBoard([]);
@@ -1039,7 +1042,7 @@ const BoardGame = (props) => {
     update(ref(database, 'game/scores/'), {
       [contractName]: [c, score1, score2, score3, score4],
     });
-    
+
     console.log(" ----------------------------------------------> RECORD CONTRACT & SCORES OUT");
   }
 
@@ -1425,10 +1428,7 @@ const BoardGame = (props) => {
         update(ref(database, 'game/current/'), { 
           colorAsk: click[1].charAt(1)
         });
-  
-        // colorAsked = click[1].charAt(1);
-        // setColorAsked(colorAsked);
-        // setPlaceAsked(click[0]);
+ 
         console.log("1.1 BOARDGAME // onClickBoard // Updated colorAsked !");
       }
   
@@ -1439,6 +1439,18 @@ const BoardGame = (props) => {
           return;
         }
       }
+
+      // Sinon use BOARD uid
+      for (let i = 0; i < board.length; i++) {
+        if(board[i].place === user.uid) alert("You already played!")
+      }
+
+      // if(alreadyClicked) {
+      //   alert("You already played!");
+      //   return;
+      // } else {
+      //   setAlreadyClicked(true);
+      // }
   
       // Save clicked card in Database table "Board". ID replace PLACE (click[0])
       console.log("2. BOARDGAME // onClickBoard // ", getNameByUID(click[0])," ADDED ", click[1]," TO BOARD.");

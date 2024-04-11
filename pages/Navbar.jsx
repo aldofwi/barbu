@@ -61,6 +61,9 @@ const Navbar = ({ playersNav }) => {
                         </Modal>
                     </li>
 
+                    {
+                        playersNav.length !== 0 
+                            ?
                     <li className='px-6 py-4'>
                         <button onClick={() => handleScoreModal()} className="text-blue-500 hover:text-white font-bold">Score</button>
                         <Modal onClose={onScoreClose} size={'4xl'} isOpen={isScoreOpen}>
@@ -79,7 +82,9 @@ const Navbar = ({ playersNav }) => {
                             </ModalContent>
                         </Modal>
                     </li>
-
+                            :
+                            null
+                    }
 
                     <li className='px-6 py-4'>
                         <button onClick={() => handleOnlineModal()} className="text-blue-500 hover:text-white font-bold">Online</button>

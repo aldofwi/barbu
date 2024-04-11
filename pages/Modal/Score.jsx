@@ -38,12 +38,6 @@ const Score = ({ players }) => {
     );
 
     onValue(
-      ref(database, 'game/players/'+players[0].uid+'/username' ), (snapshot) => {
-        setName1(snapshot.val());
-      }
-    );
-
-    onValue(
       ref(database, 'game/players/'+players[1].uid+'/username' ), (snapshot) => {
         setName2(snapshot.val());
       }
@@ -111,11 +105,11 @@ const Score = ({ players }) => {
             <Th textAlign='center'>{name4}</Th>
           </Tr>
           <Tr>
-            <Td textAlign='center'><b>Total</b></Td>
-            <Td textAlign='center' className={globalScore1>0 ? "p1" : globalScore1<0 ? "p11" : null}><b>{globalScore1}</b></Td>
-            <Td textAlign='center' className={globalScore2>0 ? "p1" : globalScore2<0 ? "p11" : null}><b>{globalScore2}</b></Td>
-            <Td textAlign='center' className={globalScore3>0 ? "p1" : globalScore3<0 ? "p11" : null}><b>{globalScore3}</b></Td>
-            <Td textAlign='center' className={globalScore4>0 ? "p1" : globalScore4<0 ? "p11" : null}><b>{globalScore4}</b></Td>
+            <Td fontSize="large" textAlign='center'><b>Total</b></Td>
+            <Td fontSize="large" textAlign='center' className={globalScore1>0 ? "p1" : globalScore1<0 ? "p11" : null}><b>{globalScore1}</b></Td>
+            <Td fontSize="large" textAlign='center' className={globalScore2>0 ? "p1" : globalScore2<0 ? "p11" : null}><b>{globalScore2}</b></Td>
+            <Td fontSize="large" textAlign='center' className={globalScore3>0 ? "p1" : globalScore3<0 ? "p11" : null}><b>{globalScore3}</b></Td>
+            <Td fontSize="large" textAlign='center' className={globalScore4>0 ? "p1" : globalScore4<0 ? "p11" : null}><b>{globalScore4}</b></Td>
           </Tr>
         </Thead>
 

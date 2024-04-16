@@ -11,6 +11,7 @@ import PlayerBox from './PlayerBox';
 import Image from 'next/image';
 import Board from './Board';
 import Panel from './Panel';
+import { async } from '@firebase/util';
 
 const cardValues = ["7", "8", "9", "t", "j", "q", "k", "a"];
 
@@ -88,6 +89,8 @@ const BoardGame = (props) => {
   const [plis3, setPlis3] = useState([]);
   const [plis4, setPlis4] = useState([]);
 
+  let allPlis = plis1.length + plis2.length + plis3.length + plis4.length;
+
   let [score1, setScore1] = useState(0);
   let [score2, setScore2] = useState(0);
   let [score3, setScore3] = useState(0);
@@ -139,6 +142,16 @@ const BoardGame = (props) => {
       score4: 0,
     });
 
+    set(ref(database, 'game/contracts/'), {
+      barbu:  false,
+      coeurs: false,
+      dames:  false,
+      domino: false,
+      dp:     false,
+      plis:   false,
+      rata:   false,
+    });
+
     set(ref(database, 'game/scores/'), {
     });
 
@@ -161,7 +174,7 @@ const BoardGame = (props) => {
     setHandCloves([]);
     setHandDiamonds([]);
 
-    // // NEW SCORE
+    // NEW SCORE
     setScore1(0);
     setScore2(0);
     setScore3(0);
@@ -506,6 +519,12 @@ const BoardGame = (props) => {
     return number;
   }
 
+  const getNbPlis = (plis) => {
+
+    if (plis.length === 8) {return -8;}
+    else {return plis.length;}
+  }
+
   const getDomScore = (index) => {
 
     switch(index) {
@@ -640,6 +659,13 @@ const BoardGame = (props) => {
 
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[0]);
+
+      console.log("2.2 BOARDGAME // END OF RATA ||");
+      //alert('6. BOARDGAME // END OF CONTRACT || ');
+
+      setTimeout(() => {
+        initHands();
+      }, 1000);
     }
   }
 
@@ -672,8 +698,8 @@ const BoardGame = (props) => {
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[1]);
 
-      console.log("6. BOARDGAME // END OF CONTRACT ||");
-      alert('6. BOARDGAME // END OF CONTRACT || ');
+      console.log("2.2 BOARDGAME // END OF BARBU ||");
+      // alert('6. BOARDGAME // END OF CONTRACT || ');
 
       setTimeout(() => {
         initHands();
@@ -733,6 +759,13 @@ const BoardGame = (props) => {
       update(ref(database, 'game/current/'), { 
         hasToPlay: contractor, 
       });
+
+      console.log("2.2 BOARDGAME // END OF DOMINO ||");
+      //alert('6. BOARDGAME // END OF CONTRACT || ');
+
+      setTimeout(() => {
+        initHands();
+      }, 1000);
     }
   }
 
@@ -765,8 +798,8 @@ const BoardGame = (props) => {
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[3]);
 
-      console.log("6. BOARDGAME // END OF CONTRACT ||");
-      alert('6. BOARDGAME // END OF CONTRACT || ');
+      console.log("2.2 BOARDGAME // END OF HEARTS ||");
+      // alert('6. BOARDGAME // END OF CONTRACT || ');
 
       setTimeout(() => {
         initHands();
@@ -803,8 +836,8 @@ const BoardGame = (props) => {
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[4]);
 
-      console.log("6. BOARDGAME // END OF CONTRACT ||");
-      alert('6. BOARDGAME // END OF CONTRACT || ');
+      console.log("2.2 BOARDGAME // END OF QUEENS ||");
+      //alert('6. BOARDGAME // END OF CONTRACT || ');
 
       setTimeout(() => {
         initHands();
@@ -817,10 +850,10 @@ const BoardGame = (props) => {
 
     if(!contractsDone.includes("Plis")) {
 
-      score1 = plis1.length * -5;
-      score2 = plis2.length * -5;
-      score3 = plis3.length * -5;
-      score4 = plis4.length * -5;
+      score1 = getNbPlis(plis1) * -5;
+      score2 = getNbPlis(plis2) * -5;
+      score3 = getNbPlis(plis3) * -5;
+      score4 = getNbPlis(plis4) * -5;
   
       console.log("2.2 BOARDGAME // handlePlis() - score1 : ", score1);
       console.log("2.2 BOARDGAME // handlePlis() - score2 : ", score2);
@@ -840,6 +873,13 @@ const BoardGame = (props) => {
 
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[5]);
+
+      console.log("2.2 BOARDGAME // END OF PLIS ||");
+      //alert('6. BOARDGAME // END OF CONTRACT || ');
+
+      setTimeout(() => {
+        initHands();
+      }, 1000);
     }
   }
 
@@ -880,22 +920,28 @@ const BoardGame = (props) => {
 
       // RECORD CONTRACT ON BASE.
       recordContract(contracts[6]);
+
+      console.log("2.3 BOARDGAME // END OF DP ||");
+      //alert('6. BOARDGAME // END OF CONTRACT || ');
+
+      setTimeout(() => {
+        initHands();
+      }, 1000);
     }
   }
 
   const handleContract = (p, c) => {
 
-    let allPlis = plis1.length + plis2.length + plis3.length + plis4.length;
     console.log("2.2 BOARDGAME // handleContract() - place : ", p);
     console.log("2.2 BOARDGAME // handleContract() - contract : ", c);
     console.log("2.2 BOARDGAME // handleContract() - allPlis : ", allPlis);
 
-    if(   (nbClic === 31  && allPlis === 8)
+    if(   (allPlis === 8)
       ||  (c === "Barbu"  && presenceIn('kh')) 
       ||  (c === "Coeurs" && presenceIn('ah') && presenceIn('kh') && presenceIn('qh') && presenceIn('jh') && presenceIn('th') && presenceIn('9h') && presenceIn('8h') && presenceIn('7h'))
       ||  (c === "Dames"  && presenceIn('qs') && presenceIn('qh') && presenceIn('qc') && presenceIn('qd')) ) {
       
-      setEndOfContract(true);
+      //setEndOfContract(true);
 
       switch(c) {
         case "RATA"        : handleRata(p);   break;
@@ -917,11 +963,17 @@ const BoardGame = (props) => {
         hasToPlay: contractor, 
       });
 
+      // NEW LOGIC
+      console.log("2.2. BOARDGAME // handleContract() // END OF CONTRACT ");
+      checkEndOf7();
+      //initHands();
+
       return contractor;
     }
     return p;
   }
 
+  // TODO : Put playersDone on DATABASE.
   const checkEndOf7 = () => {
     console.log("7. BOARDGAME // onClickBoard // checkEndOf7() - nb ContractsDone :", contractsDone.length);
 
@@ -939,6 +991,7 @@ const BoardGame = (props) => {
 
         setEndOfGame(true);
         alert("End of whole GAME !");
+
       } else {
         nextPlayer = getNextPlayer(contractor);
         //setContractor(nextPlayerUID);
@@ -1134,12 +1187,12 @@ const BoardGame = (props) => {
         // CHECK EVOLUTION OF CONTRACT.
         masterPlace = handleContract(masterPlace, contract);
 
-        console.log("2.2 BOARDGAME // handleContract() - plis1 : ", plis1);
-        console.log("2.2 BOARDGAME // handleContract() - plis2 : ", plis2);
-        console.log("2.2 BOARDGAME // handleContract() - plis3 : ", plis3);
-        console.log("2.2 BOARDGAME // handleContract() - plis4 : ", plis4);
+        console.log("2.2 BOARDGAME // whoIsTheMaster() - plis1 : ", plis1);
+        console.log("2.2 BOARDGAME // whoIsTheMaster() - plis2 : ", plis2);
+        console.log("2.2 BOARDGAME // whoIsTheMaster() - plis3 : ", plis3);
+        console.log("2.2 BOARDGAME // whoIsTheMaster() - plis4 : ", plis4);
 
-        console.log("2.1 BOARDGAME // whoIsTheMaster() = ", getNameByUID(masterPlace), " // END");
+        console.log("2.2 BOARDGAME // whoIsTheMaster() = ", getNameByUID(masterPlace), " // END");
       }
 
       return(masterPlace);
@@ -1308,10 +1361,15 @@ const BoardGame = (props) => {
 
     if(contract === "Domino") {
       console.log("1. BOARDGAME // onClickDomino(", click,")");
-      console.log("1. BOARDGAME // handSpides = ", handSpides);
-      console.log("1. BOARDGAME // handHearts = ", handHearts);
-      console.log("1. BOARDGAME // handCloves = ", handCloves);
-      console.log("1. BOARDGAME // handDiamonds = ", handDiamonds);
+      console.log("1. BOARDGAME // onClickDomino // handSpides = ", handSpides);
+      console.log("1. BOARDGAME // onClickDomino // handHearts = ", handHearts);
+      console.log("1. BOARDGAME // onClickDomino // handCloves = ", handCloves);
+      console.log("1. BOARDGAME // onClickDomino // handDiamonds = ", handDiamonds);
+      console.log("1. ----------------------------");
+      console.log("1. BOARDGAME // onClickDomino // hand1 = ", hand1);
+      console.log("1. BOARDGAME // onClickDomino // hand2 = ", hand2);
+      console.log("1. BOARDGAME // onClickDomino // hand3 = ", hand3);
+      console.log("1. BOARDGAME // onClickDomino // hand4 = ", hand4);
 
       // CHECK IF PLAYER HAS TO PLAY.
       if(click[0] !== hasToPlay) { 
@@ -1392,28 +1450,31 @@ const BoardGame = (props) => {
       }
 
       // UPDATE NB CLIC INCREMENT.
-      await update(ref(database, 'game/current/'), { 
+      update(ref(database, 'game/current/'), { 
         nbClic: nbClic+1 
       });
-
-      if(hand1.length === 0 && !dominoDone.includes(players[0].uid)) dominoDone.push(players[0].uid);
-      if(hand2.length === 0 && !dominoDone.includes(players[1].uid)) dominoDone.push(players[1].uid);
-      if(hand3.length === 0 && !dominoDone.includes(players[2].uid)) dominoDone.push(players[2].uid);
-      if(hand4.length === 0 && !dominoDone.includes(players[3].uid)) dominoDone.push(players[3].uid);
 
       // HANDLE CHOOSEN CONTRACT.
       console.log("5. BOARDGAME // CONTRACT // HANDLE CHOOSEN || Done : ", dominoDone);
 
       // MAYBE CHECK ON TEMPO PLI SIZE
       // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
-      if(amIContractor && dominoDone.length === 3) {
+      if(amIContractor) {
+
+        if(hand1.length === 0 && !dominoDone.includes(players[0].uid)) dominoDone.push(players[0].uid);
+        if(hand2.length === 0 && !dominoDone.includes(players[1].uid)) dominoDone.push(players[1].uid);
+        if(hand3.length === 0 && !dominoDone.includes(players[2].uid)) dominoDone.push(players[2].uid);
+        if(hand4.length === 0 && !dominoDone.includes(players[3].uid)) dominoDone.push(players[3].uid);
+  
+        if(dominoDone.length === 3) {
         console.log("6. BOARDGAME // onClickBoard // END OF DOMINO || Done : ", dominoDone);
         handleDomino();
         checkEndOf7();
         
-        alert('6. BOARDGAME // onClickBoard // END OF DOMINO || ');
+        // alert('6. BOARDGAME // onClickBoard // END OF DOMINO || ');
         initHands();
       }
+    }
 
     } else {
       console.log("1. BOARDGAME // onClickBoard(", click,") // board : ", board, " // colorAsked = ", colorAsked);
@@ -1445,12 +1506,10 @@ const BoardGame = (props) => {
         if(board[i].place === user.uid) alert("You already played!")
       }
 
-      // if(alreadyClicked) {
-      //   alert("You already played!");
-      //   return;
-      // } else {
-      //   setAlreadyClicked(true);
-      // }
+      // UPDATE NB CLIC INCREMENT.
+      update(ref(database, 'game/current/'), { 
+        nbClic: nbClic+1 
+      });
   
       // Save clicked card in Database table "Board". ID replace PLACE (click[0])
       console.log("2. BOARDGAME // onClickBoard // ", getNameByUID(click[0])," ADDED ", click[1]," TO BOARD.");
@@ -1459,7 +1518,7 @@ const BoardGame = (props) => {
         place: click[0],
         rank: board.length,
       });
-          
+
       console.log("3. BOARDGAME // onClickBoard // BOARD (", board.length ,") // switch() from ", getNameByUID(hasToPlay));
       if(board.length < 3) {
         switch(hasToPlay) {
@@ -1514,20 +1573,19 @@ const BoardGame = (props) => {
       // HANDLE CHOOSEN CONTRACT.
       console.log("5. BOARDGAME // CONTRACT // HANDLE CHOOSEN");
   
-      // UPDATE NB CLIC INCREMENT.
-      update(ref(database, 'game/current/'), { 
-        nbClic: nbClic+1 
-      });
-  
-      // MAYBE CHECK ON TEMPO PLI SIZE
+      // MAYBE CHECK ON TEMPO PLI SIZE or HANDS ???
       // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
-      if(amIContractor && nbClic === 31) {
-        console.log("6. BOARDGAME // onClickBoard // END OF CONTRACT ||");
-        checkEndOf7();
 
-        alert('6. BOARDGAME // onClickBoard // END OF CONTRACT || ');
-        initHands();
-      }  
+      // if(amIContractor && (nbClic === 32 || allPlis === 8)) {
+      //   console.log("6. BOARDGAME // onClickBoard // END OF CONTRACT ||");
+      //   checkEndOf7();
+      //   initHands();
+      // }  
+
+      // if(amIContractor && endOfContract) {
+      //   checkEndOf7();
+      //   initHands();
+      // }
     }
 
   }
@@ -1678,11 +1736,6 @@ const BoardGame = (props) => {
   //}, []);
   }, [hasToPlay, colorAsked]);
 
-  console.log("BOARDGAME _--------------------_");
-  console.log("BOARDGAME // PROPS playerz = ", props.playerz);
-  console.log("BOARDGAME // PROPS rank = ", props.rank);
-  console.log("BOARDGAME // PROPS Am I ? ", props.rank === 1);
-  console.log("BOARDGAME _--------------------_");
 
   if(props.rank !== 0 && playersDone.length === 0 && contractsDone.length === 0) {
 
@@ -1696,6 +1749,7 @@ const BoardGame = (props) => {
     } 
   }
 
+  console.log("BOARDGAME _--------------------_");
   console.log("BOARDGAME // players = ", players);
   console.log("BOARDGAME // myRank = ", myRank);
   console.log("BOARDGAME // amIContractor = ", amIContractor);
@@ -1707,7 +1761,9 @@ const BoardGame = (props) => {
   console.log("BOARDGAME // colorAsked = ", colorAsked);
   console.log("BOARDGAME // contractor = ", contractor);
   console.log("BOARDGAME // contractor place = ", getPlaceByUid(contractor));
+  console.log("BOARDGAME // allPlis = ", allPlis);
   console.log("BOARDGAME // endOfContract = ", endOfContract);
+  console.log("BOARDGAME // dominoDone : ", dominoDone);
   console.log("BOARDGAME // ContractsDone = ", contractsDone);
   console.log("BOARDGAME // NB ContractsDone = ", contractsDone.length);
   console.log("BOARDGAME // playersDone = ", playersDone);

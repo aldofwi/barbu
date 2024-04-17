@@ -128,6 +128,7 @@ const BoardGame = (props) => {
     update(ref(database, 'game/current/'), {
       colorAsk: "",
       contract: "",
+      dominoDone: [],
       endOfContract: true,
       endOfGame: false,
       hasToPlay: user.uid, // contractor
@@ -191,6 +192,7 @@ const BoardGame = (props) => {
     update(ref(database, 'game/current/'), {
       colorAsk: "",
       contract: "",
+      dominoDone: [],
       endOfContract: true,
       hasToPlay: user.uid, // contractor
       nbClic: 0,
@@ -1360,16 +1362,17 @@ const BoardGame = (props) => {
   const onClickBoard = async (click) => {
 
     if(contract === "Domino") {
+
       console.log("1. BOARDGAME // onClickDomino(", click,")");
-      console.log("1. BOARDGAME // onClickDomino // handSpides = ", handSpides);
-      console.log("1. BOARDGAME // onClickDomino // handHearts = ", handHearts);
-      console.log("1. BOARDGAME // onClickDomino // handCloves = ", handCloves);
-      console.log("1. BOARDGAME // onClickDomino // handDiamonds = ", handDiamonds);
+      console.log("1. BOARDGAME // onClickDomino // handSpides = ",   handSpides.length);
+      console.log("1. BOARDGAME // onClickDomino // handHearts = ",   handHearts.length);
+      console.log("1. BOARDGAME // onClickDomino // handCloves = ",   handCloves.length);
+      console.log("1. BOARDGAME // onClickDomino // handDiamonds = ", handDiamonds.length);
       console.log("1. ----------------------------");
-      console.log("1. BOARDGAME // onClickDomino // hand1 = ", hand1);
-      console.log("1. BOARDGAME // onClickDomino // hand2 = ", hand2);
-      console.log("1. BOARDGAME // onClickDomino // hand3 = ", hand3);
-      console.log("1. BOARDGAME // onClickDomino // hand4 = ", hand4);
+      console.log("1. BOARDGAME // onClickDomino // hand1 = ", hand1.length);
+      console.log("1. BOARDGAME // onClickDomino // hand2 = ", hand2.length);
+      console.log("1. BOARDGAME // onClickDomino // hand3 = ", hand3.length);
+      console.log("1. BOARDGAME // onClickDomino // hand4 = ", hand4.length);
 
       // CHECK IF PLAYER HAS TO PLAY.
       if(click[0] !== hasToPlay) { 
@@ -1384,7 +1387,7 @@ const BoardGame = (props) => {
       }
       
       // Save clicked card in Database table "HANDX".
-      console.log("2. BOARDGAME // onClickBoard // ", getNameByUID(click[0])," ADDED ", click[1]," TO BOARD DOMINO.");
+      console.log("2. BOARDGAME // onClickDomino // ", getNameByUID(click[0])," ADDED ", click[1]," TO BOARD DOMINO.");
       switch(click[1].charAt(1)) {
 
         case "s" : 
@@ -1413,68 +1416,70 @@ const BoardGame = (props) => {
 
         default : break;
       }
-      
-      // WHO CAN PLAY NEXT.
-      console.log("3. BOARDGAME // onClickBoard // BOARD DOMINO // switch() from ", getNameByUID(hasToPlay));
 
+      // WHO CAN PLAY NEXT.
+      console.log("3. BOARDGAME // onClickDomino // BOARD DOMINO // switch() from ", getNameByUID(hasToPlay));
       await update(ref(database, 'game/current/'), { 
         hasToPlay: whoCanPlay(hasToPlay),
       });
 
-      // Remove from HANDS in Database table "Hands".
-      // TODO PROD : ONLY "SOUTH" updating with uid.
-      console.log("4. BOARDGAME // onClickBoard // SPLICE // UPDATE HANDS on DOMINO");
+      // Remove Card from HANDS in Database table "Hands".
+      console.log("4. BOARDGAME // onClickDomino // SPLICE HAND OF", getNameByUID(click[0])," - CHECK PODIUM.");
       switch(click[0]) {
+
         case players[0].uid :
           setHand1(hand1.splice(hand1.indexOf(click[1]), 1));
           await update(ref(database, 'game/current/'), {
             hand1: hand1,
-            }); break;
+            });
+          if(hand1.length === 0 && !dominoDone.includes(players[0].uid)) setDominoDone(dominoDone.push(players[0].uid));
+            break;
+
         case players[1].uid :
           setHand2(hand2.splice(hand2.indexOf(click[1]), 1));  
           await update(ref(database, 'game/current/'), {
             hand2: hand2,
-            }); break;
+            });
+          if(hand2.length === 0 && !dominoDone.includes(players[1].uid)) setDominoDone(dominoDone.push(players[1].uid)); 
+            break;
+
         case players[2].uid :
           setHand3(hand3.splice(hand3.indexOf(click[1]), 1)); 
           await update(ref(database, 'game/current/'), {
             hand3: hand3,
-            }); break;
+            });
+          if(hand3.length === 0 && !dominoDone.includes(players[2].uid)) setDominoDone(dominoDone.push(players[2].uid));
+            break;
+
         case players[3].uid :
           setHand4(hand4.splice(hand4.indexOf(click[1]), 1));
           await update(ref(database, 'game/current/'), {
             hand4: hand4,
-            }); break;
+            });
+          if(hand4.length === 0 && !dominoDone.includes(players[3].uid)) setDominoDone(dominoDone.push(players[3].uid));
+            break;
   
         default: break;
       }
 
-      // UPDATE NB CLIC INCREMENT.
-      update(ref(database, 'game/current/'), { 
-        nbClic: nbClic+1 
+      await update(ref(database, 'game/current/'), {
+        dominoDone: dominoDone,
       });
 
-      // HANDLE CHOOSEN CONTRACT.
-      console.log("5. BOARDGAME // CONTRACT // HANDLE CHOOSEN || Done : ", dominoDone);
+      console.log("5. BOARDGAME // onClickDomino // END OF DOMINO || Done : ", dominoDone);
+      console.log("5. BOARDGAME // onClickDomino // hand1 : ", hand1.length);
+      console.log("5. BOARDGAME // onClickDomino // hand2 : ", hand2.length);
+      console.log("5. BOARDGAME // onClickDomino // hand3 : ", hand3.length);
+      console.log("5. BOARDGAME // onClickDomino // hand4 : ", hand4.length);
 
       // MAYBE CHECK ON TEMPO PLI SIZE
       // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
-      if(amIContractor) {
-
-        if(hand1.length === 0 && !dominoDone.includes(players[0].uid)) dominoDone.push(players[0].uid);
-        if(hand2.length === 0 && !dominoDone.includes(players[1].uid)) dominoDone.push(players[1].uid);
-        if(hand3.length === 0 && !dominoDone.includes(players[2].uid)) dominoDone.push(players[2].uid);
-        if(hand4.length === 0 && !dominoDone.includes(players[3].uid)) dominoDone.push(players[3].uid);
-  
-        if(dominoDone.length === 3) {
-        console.log("6. BOARDGAME // onClickBoard // END OF DOMINO || Done : ", dominoDone);
-        handleDomino();
-        checkEndOf7();
-        
-        // alert('6. BOARDGAME // onClickBoard // END OF DOMINO || ');
-        initHands();
+      if(amIContractor && dominoDone.length === 3) {
+        console.log("6. BOARDGAME // onClickDomino // HANDLE CHOOSEN || TOP : ", dominoDone.length);
+          // HANDLE CHOOSEN CONTRACT.
+          handleDomino();
+          checkEndOf7();
       }
-    }
 
     } else {
       console.log("1. BOARDGAME // onClickBoard(", click,") // board : ", board, " // colorAsked = ", colorAsked);
@@ -1652,6 +1657,16 @@ const BoardGame = (props) => {
     );
 
     onValue(
+      ref(database, 'game/current/dominoDone' ), (snapshot) => {
+        let done = [];
+        snapshot.forEach((doc) => {
+          done.push(doc.val());
+        });
+        setDominoDone(done);
+      }
+    );
+
+    onValue(
       ref(database, 'game/boardDomino/SPIDES' ), (snapshot) => {
         let hand_s = [];
         snapshot.forEach((doc) => {
@@ -1739,8 +1754,8 @@ const BoardGame = (props) => {
 
   if(props.rank !== 0 && playersDone.length === 0 && contractsDone.length === 0) {
 
-    //setPlayers(props.playerz);
-    console.log("BOARDGAME // Players = ", players);
+    // setPlayers(props.playerz);
+    // console.log("BOARDGAME // Players = ", players);
 
     //setContractor(players[0].uid);
     if(props.rank === 1 && !initFirst) {
@@ -1750,25 +1765,25 @@ const BoardGame = (props) => {
   }
 
   console.log("BOARDGAME _--------------------_");
-  console.log("BOARDGAME // players = ", players);
-  console.log("BOARDGAME // myRank = ", myRank);
-  console.log("BOARDGAME // amIContractor = ", amIContractor);
-  console.log("BOARDGAME // board = ", board.length);
-  console.log("BOARDGAME // master = ", master);
-  console.log("BOARDGAME // nbClic = ", nbClic);
-  console.log("BOARDGAME // contract = ", contract);
-  console.log("BOARDGAME // hasToPlay = ", hasToPlay);
-  console.log("BOARDGAME // colorAsked = ", colorAsked);
-  console.log("BOARDGAME // contractor = ", contractor);
-  console.log("BOARDGAME // contractor place = ", getPlaceByUid(contractor));
-  console.log("BOARDGAME // allPlis = ", allPlis);
-  console.log("BOARDGAME // endOfContract = ", endOfContract);
-  console.log("BOARDGAME // dominoDone : ", dominoDone);
-  console.log("BOARDGAME // ContractsDone = ", contractsDone);
-  console.log("BOARDGAME // NB ContractsDone = ", contractsDone.length);
-  console.log("BOARDGAME // playersDone = ", playersDone);
-  console.log("BOARDGAME // endOfSeven = ", endOfSeven);
-  console.log("BOARDGAME -____________________-");
+  // console.log("BOARDGAME // players = ", players);
+  // console.log("BOARDGAME // myRank = ", myRank);
+  // console.log("BOARDGAME // amIContractor = ", amIContractor);
+  // console.log("BOARDGAME // board = ", board.length);
+  // console.log("BOARDGAME // master = ", master);
+  // console.log("BOARDGAME // nbClic = ", nbClic);
+  // console.log("BOARDGAME // contract = ", contract);
+  // console.log("BOARDGAME // hasToPlay = ", hasToPlay);
+  // console.log("BOARDGAME // colorAsked = ", colorAsked);
+  // console.log("BOARDGAME // contractor = ", contractor);
+  // console.log("BOARDGAME // contractor place = ", getPlaceByUid(contractor));
+  // console.log("BOARDGAME // allPlis = ", allPlis);
+  // console.log("BOARDGAME // ContractsDone = ", contractsDone);
+  // console.log("BOARDGAME // NB ContractsDone = ", contractsDone.length);
+  // console.log("BOARDGAME // playersDone = ", playersDone);
+  // console.log("BOARDGAME // endOfSeven = ", endOfSeven);
+  // console.log("BOARDGAME // endOfContract = ", endOfContract);
+  // console.log("BOARDGAME // dominoDone : ", dominoDone);
+  // console.log("BOARDGAME -____________________-");
 
   return (
 

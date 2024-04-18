@@ -89,8 +89,6 @@ const BoardGame = (props) => {
   const [plis3, setPlis3] = useState([]);
   const [plis4, setPlis4] = useState([]);
 
-  let allPlis = plis1.length + plis2.length + plis3.length + plis4.length;
-
   let [score1, setScore1] = useState(0);
   let [score2, setScore2] = useState(0);
   let [score3, setScore3] = useState(0);
@@ -137,6 +135,7 @@ const BoardGame = (props) => {
       hand2:  [],
       hand3:  [],
       hand4:  [],
+      playersDone: [],
       score1: 0,
       score2: 0,
       score3: 0,
@@ -709,19 +708,19 @@ const BoardGame = (props) => {
     }
   }
 
-  const handleDomino = () => {
+  const handleDomino = (domDone) => {
     console.log("2.2 BOARDGAME // handleDomino()");
 
     if(!contractsDone.includes("Domino")) {
 
-      if(!dominoDone.includes(players[0].uid)) score1 += -25;
-      if(!dominoDone.includes(players[1].uid)) score2 += -25;
-      if(!dominoDone.includes(players[2].uid)) score3 += -25;
-      if(!dominoDone.includes(players[3].uid)) score4 += -25;
+      if(!domDone.includes(players[0].uid)) score1 += -25;
+      if(!domDone.includes(players[1].uid)) score2 += -25;
+      if(!domDone.includes(players[2].uid)) score3 += -25;
+      if(!domDone.includes(players[3].uid)) score4 += -25;
 
-      for (let i = 0; i < dominoDone.length; i++) {
+      for (let i = 0; i < domDone.length; i++) {
 
-        switch(dominoDone[i]) {
+        switch(domDone[i]) {
           case players[0].uid : score1 += getDomScore(i); break;
           case players[1].uid : score2 += getDomScore(i); break;
           case players[2].uid : score3 += getDomScore(i); break;
@@ -936,15 +935,12 @@ const BoardGame = (props) => {
 
     console.log("2.2 BOARDGAME // handleContract() - place : ", p);
     console.log("2.2 BOARDGAME // handleContract() - contract : ", c);
-    console.log("2.2 BOARDGAME // handleContract() - allPlis : ", allPlis);
 
-    if(   (allPlis === 8)
+    if(   ((plis1.length + plis2.length + plis3.length + plis4.length) === 8)
       ||  (c === "Barbu"  && presenceIn('kh')) 
       ||  (c === "Coeurs" && presenceIn('ah') && presenceIn('kh') && presenceIn('qh') && presenceIn('jh') && presenceIn('th') && presenceIn('9h') && presenceIn('8h') && presenceIn('7h'))
       ||  (c === "Dames"  && presenceIn('qs') && presenceIn('qh') && presenceIn('qc') && presenceIn('qd')) ) {
       
-      //setEndOfContract(true);
-
       switch(c) {
         case "RATA"        : handleRata(p);   break;
         case "Barbu"       : handleBarbu();  break;
@@ -975,7 +971,6 @@ const BoardGame = (props) => {
     return p;
   }
 
-  // TODO : Put playersDone on DATABASE.
   const checkEndOf7 = () => {
     console.log("7. BOARDGAME // onClickBoard // checkEndOf7() - nb ContractsDone :", contractsDone.length);
 
@@ -983,8 +978,13 @@ const BoardGame = (props) => {
     if(contractsDone.length === 7) {
 
       setEndOfSeven(true);
-      playersDone.push(contractor);
-      setPlayersDone(playersDone);
+      setContractsDone([]);
+
+      setPlayersDone(playersDone.push(contractor));
+
+      update(ref(database, 'game/current/'), { 
+        playersDone: playersDone,
+      });
 
       // CLEAN CONTRACTS
       cleanContracts();
@@ -992,6 +992,10 @@ const BoardGame = (props) => {
       if(playersDone.length === 4) {
 
         setEndOfGame(true);
+        update(ref(database, 'game/current/'), { 
+          endOfGame: endOfGame,
+        });
+
         alert("End of whole GAME !");
 
       } else {
@@ -1214,7 +1218,7 @@ const BoardGame = (props) => {
 
   const isPlayableDominoCard = (card, hand) => {
 
-    console.log("1. BOARDGAME // hand = ", hand);
+    // console.log("1. BOARDGAME // hand = ", hand);
 
     switch(card.charAt(0)) {
 
@@ -1432,7 +1436,12 @@ const BoardGame = (props) => {
           await update(ref(database, 'game/current/'), {
             hand1: hand1,
             });
-          if(hand1.length === 0 && !dominoDone.includes(players[0].uid)) setDominoDone(dominoDone.push(players[0].uid));
+          if(hand1.length === 0 && !dominoDone.includes(players[0].uid)) { 
+            setDominoDone(dominoDone.push(players[0].uid));
+            await update(ref(database, 'game/current/'), {
+              dominoDone: dominoDone,
+            });
+          }
             break;
 
         case players[1].uid :
@@ -1440,7 +1449,12 @@ const BoardGame = (props) => {
           await update(ref(database, 'game/current/'), {
             hand2: hand2,
             });
-          if(hand2.length === 0 && !dominoDone.includes(players[1].uid)) setDominoDone(dominoDone.push(players[1].uid)); 
+          if(hand2.length === 0 && !dominoDone.includes(players[1].uid)) { 
+            setDominoDone(dominoDone.push(players[1].uid)); 
+            await update(ref(database, 'game/current/'), {
+              dominoDone: dominoDone,
+            });
+          }
             break;
 
         case players[2].uid :
@@ -1448,7 +1462,12 @@ const BoardGame = (props) => {
           await update(ref(database, 'game/current/'), {
             hand3: hand3,
             });
-          if(hand3.length === 0 && !dominoDone.includes(players[2].uid)) setDominoDone(dominoDone.push(players[2].uid));
+          if(hand3.length === 0 && !dominoDone.includes(players[2].uid)) { 
+            setDominoDone(dominoDone.push(players[2].uid));
+            await update(ref(database, 'game/current/'), {
+              dominoDone: dominoDone,
+            });
+          }
             break;
 
         case players[3].uid :
@@ -1456,17 +1475,18 @@ const BoardGame = (props) => {
           await update(ref(database, 'game/current/'), {
             hand4: hand4,
             });
-          if(hand4.length === 0 && !dominoDone.includes(players[3].uid)) setDominoDone(dominoDone.push(players[3].uid));
+          if(hand4.length === 0 && !dominoDone.includes(players[3].uid)) { 
+            setDominoDone(dominoDone.push(players[3].uid));
+            await update(ref(database, 'game/current/'), {
+              dominoDone: dominoDone,
+            });
+          }
             break;
   
         default: break;
       }
 
-      await update(ref(database, 'game/current/'), {
-        dominoDone: dominoDone,
-      });
-
-      console.log("5. BOARDGAME // onClickDomino // END OF DOMINO || Done : ", dominoDone);
+      console.log("5. BOARDGAME // onClickDomino // END || DominoDone : ", dominoDone);
       console.log("5. BOARDGAME // onClickDomino // hand1 : ", hand1.length);
       console.log("5. BOARDGAME // onClickDomino // hand2 : ", hand2.length);
       console.log("5. BOARDGAME // onClickDomino // hand3 : ", hand3.length);
@@ -1474,12 +1494,12 @@ const BoardGame = (props) => {
 
       // MAYBE CHECK ON TEMPO PLI SIZE
       // CHECK HANDS SIZES TO KNOW IF END OF CONTRACT
-      if(amIContractor && dominoDone.length === 3) {
-        console.log("6. BOARDGAME // onClickDomino // HANDLE CHOOSEN || TOP : ", dominoDone.length);
-          // HANDLE CHOOSEN CONTRACT.
-          handleDomino();
-          checkEndOf7();
-      }
+      // if(amIContractor && dominoDone.length === 3) {
+      //   console.log("6. BOARDGAME // onClickDomino // HANDLE CHOOSEN || TOP : ", dominoDone.length);
+      //     // HANDLE CHOOSEN CONTRACT.
+      //     handleDomino();
+      //     checkEndOf7();
+      // }
 
     } else {
       console.log("1. BOARDGAME // onClickBoard(", click,") // board : ", board, " // colorAsked = ", colorAsked);
@@ -1600,8 +1620,6 @@ const BoardGame = (props) => {
     onValue(
       ref(database, 'game/contractor/uid' ), (snapshot) => {
         setContractor(state => snapshot.val());
-        //setAmIContractor(snapshot.val() === user.uid);
-        //setHasToPlay(getPlaceByUid(snapshot.val()));
       }
     );
 
@@ -1614,6 +1632,21 @@ const BoardGame = (props) => {
     onValue(
       ref(database, 'game/current/hasToPlay' ), (snapshot) => {
           setHasToPlay(state => snapshot.val());
+      }
+    );
+
+    onValue(
+      ref(database, 'game/current/dominoDone' ), (snapshot) => {
+        let done = [];
+        snapshot.forEach((doc) => {
+          done.push(doc.val());
+        });
+        setDominoDone(done);
+
+        if(amIContractor && done.length === 3) {
+          handleDomino(done);
+          checkEndOf7();
+        }
       }
     );
 
@@ -1653,16 +1686,6 @@ const BoardGame = (props) => {
     onValue(
       ref(database, 'game/current/hand4' ), (snapshot) => {
         setHand4(state => sortHand(snapshot.val()));
-      }
-    );
-
-    onValue(
-      ref(database, 'game/current/dominoDone' ), (snapshot) => {
-        let done = [];
-        snapshot.forEach((doc) => {
-          done.push(doc.val());
-        });
-        setDominoDone(done);
       }
     );
 
@@ -1785,6 +1808,10 @@ const BoardGame = (props) => {
   // console.log("BOARDGAME // dominoDone : ", dominoDone);
   // console.log("BOARDGAME -____________________-");
 
+
+  // IF EndOfGame ? Display PanelWinner. with Reset or Close Button!
+
+  
   return (
 
     <div>

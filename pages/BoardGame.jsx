@@ -975,7 +975,7 @@ const BoardGame = (props) => {
     console.log("7. BOARDGAME // onClickBoard // checkEndOf7() - nb ContractsDone :", contractsDone.length);
 
     let nextPlayer = "";
-    if(contractsDone.length === 7) {
+    if(contractsDone.length === 7 && !playersDone.includes(contractor)) {
 
       setEndOfSeven(true);
       setContractsDone([]);
@@ -996,7 +996,7 @@ const BoardGame = (props) => {
           endOfGame: endOfGame,
         });
 
-        alert("End of whole GAME !");
+        console.log("7. BOARDGAME // onClickBoard // checkEndOf7() - playersDone :", playersDone.length);
 
       } else {
         nextPlayer = getNextPlayer(contractor);
@@ -1809,7 +1809,11 @@ const BoardGame = (props) => {
   // console.log("BOARDGAME -____________________-");
 
 
-  // IF EndOfGame ? Display PanelWinner. with Reset or Close Button!
+  /**
+   * 
+   *  IF EndOfGame ? Display PanelWinner. with Reset or Close Button!
+   * 
+   */ 
 
   
   return (
@@ -1831,7 +1835,7 @@ const BoardGame = (props) => {
           thePlayers={players}
           getUIDPlace={(p) => getUIDByPlace(p)}
         />
-        // BOARD DOESN'T APPEAR !!!
+
       }
 
       <PlayerBox

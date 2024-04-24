@@ -49,9 +49,6 @@ const Panel = ({ whoCanPlayDom }) => {
       });
 
       // Check if contractor can play first.
-      /**
-       * TODO : Replace EAST by previous ID.
-       */
       update(ref(database, 'game/current/'), { 
         hasToPlay: whoCanPlayDom(),
       });

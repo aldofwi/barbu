@@ -148,30 +148,3 @@ const Score = ({ players }) => {
 }
 
 export default Score;
-
-
-//         {
-//           scores.length % 7 === 0
-//                     ?
-//             <Tbody>
-//               <Tr>
-//                 <Td>-------------</Td>
-//                 <Td>-------------</Td>
-//                 <Td>-------------</Td>
-//                 <Td>-------------</Td>
-//                 <Td>-------------</Td>
-//               </Tr>
-//             </Tbody>
-//                     :
-//                   null
-//         }
-
-
-
-// <Tr>
-// <Td textAlign='center'>{i%7 === 0 ? "-------------" : null}</Td>
-// <Td textAlign='center'>{i%7 === 0 ? "-------------" : null}</Td>
-// <Td textAlign='center'>{i%7 === 0 ? "-------------" : null}</Td>
-// <Td textAlign='center'>{i%7 === 0 ? "-------------" : null}</Td>
-// <Td textAlign='center'>{i%7 === 0 ? "-------------" : null}</Td>
-// </Tr>

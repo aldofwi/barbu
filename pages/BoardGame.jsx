@@ -55,7 +55,8 @@ const shuffle = (tab) => {
       //delete tab[i];
       n--;
   }
-  // console.log("newtab = ", newTab);
+
+  console.log("1.0 BOARDGAME // shuffle(cards) // newtab = ", newTab);
 
   return newTab;
 }
@@ -70,7 +71,7 @@ const BoardGame = (props) => {
   let [contractor, setContractor] = useState(props.playerz[0].uid);
   const [hasToPlay, setHasToPlay] = useState(props.playerz[0].uid);
 
-  const [newDeck, setNewDeck] = useState([]);
+  let [newDeck, setNewDeck] = useState([]); // shuffle(cards)
   const [initFirst, setInitFirst] = useState(false);
 
   const [hand1, setHand1] = useState([]);
@@ -165,6 +166,7 @@ const BoardGame = (props) => {
     console.log("1.0 BOARDGAME // initHands() //", user.displayName,"déclenche initHands();");
     console.log("1.0 BOARDGAME // initHands() // contractor :", getNameByUID(contractor));
     console.log("1.0 BOARDGAME // initHands() // nextPlayer : ", getNameByUID(nextPlayer));
+    console.log("1.0 BOARDGAME // initHands() // newDeck : ", newDeck);
 
     // NEW PLIS
     setPlis1([]);
@@ -185,14 +187,17 @@ const BoardGame = (props) => {
     setScore4(0);
 
     // NEW DECK
-    setNewDeck(shuffle(cards));
+    // setNewDeck(shuffle(cards));
+    newDeck = shuffle(cards);
+    setNewDeck(newDeck);
+    console.log("1.1 BOARDGAME // initHands() // newDeck : ", newDeck);
 
     update(ref(database, 'game/current/'), {
       colorAsk: "",
       contract: "",
       dominosDone: [],
       endOfContract: true,
-      hasToPlay: contractor, // nextPlayer === "" ? contractor : nextPlayer, // (old) user.uid
+      hasToPlay: nextPlayer === "" ? contractor : nextPlayer, // (old) user.uid
       nbClic: 0,
       hand1:  newDeck.slice(0, 8),
       hand2:  newDeck.slice(8, 16),
@@ -201,6 +206,8 @@ const BoardGame = (props) => {
     });
 
     if(endOfSeven) setEndOfSeven(false);
+    console.log("1.2 BOARDGAME // initHands() // newDeck : ", newDeck);
+
   }
 
   const orderPlayers = (playz) => {
@@ -577,7 +584,7 @@ const BoardGame = (props) => {
     setContractsDone([]);
     setEndOfSeven(false);
     setAmIContractor(false);
-
+    
   }
 
   const hasColorAsked = (id) => {
@@ -663,7 +670,6 @@ const BoardGame = (props) => {
       recordContract(contracts[0]);
 
       console.log("2.2 BOARDGAME // END OF RATA ||");
-      //alert('6. BOARDGAME // END OF CONTRACT || ');
 
       setTimeout(() => {
         initHands();
@@ -701,7 +707,6 @@ const BoardGame = (props) => {
       recordContract(contracts[1]);
 
       console.log("2.2 BOARDGAME // END OF BARBU ||");
-      // alert('6. BOARDGAME // END OF CONTRACT || ');
 
       setTimeout(() => {
         initHands();
@@ -1076,7 +1081,7 @@ const BoardGame = (props) => {
         default : break;
     }
 
-    let nbcd = nbContractsDone + contractsDone.length;
+    let nbcd = (playersDone.length * 7) + contractsDone.length;
     contractName = "c"+nbcd;
 
     // UPDATE PLAYER X --> GLOBAL SCORE X
@@ -1598,21 +1603,21 @@ const BoardGame = (props) => {
 
     onValue(
       ref(database, 'game/current/playersDone' ), (snapshot) => {
-        let done = [];
+        let pdone = [];
         snapshot.forEach((doc) => {
-          done.push(doc.val());
+          pdone.push(doc.val());
         });
-        setPlayersDone(done);
+        setPlayersDone(pdone);
       }
     );
 
     onValue(
       ref(database, 'game/current/dominosDone' ), (snapshot) => {
-        let done = [];
+        let ddone = [];
         snapshot.forEach((doc) => {
-          done.push(doc.val());
+          ddone.push(doc.val());
         });
-        setDominosDone(done);
+        setDominosDone(ddone);
       }
     );
 
@@ -1759,7 +1764,7 @@ const BoardGame = (props) => {
 
   // Handle end of 7 contracts.
   if(contractor === user.uid) amIContractor = true;
-  setNbContractsDone(playersDone.length * 7);
+  // setNbContractsDone(playersDone.length * 7);
 
 
   console.log("BOARDGAME _--------------------_");
@@ -1776,7 +1781,7 @@ const BoardGame = (props) => {
   // console.log("BOARDGAME // contractor place = ", getPlaceByUid(contractor));
   // console.log("BOARDGAME // allPlis = ", allPlis);
   console.log("BOARDGAME // ContractsDone = ", contractsDone);
-  console.log("BOARDGAME // nbContractsDone = ", nbContractsDone);
+  // console.log("BOARDGAME // nbContractsDone = ", nbContractsDone);
   // console.log("BOARDGAME // NB ContractsDone = ", contractsDone.length);
   // console.log("BOARDGAME // playersDone = ", playersDone);
   // console.log("BOARDGAME // endOfSeven = ", endOfSeven);

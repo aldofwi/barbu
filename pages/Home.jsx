@@ -22,12 +22,12 @@ const Home = () => {
   const [playersHome, setPlayersHome] = useState([]);
 
   const orderHPlayers = (playaz) => {
-    console.log("HOME // orderPlayers(", playaz.length,")");
+    console.log("HOME // orderPlayers(", playaz?.length,")");
 
     let goodPlayz = [];
 
     for (let i=1; i<5; i++) {
-      for (let j=0; j<playaz.length; j++) {
+      for (let j=0; j<playaz?.length; j++) {
 
         if(playaz[j].rank === i) {
           goodPlayz.push(playaz[j]);

@@ -156,9 +156,6 @@ const BoardGame = (props) => {
     set(ref(database, 'game/scores/'), {
     });
 
-    // remove(ref(database, 'game/scores')); // last edit ✏️
-    // remove(ref(database, 'game/players')); // last edit ✏️
-
     if(newDeck.length !== 0) setInitFirst(true);
   }
 
@@ -977,15 +974,12 @@ const BoardGame = (props) => {
 
         remove(ref(database, 'game/players/'), {
         }); // last edit ✏️
+        remove(ref(database, 'game/scores/'), {
+        }); // last edit ✏️
 
         console.log("7.1 BOARDGAME // checkEndOf7() - FULL! playersDone :", playersDone.length);
         // initGame(); // Display Winner Panel before.
 
-        // await update(ref(database, 'game/current/'), { 
-        //   dominosDone: [],
-        //   hasToPlay: "",
-        //   playersDone: [],
-        // });
 
       } else {
  
@@ -1004,8 +998,6 @@ const BoardGame = (props) => {
           uid: nextPlayer,
         });
 
-        // remove(ref(database, 'game/current/dominosDone')); // last edit ✏️
-
         contractor = nextPlayer;
         setContractor(contractor);
         console.log("7.2 BOARDGAME // checkEndOf7() - contractor :", getNameByUID(contractor));
@@ -1020,10 +1012,6 @@ const BoardGame = (props) => {
         setContractsDone(contractsDone.splice());
         console.log("7.5 BOARDGAME // checkEndOf7() - contractsDone :", contractsDone);
 
-        // setDominosDone(dominosDone);            // last edit ✏️
-        // setContractsDone(contractsDone);       // last edit ✏️
-
-        // console.log("7.1 BOARDGAME // checkEndOf7() - Re-Call inithands() - contractor :", getNameByUID(contractor));
         initHands(); 
       }
     }

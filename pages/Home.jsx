@@ -56,15 +56,16 @@ const Home = () => {
             snapshot.forEach((doc) => {
               playz.push({...doc.val()});
             });
-            // setPlayersHome(playz);
-            if(playz.length === 4) {
+
+            if(playz?.length === 4) {
               setPlayersHome(orderHPlayers(playz));
             }
           }
       );
 
       if(user.displayName === null) {
-        user.displayName = user.email.slice(0, user.email.indexOf('@'));;
+
+        user.displayName = user.email.slice(0, user.email.indexOf('@'));
         user.photoURL = "https://e7.pngegg.com/pngimages/416/62/png-clipart-anonymous-person-login-google-account-computer-icons-user-activity-miscellaneous-computer-thumbnail.png";
       }
   

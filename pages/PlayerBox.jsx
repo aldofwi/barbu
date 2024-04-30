@@ -30,7 +30,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
         <div className={nameOfClass}>
 
         {
-          player.uid === user.uid 
+          player?.uid === user?.uid 
               ?
             <Hand
               handStyle={id}

@@ -62,7 +62,7 @@ const Navbar = ({ playersNav }) => {
                     </li>
 
                     {
-                        playersNav.length !== 0 
+                        playersNav?.length !== 0 
                             ?
                     <li className='px-6 py-4'>
                         <button onClick={() => handleScoreModal()} className="text-blue-500 hover:text-white font-bold">Score</button>
@@ -104,7 +104,7 @@ const Navbar = ({ playersNav }) => {
                             </ModalContent>
                         </Modal>
                     </li>
-                    {user.photoURL &&
+                    {user?.photoURL &&
                         <li className='px-6 py-2'>
                             <Tooltip label={user?.displayName} bg='burlywood' textColor="black">
     

@@ -91,11 +91,12 @@ const Score = ({ players }) => {
 
   }, []);
   
+  // teal
 
   return (
 
     <TableContainer>
-      <Table variant='striped' colorScheme='teal' size='xl'>
+      <Table variant='striped' colorScheme='twitter' size='xl'>
         <Thead>
           <Tr>
             <Th textAlign='center'>Contracts</Th>
@@ -115,19 +116,19 @@ const Score = ({ players }) => {
 
         {
           scores?.map((score, i) => 
-          <Tbody>
-            <Tr key={i}>
-              <Td textAlign='center'>{score[0]}</Td>
-              <Td textAlign='center'>{score[1]}</Td>
-              <Td textAlign='center'>{score[2]}</Td>
-              <Td textAlign='center'>{score[3]}</Td>
-              <Td textAlign='center'>{score[4]}</Td>
+          <Tbody key={i}>
+            <Tr>
+              <Td textAlign='center' className={score[0]>0 ? "p1" : score[0]<0 ? "p11" : null}>{score[0]}</Td>
+              <Td textAlign='center' className={score[1]>0 ? "p1" : score[1]<0 ? "p11" : null}>{score[1]}</Td>
+              <Td textAlign='center' className={score[2]>0 ? "p1" : score[2]<0 ? "p11" : null}>{score[2]}</Td>
+              <Td textAlign='center' className={score[3]>0 ? "p1" : score[3]<0 ? "p11" : null}>{score[3]}</Td>
+              <Td textAlign='center' className={score[4]>0 ? "p1" : score[4]<0 ? "p11" : null}>{score[4]}</Td>
             </Tr>
 
             {
-              (i+1)%7 === 0 
+              (i+1)%1 === 0 
                     ?
-              <Tr key={i}>
+              <Tr>
                 <Td textAlign='center'>------------</Td>
                 <Td textAlign='center'>------------</Td>
                 <Td textAlign='center'>------------</Td>

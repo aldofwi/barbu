@@ -49,7 +49,8 @@ const Panel = ({ whoCanPlayDom }) => {
       });
 
       // Check if contractor can play first.
-      update(ref(database, 'game/current/'), { 
+      update(ref(database, 'game/current/'), {
+        dominosDone: [], // last edit ✏️
         hasToPlay: whoCanPlayDom(),
       });
       

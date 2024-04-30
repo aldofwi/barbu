@@ -47,9 +47,11 @@ const Rules = () => {
         { /*  </th>
 
   <th align='center' className='px-4'> */ } 
+            </th>
+            <th align='center'>
 
                 <span className="text-xl"><h5>BARBU 🎅🏾</h5></span>
-                <span className="textrules">Celui qui récupère le Barbu (<b>Roi de ♥️</b>) perd <b><span className="crr">40 points</span></b>.<br></br><br></br></span>
+                <span className="textrules">Celui qui récupère le Barbu (<b>Roi de <span className="text-red-500">♥️</span></b>) perd <b><span className="text-red-500">40 points</span></b>.<br></br><br></br></span>
                 
                 <span className="text-xl"><h5>DOMINO 🎲</h5></span>
                 <span className="textrules">
@@ -59,7 +61,7 @@ const Rules = () => {
                 On commence <b>OBLIGATOIREMENT</b> par un <b>Valet</b>.<br></br>
                 <i>Exemple</i> : (A.R.D.<span className="text-blue-500">V</span>.10.9.8.7)<br></br>
                 Celui qui n&apos;a plus de cartes en main gagne le Domino.<br></br>
-                <b>1er : <span className="text-green-500"> +50 </span> ➡️ 2e : <span className="text-blue-500"> +25 </span> ➡️ 3e : 0 ➡️ 4e : <span className="text-red-500"> -25 </span></b><br></br><br></br>
+                <b>1er : <span className="text-green-500"> +50 </span> ➡️ 2e : <span className="text-green-500"> +25 </span> ➡️ 3e : 0 ➡️ 4e : <span className="text-red-500"> -25 </span></b><br></br><br></br>
                 
                 </span>
                 

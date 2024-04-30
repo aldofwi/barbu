@@ -56,8 +56,7 @@ const shuffle = (tab) => {
       n--;
   }
 
-  console.log("1.0 BOARDGAME // shuffle(cards) // newtab = ", newTab);
-
+  // console.log("1.0 BOARDGAME // shuffle(cards) // newtab = ", newTab);
   return newTab;
 }
 
@@ -67,9 +66,9 @@ const BoardGame = (props) => {
 
   const [myRank, setMyRank] = useState(props.rank);
   const [players, setPlayers] = useState(props.playerz);
-  let [amIContractor, setAmIContractor] = useState(props.rank === 1);
+  let [hasToPlay, setHasToPlay] = useState(props.playerz[0].uid);
   let [contractor, setContractor] = useState(props.playerz[0].uid);
-  const [hasToPlay, setHasToPlay] = useState(props.playerz[0].uid);
+  const [amIContractor, setAmIContractor] = useState(props.rank === 1);
 
   let [newDeck, setNewDeck] = useState([]); // shuffle(cards)
   const [initFirst, setInitFirst] = useState(false);
@@ -103,17 +102,16 @@ const BoardGame = (props) => {
   const [contract, setContract] = useState("");
   const [colorAsked, setColorAsked] = useState("");
   const [alreadyClicked, setAlreadyClicked] = useState(false);
-
-  const [dominosDone, setDominosDone] = useState([]);
   const [displayLoading, setDisplayLoading] = useState(false);
 
   const [master, setMaster] = useState("");
   let [nbClic, setNbClic] = useState(0);
 
   let [nextPlayer, setNextPlayer] = useState("");
+  let [dominosDone, setDominosDone] = useState([]);
   let [contractsDone, setContractsDone] = useState([]);
   let [nbContractsDone, setNbContractsDone] = useState(0); // Max is 28.
-  const [playersDone, setPlayersDone] = useState([]); // Max length is 4.
+  let [playersDone, setPlayersDone] = useState([]); // Max length is 4.
 
   const [endOfContract, setEndOfContract] = useState(false);
   const [endOfSeven,    setEndOfSeven] = useState(false);
@@ -158,6 +156,9 @@ const BoardGame = (props) => {
     set(ref(database, 'game/scores/'), {
     });
 
+    // remove(ref(database, 'game/scores')); // last edit ✏️
+    // remove(ref(database, 'game/players')); // last edit ✏️
+
     if(newDeck.length !== 0) setInitFirst(true);
   }
 
@@ -166,7 +167,6 @@ const BoardGame = (props) => {
     console.log("1.0 BOARDGAME // initHands() //", user.displayName,"déclenche initHands();");
     console.log("1.0 BOARDGAME // initHands() // contractor :", getNameByUID(contractor));
     console.log("1.0 BOARDGAME // initHands() // nextPlayer : ", getNameByUID(nextPlayer));
-    console.log("1.0 BOARDGAME // initHands() // newDeck : ", newDeck);
 
     // NEW PLIS
     setPlis1([]);
@@ -187,9 +187,9 @@ const BoardGame = (props) => {
     setScore4(0);
 
     // NEW DECK
-    // setNewDeck(shuffle(cards));
     newDeck = shuffle(cards);
     setNewDeck(newDeck);
+    // setNewDeck(shuffle(cards));
     console.log("1.1 BOARDGAME // initHands() // newDeck : ", newDeck);
 
     update(ref(database, 'game/current/'), {
@@ -197,16 +197,15 @@ const BoardGame = (props) => {
       contract: "",
       dominosDone: [],
       endOfContract: true,
-      hasToPlay: nextPlayer === "" ? contractor : nextPlayer, // (old) user.uid
-      nbClic: 0,
       hand1:  newDeck.slice(0, 8),
       hand2:  newDeck.slice(8, 16),
       hand3:  newDeck.slice(16, 24),
       hand4:  newDeck.slice(24, 32),
+      hasToPlay: nextPlayer === "" ? contractor : nextPlayer, // (old) user.uid
+      nbClic: 0,
     });
 
     if(endOfSeven) setEndOfSeven(false);
-    console.log("1.2 BOARDGAME // initHands() // newDeck : ", newDeck);
 
   }
 
@@ -557,11 +556,10 @@ const BoardGame = (props) => {
   const cleanBoard = (diBoard) => {
 
     if(diBoard.length === 4) {
-
       setAlreadyClicked(false);
 
       setTimeout(() => {
-        // setBoard([]);
+        
         remove(ref(database, 'game/board/'));
         // console.log("BOARDGAME // CleanBoard() - Done");
       }, 1500);
@@ -584,7 +582,6 @@ const BoardGame = (props) => {
     setContractsDone([]);
     setEndOfSeven(false);
     setAmIContractor(false);
-    
   }
 
   const hasColorAsked = (id) => {
@@ -709,7 +706,7 @@ const BoardGame = (props) => {
       console.log("2.2 BOARDGAME // END OF BARBU ||");
 
       setTimeout(() => {
-        initHands();
+        contractsDone.length < 2 ? initHands() : null;
       }, 1000);
     }
   }
@@ -761,10 +758,12 @@ const BoardGame = (props) => {
         DIAMONDS: [],   
       });
 
+      setDominosDone([]); // last edit
+
       console.log("2.2 BOARDGAME // handleDomino() - END OF DOMINO");
 
       setTimeout(() => {
-        initHands();
+        contractsDone.length < 2 ? initHands() : null;
       }, 1000);
     }
   }
@@ -957,20 +956,14 @@ const BoardGame = (props) => {
   }
 
   const checkEndOf7 = async () => {
-    console.log("7. BOARDGAME // checkEndOf7() - ContractsDone :", contractsDone);
+    console.log("7.0 BOARDGAME // checkEndOf7() - ContractsDone :", contractsDone);
 
-    if(contractsDone.length === 7 && !playersDone.includes(contractor)) {
+    if(contractsDone.length === 1 && !playersDone.includes(contractor)) {
 
       nbContractsDone += contractsDone.length;
-      
       setNbContractsDone(nbContractsDone);
-      setEndOfSeven(true);
-      setContractsDone([]);
       setPlayersDone(playersDone.push(contractor));
-
-      update(ref(database, 'game/current/'), { 
-        playersDone: playersDone,
-      });
+      setEndOfSeven(true);
 
       // CLEAN CONTRACTS
       cleanContracts();
@@ -982,18 +975,28 @@ const BoardGame = (props) => {
           endOfGame: endOfGame,
         });
 
+        remove(ref(database, 'game/players/'), {
+        }); // last edit ✏️
+
         console.log("7.1 BOARDGAME // checkEndOf7() - FULL! playersDone :", playersDone.length);
+        // initGame(); // Display Winner Panel before.
+
+        // await update(ref(database, 'game/current/'), { 
+        //   dominosDone: [],
+        //   hasToPlay: "",
+        //   playersDone: [],
+        // });
 
       } else {
+ 
         nextPlayer = getNextPlayer(contractor);
-        contractor = nextPlayer;
-
         setNextPlayer(nextPlayer);
-        setContractor(contractor);
-        setHasToPlay(nextPlayer);
+        console.log("7.1 BOARDGAME // checkEndOf7() - nextPlayer :", getNameByUID(nextPlayer));
 
         await update(ref(database, 'game/current/'), { 
+          dominosDone: [],
           hasToPlay: nextPlayer,
+          playersDone: playersDone,
         });
 
         await update(ref(database, 'game/contractor/'), { 
@@ -1001,13 +1004,30 @@ const BoardGame = (props) => {
           uid: nextPlayer,
         });
 
-        console.log("7.1 BOARDGAME // checkEndOf7() - nextPlayer :", getNameByUID(nextPlayer));
-        console.log("7.1 BOARDGAME // checkEndOf7() - Re-Call inithands() - contractor :", getNameByUID(contractor));
-        initHands();
+        // remove(ref(database, 'game/current/dominosDone')); // last edit ✏️
 
+        contractor = nextPlayer;
+        setContractor(contractor);
+        console.log("7.2 BOARDGAME // checkEndOf7() - contractor :", getNameByUID(contractor));
+
+        hasToPlay = nextPlayer;
+        setHasToPlay(nextPlayer);
+        console.log("7.3 BOARDGAME // checkEndOf7() - hasToPlay :", getNameByUID(hasToPlay));
+
+        setDominosDone(dominosDone.splice());
+        console.log("7.4 BOARDGAME // checkEndOf7() - dominosDone :", dominosDone);
+
+        setContractsDone(contractsDone.splice());
+        console.log("7.5 BOARDGAME // checkEndOf7() - contractsDone :", contractsDone);
+
+        // setDominosDone(dominosDone);            // last edit ✏️
+        // setContractsDone(contractsDone);       // last edit ✏️
+
+        // console.log("7.1 BOARDGAME // checkEndOf7() - Re-Call inithands() - contractor :", getNameByUID(contractor));
+        initHands(); 
       }
-    } 
-
+    }
+    
   }
 
   const presenceIn = (temp) => {
@@ -1471,17 +1491,15 @@ const BoardGame = (props) => {
       }
 
       if(hand1.length === 0 || hand2.length === 0 || hand3.length === 0 || hand4.length === 0) {
-        console.log("2.x BOARDGAME // onClickDomino // DominosDone : ", dominosDone);
-        console.log("2.1 BOARDGAME // onClickDomino IN - score1 : ", score1);
-        console.log("2.1 BOARDGAME // onClickDomino IN - score2 : ", score2);
-        console.log("2.1 BOARDGAME // onClickDomino IN - score3 : ", score3);
-        console.log("2.1 BOARDGAME // onClickDomino IN - score4 : ", score4);
-        console.log("2.1 BOARDGAME // onClickDomino IN - globalScore1 : ", globalScore1);
-        console.log("2.1 BOARDGAME // onClickDomino IN - globalScore2 : ", globalScore2);
-        console.log("2.1 BOARDGAME // onClickDomino IN - globalScore3 : ", globalScore3);
-        console.log("2.1 BOARDGAME // onClickDomino IN - globalScore4 : ", globalScore4);
+        console.log("1.1 BOARDGAME // onClickDomino // DominosDone : ", dominosDone);
       }
 
+      // Handle contract Domino.
+      // if(amIContractor && dominosDone.length >= 3) {
+      //   console.log("1.2 BOARDGAME // onClickDomino // Call handleDomino();");
+      //     handleDomino(dominosDone); // ??? param
+      //     checkEndOf7();
+      // }
 
     } else {
       console.log("1. BOARDGAME // onClickBoard(", click,") // board : ", board, " // colorAsked = ", colorAsked);
@@ -1586,6 +1604,7 @@ const BoardGame = (props) => {
     onValue(
       ref(database, 'game/contractor/uid' ), (snapshot) => {
         setContractor(state => snapshot.val());
+        setAmIContractor(user.uid === snapshot.val());
       }
     );
 
@@ -1613,11 +1632,12 @@ const BoardGame = (props) => {
 
     onValue(
       ref(database, 'game/current/dominosDone' ), (snapshot) => {
-        let ddone = [];
+        let done = [];
         snapshot.forEach((doc) => {
-          ddone.push(doc.val());
+          done.push(doc.val());
         });
-        setDominosDone(ddone);
+        dominosDone = done;
+        setDominosDone(done);
       }
     );
 
@@ -1746,7 +1766,7 @@ const BoardGame = (props) => {
     );
 
   //}, []);
-  }, [hasToPlay, colorAsked]);
+  }, [colorAsked]); // last edit ✏️
 
   // Handle beginning of the game.
   if(props.rank !== 0 && playersDone.length === 0 && contractsDone.length === 0) {
@@ -1756,38 +1776,41 @@ const BoardGame = (props) => {
     } 
   }
 
-  // Handle contract Domino.
-  if(amIContractor && dominosDone.length === 3) {
+  // Handle contract Domino & end of 7 contracts.
+  if((contractor === user.uid) && dominosDone.length >= 3 && !playersDone.includes(user.uid)) {
+      console.log("1.0.1 BOARDGAME // Control // Call handleDomino(); & checkEndOf7();");
       handleDomino(dominosDone);
       checkEndOf7();
   }
 
-  // Handle end of 7 contracts.
-  if(contractor === user.uid) amIContractor = true;
-  // setNbContractsDone(playersDone.length * 7);
-
 
   console.log("BOARDGAME _--------------------_");
+  console.log("BOARDGAME // amIContractor =", amIContractor);
+  console.log("BOARDGAME // contractor =", getNameByUID(contractor));
+  console.log("BOARDGAME // HasToPlay =", getNameByUID(hasToPlay));
+  console.log("BOARDGAME // ContractsDone =", contractsDone);
+  console.log("BOARDGAME // playersDone =", playersDone);
+  console.log("BOARDGAME // dominosDone =", dominosDone);
+  console.log("BOARDGAME // contract =", contract);
+  console.log("BOARDGAME // amI && dominosDone3 =", amIContractor && dominosDone.length >= 3);
+  console.log("BOARDGAME // endOfGame =", endOfGame);
+  console.log("BOARDGAME -____________________-");
+
   // console.log("BOARDGAME // players = ", players);
   // console.log("BOARDGAME // myRank = ", myRank);
-  console.log("BOARDGAME // amIContractor = ", amIContractor);
   // console.log("BOARDGAME // board = ", board.length);
   // console.log("BOARDGAME // master = ", master);
   // console.log("BOARDGAME // nbClic = ", nbClic);
   // console.log("BOARDGAME // contract = ", contract);
-  console.log("BOARDGAME // hasToPlay = ", getNameByUID(hasToPlay));
+  // console.log("BOARDGAME // hasToPlay = ", getNameByUID(hasToPlay));
   // console.log("BOARDGAME // colorAsked = ", colorAsked);
-  console.log("BOARDGAME // contractor = ", getNameByUID(contractor));
   // console.log("BOARDGAME // contractor place = ", getPlaceByUid(contractor));
   // console.log("BOARDGAME // allPlis = ", allPlis);
-  console.log("BOARDGAME // ContractsDone = ", contractsDone);
   // console.log("BOARDGAME // nbContractsDone = ", nbContractsDone);
   // console.log("BOARDGAME // NB ContractsDone = ", contractsDone.length);
-  // console.log("BOARDGAME // playersDone = ", playersDone);
   // console.log("BOARDGAME // endOfSeven = ", endOfSeven);
   // console.log("BOARDGAME // endOfContract = ", endOfContract);
   // console.log("BOARDGAME // dominoDone : ", dominoDone);
-  console.log("BOARDGAME -____________________-");
 
   /**
    * 

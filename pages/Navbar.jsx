@@ -44,7 +44,7 @@ const Navbar = ({ playersNav }) => {
                 <ul className="font-[Stanley] flex">
                     <li className='px-6 py-4'>
                         <button onClick={() => handleRulesModal()} className="text-blue-500 hover:text-white font-bold">Rules</button>
-                        <Modal onClose={onRulesClose} size={'xl'} isOpen={isRulesOpen}>
+                        <Modal onClose={onRulesClose} size={'5xl'} isOpen={isRulesOpen}>
                             <ModalOverlay />
                             <ModalContent>
                                 <ModalHeader align='center'>📜 Règles du Barbu</ModalHeader>

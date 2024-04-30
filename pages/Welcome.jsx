@@ -138,11 +138,16 @@ const Welcome = () => {
             setPlayers(orderPlayers(playz));
             setGameStarted(true);
           }
+          else if(playz.length === 0) {
+            setGameStarted(false);
+            setClickPlay(false);
+          }
         }
     );
 
   }, []);
 
+  console.log("WELCOME // gameStarted =", gameStarted);
 
   return (
 

@@ -117,9 +117,6 @@ const BoardGame = (props) => {
   const [endOfSeven,    setEndOfSeven] = useState(false);
   const [endOfGame,     setEndOfGame] = useState(false);
 
-  // "RATA", "Domino", "Coeurs", "Dames", "Plis", "Dernier Pli"
-
-  // INIT Game
   const initGame = () => {
     console.log("BOARDGAME //", user.displayName," déclenche le Game.");
 
@@ -159,7 +156,6 @@ const BoardGame = (props) => {
     if(newDeck.length !== 0) setInitFirst(true);
   }
 
-  // INIT Hands
   const initHands = () => {
     console.log("1.0 BOARDGAME // initHands() //", user.displayName,"déclenche initHands();");
     console.log("1.0 BOARDGAME // initHands() // contractor :", getNameByUID(contractor));
@@ -203,43 +199,6 @@ const BoardGame = (props) => {
     });
 
     if(endOfSeven) setEndOfSeven(false);
-
-  }
-
-  const orderPlayers = (playz) => {
-    console.log("BOARDGAME // orderPlayers()");
-
-    let goodPlayz = [];
-
-    for (let i=1; i<5; i++) {
-      for (let j=0; j<playz.length; j++) {
-
-        if(playz[j].rank === i) {
-          players.push(playz[j]);
-        }
-      }
-    }
-
-    //return goodPlayz;
-  }
-
-  const sortPlayz = (playerz) => {
-
-    let nb=1;
-    let playaz = [];
-
-    while(playaz.length !== 4) {
-      for(let i=0; i<playerz.length; i++) {
-
-        if(playerz[i].uid === user.uid) setMyRank(playerz[i].rank);
-        
-        if(playerz[i].rank === nb) {
-          playaz.push(playerz[i]);
-          nb++; break;
-        }
-      }
-    }
-    return playaz;
 
   }
 

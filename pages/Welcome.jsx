@@ -9,19 +9,6 @@ import LoadCard from '/public/images/loadCard.png';
 import BoardGame from './BoardGame';
 import Image from 'next/image';
 
-const values = {
-  7: 0,
-  8: 1,
-  9: 2,
-  t: 3,
-  j: 4,
-  q: 5,
-  k: 6,
-  a: 7,
-}
-
-const cardValues = ["7", "8", "9", "t", "j", "q", "k", "a"];
-
 const shuffle = (tab) => {
 
   const theTab = [...tab];
@@ -146,7 +133,7 @@ const Welcome = () => {
         }
     );
 
-  }, [gameStarted, orderPlayers]);
+  }, [gameStarted, orderPlayers, user.uid]);
 
   console.log("WELCOME // gameStarted =", gameStarted);
 

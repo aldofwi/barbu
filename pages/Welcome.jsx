@@ -145,7 +145,7 @@ const Welcome = () => {
         }
     );
 
-  }, []);
+  }, [gameStarted, orderPlayers]);
 
   console.log("WELCOME // gameStarted =", gameStarted);
 

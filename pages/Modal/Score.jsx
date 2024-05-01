@@ -89,7 +89,7 @@ const Score = ({ players }) => {
       }
     );
 
-  }, []);
+  }, [players]);
   
   // teal
 

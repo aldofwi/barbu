@@ -42,7 +42,7 @@ const shuffle = (tab) => {
 
   const theTab = [...tab];
   const newTab = [];
-  let i;  let n = tab.length;
+  let i=0;  let n = tab.length;
   
   // While it remains elements to suffle.
   while(n) {

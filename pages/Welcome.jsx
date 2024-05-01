@@ -133,7 +133,8 @@ const Welcome = () => {
         }
     );
 
-  }, [gameStarted, orderPlayers, user.uid]);
+  } );
+//   }, [gameStarted, orderPlayers, user.uid]);
 
   console.log("WELCOME // gameStarted =", gameStarted);
 

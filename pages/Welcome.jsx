@@ -102,28 +102,29 @@ const Welcome = () => {
     setClickPlay(true);
   }
  
-  const orderPlayers = (playaz) => {
-    console.log("WELCOME // orderPlayers(", playaz.length,") // GameStarted ? ", gameStarted);
-
-    let goodPlayz = [];
-
-    for (let i=1; i<5; i++) {
-      for (let j=0; j<playaz.length; j++) {
-
-        if(playaz[j].rank === i) {
-          goodPlayz.push(playaz[j]);
-        }
-      }
-    }
-
-    goodPlayz.forEach(element => {
-      if(element.uid === user.uid) setMyRank(element.rank);
-    });
-
-    return goodPlayz;
-  }
 
   useEffect(() => {
+
+    const orderPlayers = (playaz) => {
+      console.log("WELCOME // orderPlayers(", playaz.length,") // GameStarted ? ", gameStarted);
+
+      let goodPlayz = [];
+
+      for (let i=1; i<5; i++) {
+        for (let j=0; j<playaz.length; j++) {
+
+          if(playaz[j].rank === i) {
+            goodPlayz.push(playaz[j]);
+          }
+        }
+      }
+
+      goodPlayz.forEach(element => {
+        if(element.uid === user.uid) setMyRank(element.rank);
+      });
+
+      return goodPlayz;
+    }
 
     onValue(
       ref(database, 'game/players/' ), (snapshot) => {

@@ -4,10 +4,5 @@ const nextConfig = {
   runtimeOnly: false,
 }
 
-module.exports = {
-  nextConfig,
-  future: {
-    webpack5: true,
-  },
-}
+module.exports = nextConfig
  

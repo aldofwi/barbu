@@ -8,7 +8,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
 
   const { user } = useAuthContext();
 
-  const myLoader = ({ }) => { return player?.picture };
+  const myLoader = () => { return player?.picture };
 
   return (
 
@@ -20,7 +20,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
                 className="profile_img"
                 src={player?.picture}
                 unoptimized
-                loader={myLoader}
+                loader={myLoader()}
                 width={30}
                 height={30}
                 alt="pp" />

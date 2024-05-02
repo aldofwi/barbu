@@ -177,10 +177,14 @@ const Welcome = () => {
 
         :
 
+      players
+        ?
     <BoardGame
       rank={myRank}
       playerz={players}
     />
+        :
+      null
 
   )
 }

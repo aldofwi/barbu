@@ -66,10 +66,10 @@ const BoardGame = (props) => {
 
   const [myRank, setMyRank] = useState(props.rank);
   const [players, setPlayers] = useState(props.playerz);
-  let [hasToPlay, setHasToPlay] = useState("");
-  let [contractor, setContractor] = useState("");
-  // let [hasToPlay, setHasToPlay] = useState(props.playerz[0].uid);
-  // let [contractor, setContractor] = useState(props.playerz[0].uid);
+  // let [hasToPlay, setHasToPlay] = useState("");
+  // let [contractor, setContractor] = useState("");
+  let [hasToPlay, setHasToPlay] = useState(props.playerz[0].uid);
+  let [contractor, setContractor] = useState(props.playerz[0].uid);
   const [amIContractor, setAmIContractor] = useState(props.rank === 1);
 
   let [newDeck, setNewDeck] = useState([]);
@@ -1720,9 +1720,6 @@ const BoardGame = (props) => {
 
   // Handle beginning of the game.
   if(props.rank !== 0 && playersDone.length === 0 && contractsDone.length === 0) {
-
-    // setHasToPlay(props.playerz[0].uid);
-    // setContractor(props.playerz[0].uid); 
 
     if(props.rank === 1 && !initFirst) {
       initGame();

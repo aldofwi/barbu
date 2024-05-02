@@ -1745,7 +1745,13 @@ const BoardGame = (props) => {
   console.log("BOARDGAME // amI && dominosDone3 =", amIContractor && dominosDone.length >= 3);
   console.log("BOARDGAME // endOfGame =", endOfGame);
   console.log("BOARDGAME -____________________-");
-
+  console.log("BOARDGAME // handSpides =", handSpides);
+  console.log("BOARDGAME // handHearts =", handHearts);
+  console.log("BOARDGAME // handCloves =", handCloves);
+  console.log("BOARDGAME // handDiamonds =", handDiamonds);
+  console.log("BOARDGAME // board =", board);
+  console.log("BOARDGAME // players =", players);
+  console.log("BOARDGAME -____________________-");
 
   // console.log("BOARDGAME // contractor =", getNameByUID(contractor));
   // console.log("BOARDGAME // HasToPlay =", getNameByUID(hasToPlay));

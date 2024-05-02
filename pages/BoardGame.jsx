@@ -66,8 +66,8 @@ const BoardGame = (props) => {
 
   const [myRank, setMyRank] = useState(props.rank);
   const [players, setPlayers] = useState(props.playerz);
-  let [hasToPlay, setHasToPlay] = useState(props.playerz[0].uid ? props.playerz[0].uid : "");
-  let [contractor, setContractor] = useState(props.playerz[0].uid ? props.playerz[0].uid : "");
+  let [hasToPlay, setHasToPlay] = useState(props ? props.playerz[0].uid : "");
+  let [contractor, setContractor] = useState(props ? props.playerz[0].uid : "");
   const [amIContractor, setAmIContractor] = useState(props.rank === 1);
 
   let [newDeck, setNewDeck] = useState([]);

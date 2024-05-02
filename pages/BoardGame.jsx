@@ -1731,7 +1731,7 @@ const BoardGame = (props) => {
   }
 
   // Handle contract Domino & end of 7 contracts.
-  if((contractor === user.uid) && dominosDone.length >= 3 && !playersDone.includes(user.uid)) {
+  if((contractor === user?.uid) && dominosDone.length >= 3 && !playersDone.includes(user?.uid)) {
       console.log("1.0.1 BOARDGAME // Control // Call handleDomino(); & checkEndOf7();");
       handleDomino(dominosDone);
       checkEndOf7();

@@ -371,8 +371,6 @@ const BoardGame = (props) => {
 
   const getNameByUID = (id) => {
 
-    if(players) {
-
       switch(id) {
         case players[0].uid : return players[0].username;
         case players[1].uid : return players[1].username;
@@ -380,7 +378,6 @@ const BoardGame = (props) => {
         case players[3].uid : return players[3].username;
         default: break;
       }
-    } else return "";
   }
 
   const getUIDByPlace = (place) => {
@@ -1734,7 +1731,7 @@ const BoardGame = (props) => {
   }
 
   // Handle contract Domino & end of 7 contracts. // user?.uid 50 --> 48
-  if((contractor === user.uid) && dominosDone.length >= 3 && !playersDone.includes(user.uid)) {
+  if((contractor === user?.uid) && dominosDone.length >= 3 && !playersDone.includes(user?.uid)) {
       console.log("1.0.1 BOARDGAME // Control // Call handleDomino(); & checkEndOf7();");
       handleDomino(dominosDone);
       checkEndOf7();

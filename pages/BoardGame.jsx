@@ -380,7 +380,7 @@ const BoardGame = (props) => {
         case players[3].uid : return players[3].username;
         default: break;
       }
-    }
+    } else return "";
   }
 
   const getUIDByPlace = (place) => {
@@ -1740,11 +1740,10 @@ const BoardGame = (props) => {
       checkEndOf7();
   }
 
-
   console.log("BOARDGAME _--------------------_");
   console.log("BOARDGAME // amIContractor =", amIContractor);
-  console.log("BOARDGAME // contractor =", getNameByUID(contractor));
-  console.log("BOARDGAME // HasToPlay =", getNameByUID(hasToPlay));
+  console.log("BOARDGAME // contractor =", contractor);
+  console.log("BOARDGAME // HasToPlay =", hasToPlay);
   console.log("BOARDGAME // ContractsDone =", contractsDone);
   console.log("BOARDGAME // playersDone =", playersDone);
   console.log("BOARDGAME // dominosDone =", dominosDone);
@@ -1752,6 +1751,10 @@ const BoardGame = (props) => {
   console.log("BOARDGAME // amI && dominosDone3 =", amIContractor && dominosDone.length >= 3);
   console.log("BOARDGAME // endOfGame =", endOfGame);
   console.log("BOARDGAME -____________________-");
+
+
+  // console.log("BOARDGAME // contractor =", getNameByUID(contractor));
+  // console.log("BOARDGAME // HasToPlay =", getNameByUID(hasToPlay));
 
   // console.log("BOARDGAME // players = ", players);
   // console.log("BOARDGAME // myRank = ", myRank);

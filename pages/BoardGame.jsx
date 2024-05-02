@@ -1721,8 +1721,8 @@ const BoardGame = (props) => {
   // Handle beginning of the game.
   if(props.rank !== 0 && playersDone.length === 0 && contractsDone.length === 0) {
 
-    setHasToPlay(props.playerz[0].uid);
-    setContractor(props.playerz[0].uid);
+    // setHasToPlay(props.playerz[0].uid);
+    // setContractor(props.playerz[0].uid);
 
     if(props.rank === 1 && !initFirst) {
       initGame();

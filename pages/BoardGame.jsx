@@ -120,7 +120,7 @@ const BoardGame = (props) => {
   const [endOfGame,     setEndOfGame] = useState(false);
 
   const initGame = () => {
-    console.log("BOARDGAME //", user.displayName," déclenche le Game.");
+    console.log("BOARDGAME //", user?.displayName," déclenche le Game.");
 
     // TODO : Switch Update to Set
     update(ref(database, 'game/current/'), {
@@ -129,7 +129,7 @@ const BoardGame = (props) => {
       dominosDone: [],
       endOfContract: true,
       endOfGame: false,
-      hasToPlay: user.uid, // contractor
+      hasToPlay: user?.uid, // contractor
       nbClic: 0,
       hand1:  [],
       hand2:  [],
@@ -1722,7 +1722,7 @@ const BoardGame = (props) => {
   if(props.rank !== 0 && playersDone.length === 0 && contractsDone.length === 0) {
 
     // setHasToPlay(props.playerz[0].uid);
-    // setContractor(props.playerz[0].uid);
+    // setContractor(props.playerz[0].uid); 
 
     if(props.rank === 1 && !initFirst) {
       initGame();
@@ -1730,7 +1730,7 @@ const BoardGame = (props) => {
     } 
   }
 
-  // Handle contract Domino & end of 7 contracts.
+  // Handle contract Domino & end of 7 contracts. // user?.uid 50 --> 48
   if((contractor === user?.uid) && dominosDone.length >= 3 && !playersDone.includes(user?.uid)) {
       console.log("1.0.1 BOARDGAME // Control // Call handleDomino(); & checkEndOf7();");
       handleDomino(dominosDone);

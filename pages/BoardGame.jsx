@@ -371,12 +371,15 @@ const BoardGame = (props) => {
 
   const getNameByUID = (id) => {
 
-    switch(id) {
-      case players[0].uid : return players[0].username;
-      case players[1].uid : return players[1].username;
-      case players[2].uid : return players[2].username;
-      case players[3].uid : return players[3].username;
-      default: break;
+    if(players) {
+
+      switch(id) {
+        case players[0].uid : return players[0].username;
+        case players[1].uid : return players[1].username;
+        case players[2].uid : return players[2].username;
+        case players[3].uid : return players[3].username;
+        default: break;
+      }
     }
   }
 

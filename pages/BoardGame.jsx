@@ -65,7 +65,7 @@ const BoardGame = (props) => {
   const { user } = useAuthContext();
 
   const [myRank, setMyRank] = useState(props.rank);
-  const [players, setPlayers] = useState(props.playerz);
+  const [players, setPlayers] = useState(props.playerz ? props.playerz : []);
   let [hasToPlay, setHasToPlay] = useState("");
   let [contractor, setContractor] = useState("");
   // let [hasToPlay, setHasToPlay] = useState(props.playerz[0].uid);

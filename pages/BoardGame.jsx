@@ -382,7 +382,7 @@ const BoardGame = (props) => {
 
   const getUIDByPlace = (place) => {
 
-    if(players) {
+    if(user && players) {
 
       switch(place) {
         case "SOUTH": return user.uid;

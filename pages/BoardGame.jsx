@@ -382,34 +382,38 @@ const BoardGame = (props) => {
 
   const getUIDByPlace = (place) => {
 
-    switch(place) {
-      case "SOUTH": return user.uid;
-      case "WEST" :
-        switch(myRank) {
-          case 1 : return players[1].uid;
-          case 2 : return players[2].uid;
-          case 3 : return players[3].uid;
-          case 4 : return players[0].uid;
-          default: break;
-        }
-      case "NORTH":
-        switch(myRank) {
-          case 1 : return players[2].uid;
-          case 2 : return players[3].uid;
-          case 3 : return players[0].uid;
-          case 4 : return players[1].uid;
-          default: break;
-        }
-      case "EAST" :
-        switch(myRank) {
-          case 1 : return players[3].uid;
-          case 2 : return players[0].uid;
-          case 3 : return players[1].uid;
-          case 4 : return players[2].uid;
-          default: break;
-        }
-      default: break;
-    }
+    if(players) {
+
+      switch(place) {
+        case "SOUTH": return user.uid;
+        case "WEST" :
+          switch(myRank) {
+            case 1 : return players[1].uid;
+            case 2 : return players[2].uid;
+            case 3 : return players[3].uid;
+            case 4 : return players[0].uid;
+            default: break;
+          }
+        case "NORTH":
+          switch(myRank) {
+            case 1 : return players[2].uid;
+            case 2 : return players[3].uid;
+            case 3 : return players[0].uid;
+            case 4 : return players[1].uid;
+            default: break;
+          }
+        case "EAST" :
+          switch(myRank) {
+            case 1 : return players[3].uid;
+            case 2 : return players[0].uid;
+            case 3 : return players[1].uid;
+            case 4 : return players[2].uid;
+            default: break;
+          }
+        default: break;
+      }
+
+    } else return "";
 
   }
 

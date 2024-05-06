@@ -11,7 +11,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
   const myLoader = () => { 
 
     if(!player) return;
-    return player?.picture 
+    return player.picture; 
   };
 
   return (
@@ -22,7 +22,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
           <Tooltip label={player?.username} bg='burlywood' textColor="black">
             <Image
                 className="profile_img"
-                src={player?.picture}
+                src={player.picture}
                 unoptimized
                 loader={myLoader}
                 width={30}

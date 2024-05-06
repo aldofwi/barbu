@@ -14,8 +14,6 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
     else return;
   };
 
-  // src={player.picture}
-
   return (
 
     <div>
@@ -26,7 +24,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
                 className="profile_img"
                 src={player?.picture}
                 unoptimized
-                loader={myLoader}
+                loader={() => myLoader()}
                 width={30}
                 height={30}
                 alt="pp" />

@@ -11,8 +11,10 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
   const myLoader = () => { 
 
     if(!player) return;
-    return player.picture; 
+    return player.picture;
   };
+
+  // src={player.picture}
 
   return (
 

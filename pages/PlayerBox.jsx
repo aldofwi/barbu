@@ -24,7 +24,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
           <Tooltip label={player?.username} bg='burlywood' textColor="black">
             <Image
                 className="profile_img"
-                src={player.picture}
+                src={player?.picture}
                 unoptimized
                 loader={myLoader}
                 width={30}

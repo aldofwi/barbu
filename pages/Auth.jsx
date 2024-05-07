@@ -134,7 +134,7 @@ export default function Auth() {
                 <Heading className="text-5xl font-bold" align='center' size='md'>Sign Up</Heading>
               </CardHeader>
 
-              <CardBody>
+              <CardBody align='center'>
                 <Stack divider={<StackDivider />} spacing='4'>
                   <Box>
                     {
@@ -150,17 +150,18 @@ export default function Auth() {
                   <form onSubmit={handleMail}>
                     <Input 
                       required 
-                      name="email" 
-                      id="email" 
+                      width="140px"
+                      name="email"
+                      id="email"
                       type="email" 
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email" 
-                      className="text-white px-6" 
+                      className="hover:text-white" 
                       value={email || ""} />
-                    <button type="submit" className="text-white w-full bg-[#050708] hover:bg-[#050708]/30 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-normal rounded-lg text-base px-14 py-1.5 text-center inline-flex items-center dark:focus:ring-[#050708]/50 dark:hover:bg-[#050708]/30 mr-2 mb-0 mt-2">
+                    <button type="submit" className="text-black w-3/4 bg-[#FFF] hover:bg-[#050708]/30 hover:text-white focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-normal rounded-lg text-base px-4 py-1.5 text-center inline-flex items-center dark:focus:ring-[#050708]/50 dark:hover:bg-[#050708]/30 mr-2 mb-0 mt-2">
                       {loginLoading ? (
-                        <span className='block rounded-full px-3 py-2 hover:text-white text-xl font-[courier]'> Logging you in.. </span>
-                      ) 
+                        <span className='block rounded-full px-3 py-2 hover:text-white text-xl font-[courier]'> Logging.. </span>
+                      )
                         : (
                           <span className='block rounded-full px-3 py-2 hover:text-white text-xl font-[courier]'> Log IN </span>
                         )

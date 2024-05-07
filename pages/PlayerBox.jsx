@@ -8,9 +8,9 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
 
   const { user } = useAuthContext();
 
-  const [playUsername, setPlayUsername] = useState(player.username);
-  const [playPicture, setPlayPicture] = useState(player.picture);
-  const [playUid, setPlayUid] = useState(player.uid);
+  const [playUsername, setPlayUsername] = useState(player?.username);
+  const [playPicture, setPlayPicture] = useState(player?.picture);
+  const [playUid, setPlayUid] = useState(player?.uid);
 
 
   // const myLoader = () => { 
@@ -37,25 +37,26 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
           </Tooltip>
         </div>
 
-        
-        {
-          playUid === user?.uid 
-              ?
-          <div className={nameOfClass}>
-            <Hand
-              handStyle={id}
-              cards={myCards}
-              onClickHand={(playCard) => clickBoard(playCard)}
-            />
-          </div>
-              :
-          <div className={nameOfClass}>
-            <Hand
-              handStyle={id}
-              cards={myCards}
-            />
-          </div>
-        }
+        <div>
+          {
+            playUid === user?.uid 
+                ?
+            <div className={nameOfClass}>
+              <Hand
+                handStyle={id}
+                cards={myCards}
+                onClickHand={(playCard) => clickBoard(playCard)}
+              />
+            </div>
+                :
+            <div className={nameOfClass}>
+              <Hand
+                handStyle={id}
+                cards={myCards}
+              />
+            </div>
+          }
+        </div>
 
     </div>
 

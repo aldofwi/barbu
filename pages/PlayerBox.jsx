@@ -12,7 +12,6 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
   const [playPicture, setPlayPicture] = useState(player?.picture);
   const [playUid, setPlayUid] = useState(player?.uid);
 
-
   // const myLoader = () => { 
 
   //   if(player.picture) return player.picture;
@@ -21,10 +20,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
 
   // loader={() => myLoader()}
 
-  return (
-
-    <div>
-
+  /*
         <div className={getBoxClass(id)}>
           <Tooltip label={playUsername} bg='burlywood' textColor="black">
             <Image
@@ -36,6 +32,13 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
                 alt="pp" />
           </Tooltip>
         </div>
+  */
+
+  return (
+
+    <div>
+
+
 
         <div>
           {

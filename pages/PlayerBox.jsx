@@ -37,14 +37,17 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
   return (
 
     <div>
+
       <div>
-        <Image
-          className="profile_img"
-          src={playPicture}
-          unoptimized
-          width={30}
-          height={30}
-          alt="pp" />
+        <Tooltip label={playUsername} bg='burlywood' textColor="black">
+          <Image
+            className="profile_img"
+            src={playPicture}
+            unoptimized
+            width={30}
+            height={30}
+            alt="pp" />
+          </Tooltip>
       </div>
 
         <div>

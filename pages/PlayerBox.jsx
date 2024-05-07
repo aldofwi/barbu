@@ -8,9 +8,11 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
 
   const { user } = useAuthContext();
 
+  const [nameClass, setNameClass] = useState(getBoxClass(id));
   const [playUsername, setPlayUsername] = useState(player?.username);
   const [playPicture, setPlayPicture] = useState(player?.picture);
   const [playUid, setPlayUid] = useState(player?.uid);
+
 
   // const myLoader = () => { 
 
@@ -38,7 +40,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
 
     <div>
 
-      <div className={() => getBoxClass(id)}>
+      <div className={nameClass}>
         <Tooltip label={playUsername} bg='burlywood' textColor="black">
           <Image
             className="profile_img"

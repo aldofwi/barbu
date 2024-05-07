@@ -288,8 +288,6 @@ button img {
   height: auto;
 }
 
-
-
 .choiceTitle {
   position: relative;
   align-content: center;
@@ -297,6 +295,10 @@ button img {
   font-size: xx-large;
   left: 400px;
   top: 100px;
+}
+
+.authFont {
+  font-family: 'Stanley';
 }
 
 .p0 {

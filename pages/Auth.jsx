@@ -131,7 +131,7 @@ export default function Auth() {
 
             <Card>
               <CardHeader>
-                <Heading className="text-5xl font-bold" align='center' size='md'>Sign Up</Heading>
+                <Heading fontFamily="authFont" fontSize="3xl" className="text-5xl font-bold" align='center' size='md'>Sign Up</Heading>
               </CardHeader>
 
               <CardBody align='center'>

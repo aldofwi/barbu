@@ -37,7 +37,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
   return (
 
     <div>
-      <div className={getBoxClass(id)}>
+      <div>
         <Image
           className="profile_img"
           src={playPicture}

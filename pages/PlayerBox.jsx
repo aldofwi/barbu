@@ -38,7 +38,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
 
     <div>
 
-      <div>
+      <div className={() => getBoxClass(id)}>
         <Tooltip label={playUsername} bg='burlywood' textColor="black">
           <Image
             className="profile_img"

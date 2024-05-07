@@ -2,18 +2,22 @@ import { useAuthContext } from '@/context/AuthContext';
 import { Tooltip } from '@chakra-ui/react';
 import Image from 'next/image';
 import Hand from './Hand';
-import React from 'react';
+import React, { useState } from 'react';
 
 const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }) => {
 
   const { user } = useAuthContext();
+
+  const [playUsername, setPlayUsername] = useState(player.username);
+  const [playPicture, setPlayPicture] = useState(player.picture);
+  const [playUid, setPlayUid] = useState(player.uid);
+
 
   // const myLoader = () => { 
 
   //   if(player.picture) return player.picture;
   //   else return;
   // };
-
 
   // loader={() => myLoader()}
 
@@ -22,10 +26,10 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
     <div>
 
         <div className={getBoxClass(id)}>
-          <Tooltip label={player?.username} bg='burlywood' textColor="black">
+          <Tooltip label={playUsername} bg='burlywood' textColor="black">
             <Image
                 className="profile_img"
-                src={player?.picture}
+                src={playPicture}
                 unoptimized
                 width={30}
                 height={30}
@@ -33,24 +37,25 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
           </Tooltip>
         </div>
 
-        <div className={nameOfClass}>
-
+        
         {
-          player?.uid === user?.uid 
+          playUid === user?.uid 
               ?
+          <div className={nameOfClass}>
             <Hand
               handStyle={id}
               cards={myCards}
               onClickHand={(playCard) => clickBoard(playCard)}
             />
+          </div>
               :
+          <div className={nameOfClass}>
             <Hand
               handStyle={id}
               cards={myCards}
             />
+          </div>
         }
-          
-        </div>
 
     </div>
 

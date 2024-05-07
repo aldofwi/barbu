@@ -4,11 +4,10 @@ import Image from 'next/image';
 import Hand from './Hand';
 import React, { useState } from 'react';
 
-const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }) => {
+const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, boxClass }) => {
 
   const { user } = useAuthContext();
 
-  const [nameClass, setNameClass] = useState(getBoxClass(id));
   const [playUsername, setPlayUsername] = useState(player?.username);
   const [playPicture, setPlayPicture] = useState(player?.picture);
   const [playUid, setPlayUid] = useState(player?.uid);
@@ -36,13 +35,13 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, getBoxClass }
         </div>
   */
 
-  console.log("PLAYERBOX // nameClass : ", nameClass);
+  console.log("PLAYERBOX // boxClass : ", boxClass);
 
   return (
 
     <div>
 
-      <div className={nameClass}>
+      <div className={boxClass}>
         <Tooltip label={playUsername} bg='burlywood' textColor="black">
           <Image
             className="profile_img"

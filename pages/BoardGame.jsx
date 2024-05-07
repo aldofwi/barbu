@@ -1812,7 +1812,7 @@ const BoardGame = (props) => {
         myCards={getHandByRank("EAST")}
         hasToPlay={hasToPlay}
         contractor={contractor}
-        getBoxClass={(e) => getBoxClass(e)}
+        boxClass={getBoxClass("EAST")}
         nameOfClass={`${positions[3]}`}
       />
 
@@ -1823,7 +1823,7 @@ const BoardGame = (props) => {
         myCards={getHandByRank("NORTH")}
         hasToPlay={hasToPlay}
         contractor={contractor}
-        getBoxClass={(e) => getBoxClass(e)}
+        boxClass={getBoxClass("NORTH")}
         nameOfClass={`${positions[2]}`}
       />
 
@@ -1834,7 +1834,7 @@ const BoardGame = (props) => {
         myCards={getHandByRank("WEST")}
         hasToPlay={hasToPlay}
         contractor={contractor}
-        getBoxClass={(e) => getBoxClass(e)}
+        boxClass={getBoxClass("WEST")}
         nameOfClass={`${positions[1]}`}
       />
 
@@ -1845,7 +1845,7 @@ const BoardGame = (props) => {
         myCards={getHandByRank("SOUTH")}
         hasToPlay={hasToPlay}
         contractor={contractor}
-        getBoxClass={(e) => getBoxClass(e)}
+        boxClass={getBoxClass("SOUTH")}
         clickBoard={(key) => onClickBoard(key)}
         nameOfClass={`${positions[0]}`}
       />

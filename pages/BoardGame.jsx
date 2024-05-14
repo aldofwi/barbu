@@ -11,6 +11,7 @@ import PlayerBox from './PlayerBox';
 import Image from 'next/image';
 import Board from './Board';
 import Panel from './Panel';
+import { useToast } from '@chakra-ui/react';
 
 const cardValues = ["7", "8", "9", "t", "j", "q", "k", "a"];
 
@@ -63,6 +64,7 @@ const shuffle = (tab) => {
 const BoardGame = (props) => {
 
   const { user } = useAuthContext();
+  const toast = useToast();
 
   const [myRank, setMyRank] = useState(props.rank);
   const [players, setPlayers] = useState(props.playerz ? props.playerz : []);
@@ -988,6 +990,13 @@ const BoardGame = (props) => {
               uid: "basic101",
           });
 
+        toast({
+            title: players[winners[i]].username + " just won the Game !",
+            status: "success",
+            duration: 2000,
+            position: "top",
+        });
+
         // Save Victories in Database.
         switch(winners[i]) {
           case 0 : 
@@ -1019,6 +1028,8 @@ const BoardGame = (props) => {
 
       }
     }
+
+
   }
 
   const checkEndOf7 = () => {
@@ -1877,15 +1888,9 @@ const BoardGame = (props) => {
   console.log("BOARDGAME // contract =", contract);
   console.log("BOARDGAME // endOfGame =", endOfGame);
   console.log("BOARDGAME -____________________-");
-  console.log("BOARDGAME // victories1 =", victories1 === null ? 0 : victories1);
-  console.log("BOARDGAME // victories2 =", victories2 === null ? 0 : victories2);
-  console.log("BOARDGAME // victories3 =", victories3 === null ? 0 : victories3);
-  console.log("BOARDGAME // victories4 =", victories4 === null ? 0 : victories4);
-  console.log("BOARDGAME -____________________-");
 
   // console.log("BOARDGAME // contractor =", getNameByUID(contractor));
   // console.log("BOARDGAME // HasToPlay =", getNameByUID(hasToPlay));
-
   // console.log("BOARDGAME // players = ", players);
   // console.log("BOARDGAME // myRank = ", myRank);
   // console.log("BOARDGAME // board = ", board.length);

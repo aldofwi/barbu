@@ -599,7 +599,7 @@ const BoardGame = (props) => {
 
   const handleRata = (player) => {
 
-    if(!contractsDone.includes("RATA")) {
+    if(!contractsDone.includes("RATA") && contractsDone.length !== 7) {
       console.log("2.2 BOARDGAME // handleRata()");
 
       if(!getRata()) {
@@ -667,7 +667,7 @@ const BoardGame = (props) => {
 
   const handleBarbu = () => {
 
-    if(!contractsDone.includes("Barbu")) {
+    if(!contractsDone.includes("Barbu") && contractsDone.length !== 7) {
       console.log("2.2 BOARDGAME // handleBarbu() // !contractsDone.includes(Barbu) = ", !contractsDone.includes("Barbu"));
 
       score1 = getBarbu(plis1);
@@ -705,7 +705,7 @@ const BoardGame = (props) => {
 
   const handleDomino = (domDone) => {
     
-    if(!contractsDone.includes("Domino")) {
+    if(!contractsDone.includes("Domino") && contractsDone.length !== 7) {
       console.log("2.2 BOARDGAME // handleDomino()");
 
       console.log("2.2 BOARDGAME // handleDomino() IN - globalScore1 : ", globalScore1);
@@ -1035,7 +1035,7 @@ const BoardGame = (props) => {
   const checkEndOf7 = () => {
     console.log("7.0 BOARDGAME // checkEndOf7() - ContractsDone :", contractsDone);
 
-    if(contractsDone.length === 1 && !playersDone.includes(contractor)) {
+    if(contractsDone.length === 7 && !playersDone.includes(contractor)) {
 
       nbContractsDone += contractsDone.length;
       setNbContractsDone(nbContractsDone);

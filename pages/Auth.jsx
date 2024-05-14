@@ -70,6 +70,7 @@ export default function Auth() {
           username: name,
           email: response.user.email,
           picture: "https://e7.pngegg.com/pngimages/416/62/png-clipart-anonymous-person-login-google-account-computer-icons-user-activity-miscellaneous-computer-thumbnail.png",
+          uid: response.user.uid,
       });
   
       console.log("-> New user recorded :", name);

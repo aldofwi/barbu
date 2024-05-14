@@ -95,7 +95,7 @@ const Navbar = ({ playersNav }) => {
                                 <ModalCloseButton />
 
                                 <ModalBody>
-                                    <Online />
+                                    <Online players={playersNav} />
                                 </ModalBody>
 
                                 <ModalFooter>

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { onValue, ref, remove, set, update } from 'firebase/database';
+import { onValue, push, ref, remove, serverTimestamp, set, update } from 'firebase/database';
 import { useAuthContext } from '@/context/AuthContext';
 import React, { useEffect, useState } from 'react';
 import { database } from '@/firebase/config';
@@ -73,6 +73,11 @@ const BoardGame = (props) => {
   const [amIContractor, setAmIContractor] = useState(props.rank === 1);
 
   let [newDeck, setNewDeck] = useState([]);
+  let [winners, setWinners] = useState([]);
+  const [victories1, setVictories1] = useState(0);
+  const [victories2, setVictories2] = useState(0);
+  const [victories3, setVictories3] = useState(0);
+  const [victories4, setVictories4] = useState(0);
   const [initFirst, setInitFirst] = useState(false);
 
   const [hand1, setHand1] = useState([]);
@@ -122,6 +127,28 @@ const BoardGame = (props) => {
   const initGame = () => {
     console.log("BOARDGAME //", user.displayName," déclenche le Game.");
 
+    // NEW PLIS
+    setPlis1([]);
+    setPlis2([]);
+    setPlis3([]);
+    setPlis4([]);
+
+    // NEW DOM HANDS
+    setHandSpides([]);
+    setHandHearts([]);
+    setHandCloves([]);
+    setHandDiamonds([]);
+
+    // NEW SCORE
+    setScore1(0);
+    setScore2(0);
+    setScore3(0);
+    setScore4(0);
+
+    // NEW DECK
+    newDeck = shuffle(cards);
+    setNewDeck(newDeck);
+
     // TODO : Switch Update to Set
     update(ref(database, 'game/current/'), {
       colorAsk: "",
@@ -129,12 +156,12 @@ const BoardGame = (props) => {
       dominosDone: [],
       endOfContract: true,
       endOfGame: false,
+      hand1:  newDeck.slice(0, 8),
+      hand2:  newDeck.slice(8, 16),
+      hand3:  newDeck.slice(16, 24),
+      hand4:  newDeck.slice(24, 32),
       hasToPlay: user.uid, // contractor
       nbClic: 0,
-      hand1:  [],
-      hand2:  [],
-      hand3:  [],
-      hand4:  [],
       playersDone: [],
       score1: 0,
       score2: 0,
@@ -155,7 +182,7 @@ const BoardGame = (props) => {
     set(ref(database, 'game/scores/'), {
     });
 
-    if(newDeck.length !== 0) setInitFirst(true);
+    setInitFirst(true);
   }
 
   const initHands = () => {
@@ -639,7 +666,7 @@ const BoardGame = (props) => {
   const handleBarbu = () => {
 
     if(!contractsDone.includes("Barbu")) {
-      console.log("2.2 BOARDGAME // handleBarbu()");
+      console.log("2.2 BOARDGAME // handleBarbu() // !contractsDone.includes(Barbu) = ", !contractsDone.includes("Barbu"));
 
       score1 = getBarbu(plis1);
       score2 = getBarbu(plis2);
@@ -668,7 +695,8 @@ const BoardGame = (props) => {
       console.log("2.2 BOARDGAME // END OF BARBU ||");
 
       setTimeout(() => {
-        contractsDone.length < 2 ? initHands() : null;
+        initHands();
+        // contractsDone.length < 2 ? initHands() : null;
       }, 1000);
     }
   }
@@ -917,7 +945,83 @@ const BoardGame = (props) => {
     return p;
   }
 
-  const checkEndOf7 = async () => {
+  const checkWinners = async () => {
+    console.log("7.0 BOARDGAME // checkWinners()");
+
+    let winner = 0; let draw = false; let winner2; let winner3;
+    let all = [globalScore1, globalScore2, globalScore3, globalScore4];
+
+    if(globalScore1 === globalScore2 && globalScore2 === globalScore3 && globalScore3 === globalScore4) {
+      setWinners([0, 1, 2, 3]); // 4 winners very Rare
+    } else {
+
+      // Find 1st winner.
+      for (let h=1; h<all.length; h++) {
+        if(all[winner] < all[h]) winner = h;
+      }
+      // Find 2nd winner.
+      for (let k=0; k<all.length; k++) { 
+        if(winner !== k && all[winner] === all[k]) {
+          draw = true; winner2 = k;
+        }
+      }
+      // Find 3rd winner.
+      for (let j=0; j<all.length; j++) { 
+        if(winner !== j && winner2 !== j && all[winner] === all[j]) winner3 = j;
+      }
+
+      winners.push(winner);
+      if(winner2) winners.push(winner2);
+      if(winner3) winners.push(winner3);
+
+      // Chat messaging winners.
+      const msgRef = ref(database, 'messages/');
+      const newItem = await push(msgRef);
+
+      for (let i=0; i<winners.length; i++) {
+
+        set(newItem, 
+          {
+              createdAt: serverTimestamp(),
+              msg: players[winners[i]].username +" is the WINNER!",
+              name: "[J@rvis]",
+              uid: "basic101",
+          });
+
+        // Save Victories in Database.
+        switch(winners[i]) {
+          case 0 : 
+                await update(ref(database, 'victories/'+players[0].uid), { 
+                  uid: players[0].uid,
+                  username: players[0].username,
+                  victories: victories1+1,
+                }); break;
+          case 1 : 
+                await update(ref(database, 'victories/'+players[1].uid), { 
+                  uid: players[1].uid,
+                  username: players[1].username,
+                  victories: victories2+1,
+                }); break;
+          case 2 :  
+                await update(ref(database, 'victories/'+players[2].uid), { 
+                  uid: players[2].uid,
+                  username: players[2].username,
+                  victories: victories3+1,
+                }); break;
+          case 3 :  
+                await update(ref(database, 'victories/'+players[3].uid), { 
+                  uid: players[3].uid,
+                  username: players[3].username,
+                  victories: victories4+1,
+                }); break;
+          default : break;
+        }
+
+      }
+    }
+  }
+
+  const checkEndOf7 = () => {
     console.log("7.0 BOARDGAME // checkEndOf7() - ContractsDone :", contractsDone);
 
     if(contractsDone.length === 1 && !playersDone.includes(contractor)) {
@@ -937,14 +1041,14 @@ const BoardGame = (props) => {
           endOfGame: endOfGame,
         });
 
+        checkWinners(); // Display Winner Panel before.
+
         remove(ref(database, 'game/players/'), {
         }); // last edit ✏️
         remove(ref(database, 'game/scores/'), {
         }); // last edit ✏️
 
-        console.log("7.1 BOARDGAME // checkEndOf7() - FULL! playersDone :", playersDone.length);
-        // initGame(); // Display Winner Panel before.
-
+        console.log("7.0.1 BOARDGAME // checkEndOf7() - FULL! playersDone :", playersDone.length);
 
       } else {
  
@@ -952,13 +1056,13 @@ const BoardGame = (props) => {
         setNextPlayer(nextPlayer);
         console.log("7.1 BOARDGAME // checkEndOf7() - nextPlayer :", getNameByUID(nextPlayer));
 
-        await update(ref(database, 'game/current/'), { 
+        update(ref(database, 'game/current/'), { 
           dominosDone: [],
           hasToPlay: nextPlayer,
           playersDone: playersDone,
         });
 
-        await update(ref(database, 'game/contractor/'), { 
+        update(ref(database, 'game/contractor/'), { 
           name: getNameByUID(nextPlayer),
           uid: nextPlayer,
         });
@@ -1701,6 +1805,30 @@ const BoardGame = (props) => {
     );
 
     onValue(
+      ref(database, 'victories/'+players[0].uid+'/victories' ), (snapshot) => {
+        setVictories1(state => snapshot.val());
+      }
+    );
+
+    onValue(
+      ref(database, 'victories/'+players[1].uid+'/victories' ), (snapshot) => {
+        setVictories2(state => snapshot.val());
+      }
+    );
+
+    onValue(
+      ref(database, 'victories/'+players[2].uid+'/victories' ), (snapshot) => {
+        setVictories3(state => snapshot.val());
+      }
+    );
+
+    onValue(
+      ref(database, 'victories/'+players[3].uid+'/victories' ), (snapshot) => {
+        setVictories4(state => snapshot.val());
+      }
+    );
+
+    onValue(
       ref(database, 'game/current/contract' ), (snapshot) => {
         setContract(state => snapshot.val());
       }
@@ -1719,7 +1847,7 @@ const BoardGame = (props) => {
     );
 
   //}, []);
-  }, [colorAsked]); // last edit ✏️
+  }, [colorAsked, hasToPlay]); // last edit ✏️ hasToPlay
 
 
   // Handle beginning of the game.
@@ -1727,7 +1855,7 @@ const BoardGame = (props) => {
 
     if(props.rank === 1 && !initFirst) {
       initGame();
-      initHands();
+      //initHands();
     } 
   }
 
@@ -1740,21 +1868,19 @@ const BoardGame = (props) => {
 
   console.log("BOARDGAME _--------------------_");
   console.log("BOARDGAME // amIContractor =", amIContractor);
-  console.log("BOARDGAME // contractor =", contractor);
-  console.log("BOARDGAME // HasToPlay =", hasToPlay);
+  console.log("BOARDGAME // contractor =", getNameByUID(contractor));
+  console.log("BOARDGAME // HasToPlay =", getNameByUID(hasToPlay));
+  console.log("BOARDGAME // amI && dominosDone3 =", amIContractor && dominosDone.length >= 3);
   console.log("BOARDGAME // ContractsDone =", contractsDone);
   console.log("BOARDGAME // playersDone =", playersDone);
   console.log("BOARDGAME // dominosDone =", dominosDone);
   console.log("BOARDGAME // contract =", contract);
-  console.log("BOARDGAME // amI && dominosDone3 =", amIContractor && dominosDone.length >= 3);
   console.log("BOARDGAME // endOfGame =", endOfGame);
   console.log("BOARDGAME -____________________-");
-  console.log("BOARDGAME // handSpides =", handSpides);
-  console.log("BOARDGAME // handHearts =", handHearts);
-  console.log("BOARDGAME // handCloves =", handCloves);
-  console.log("BOARDGAME // handDiamonds =", handDiamonds);
-  console.log("BOARDGAME // board =", board);
-  console.log("BOARDGAME // players =", players);
+  console.log("BOARDGAME // victories1 =", victories1);
+  console.log("BOARDGAME // victories2 =", victories2);
+  console.log("BOARDGAME // victories3 =", victories3);
+  console.log("BOARDGAME // victories4 =", victories4);
   console.log("BOARDGAME -____________________-");
 
   // console.log("BOARDGAME // contractor =", getNameByUID(contractor));

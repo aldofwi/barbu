@@ -35,7 +35,7 @@ const PlayerBox = ({ nameOfClass, id, player, myCards, clickBoard, boxClass }) =
         </div>
   */
 
-  console.log("PLAYERBOX // boxClass : ", boxClass);
+  // console.log("PLAYERBOX // boxClass : ", boxClass);
 
   return (
 

@@ -1868,8 +1868,8 @@ const BoardGame = (props) => {
 
   console.log("BOARDGAME _--------------------_");
   console.log("BOARDGAME // amIContractor =", amIContractor);
-  console.log("BOARDGAME // contractor =", getNameByUID(contractor));
-  console.log("BOARDGAME // HasToPlay =", getNameByUID(hasToPlay));
+  console.log("BOARDGAME // contractor =", contractor);
+  console.log("BOARDGAME // HasToPlay =", hasToPlay);
   console.log("BOARDGAME // amI && dominosDone3 =", amIContractor && dominosDone.length >= 3);
   console.log("BOARDGAME // ContractsDone =", contractsDone);
   console.log("BOARDGAME // playersDone =", playersDone);
@@ -1877,10 +1877,10 @@ const BoardGame = (props) => {
   console.log("BOARDGAME // contract =", contract);
   console.log("BOARDGAME // endOfGame =", endOfGame);
   console.log("BOARDGAME -____________________-");
-  console.log("BOARDGAME // victories1 =", victories1);
-  console.log("BOARDGAME // victories2 =", victories2);
-  console.log("BOARDGAME // victories3 =", victories3);
-  console.log("BOARDGAME // victories4 =", victories4);
+  console.log("BOARDGAME // victories1 =", victories1 === null ? 0 : victories1);
+  console.log("BOARDGAME // victories2 =", victories2 === null ? 0 : victories2);
+  console.log("BOARDGAME // victories3 =", victories3 === null ? 0 : victories3);
+  console.log("BOARDGAME // victories4 =", victories4 === null ? 0 : victories4);
   console.log("BOARDGAME -____________________-");
 
   // console.log("BOARDGAME // contractor =", getNameByUID(contractor));

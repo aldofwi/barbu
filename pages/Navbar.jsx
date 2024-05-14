@@ -82,9 +82,14 @@ const Navbar = ({ playersNav }) => {
                             </ModalContent>
                         </Modal>
                     </li>
+
                             :
                             null
                     }
+
+                    {
+                        playersNav?.length !== 0 
+                            ?
 
                     <li className='px-6 py-4'>
                         <button onClick={() => handleOnlineModal()} className="text-blue-500 hover:text-white font-bold">Online</button>
@@ -104,6 +109,11 @@ const Navbar = ({ playersNav }) => {
                             </ModalContent>
                         </Modal>
                     </li>
+
+                        :
+                        null
+                    }
+
                     {user?.photoURL &&
                         <li className='px-6 py-2'>
                             <Tooltip label={user?.displayName} bg='burlywood' textColor="black">

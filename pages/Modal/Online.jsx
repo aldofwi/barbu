@@ -29,25 +29,25 @@ const Online = ({ players }) => {
 
     onValue(
       ref(database, 'victories/'+players[0].uid+'/victories'), (snapshot) => {
-        setVictories1(snapshot.val());
+        setVictories1(snapshot.val() === null ? 0 : snapshot.val());
       }
     );
 
     onValue(
       ref(database, 'victories/'+players[1].uid+'/victories'), (snapshot) => {
-        setVictories2(snapshot.val());
+        setVictories2(snapshot.val() === null ? 0 : snapshot.val());
       }
     );
 
     onValue(
       ref(database, 'victories/'+players[2].uid+'/victories'), (snapshot) => {
-        setVictories3(snapshot.val());
+        setVictories3(snapshot.val() === null ? 0 : snapshot.val());
       }
     );
 
     onValue(
       ref(database, 'victories/'+players[3].uid+'/victories'), (snapshot) => {
-        setVictories4(snapshot.val());
+        setVictories4(snapshot.val() === null ? 0 : snapshot.val());
       }
     );
 
@@ -55,23 +55,11 @@ const Online = ({ players }) => {
 
   console.log("Players", players);
 
-  // console.log("Connected[0].uid", connected[0].uid);
-  // console.log("Connected[1].uid", connected[1].uid);
-  // console.log("Connected[2].uid", connected[2].uid);
-  // console.log("Connected[3].uid", connected[3].uid);
-
-  console.log("Connected victories1 :", victories1);
-  console.log("Connected victories2 :", victories2);
-  console.log("Connected victories3 :", victories3);
-  console.log("Connected victories4 :", victories4);
-
-  console.log("Connected victories :", victories);
-
   return (
 
     <div className='pt-10'>
 
-      {players.slice(0).map((person, i) => 
+      {players?.slice(0).map((person, i) => 
           <p className='text-center' key={i}> 🟢 {person.username} ➖ {victories[i]} wins</p>
       )}
     
